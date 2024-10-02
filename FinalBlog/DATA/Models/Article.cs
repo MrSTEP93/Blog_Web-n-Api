@@ -1,4 +1,4 @@
-﻿namespace FinalBlog.Models
+﻿namespace FinalBlog.DATA.Models
 {
     public class Article(string title, string content, BlogUser author)
     {

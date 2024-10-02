@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
-using FinalBlog.Models;
+using FinalBlog.DATA.Models;
+using FinalBlog.DATA.Repositories;
+using FinalBlog.DATA.UoW;
 using FinalBlog.ViewModels.User;
 using Microsoft.AspNetCore.Identity;
 
@@ -9,14 +11,16 @@ namespace FinalBlog.Services
         IMapper mapper,
         UserManager<BlogUser> userManager,
         SignInManager<BlogUser> signInManager,
-        RoleManager<BlogUser> roleManager)
+        RoleManager<BlogUser> roleManager,
+        IUnitOfWork unitOfWork) : IUserService
     {
         private readonly IMapper _mapper = mapper;
         private readonly UserManager<BlogUser> _userManager = userManager;
         private readonly SignInManager<BlogUser> _signInManager = signInManager;
         private readonly RoleManager<BlogUser> _roleManager = roleManager;
-        
-        public async Task<ResultModel> Register(RegistrationViewModel model)
+        private readonly IUnitOfWork _unitOfWork;
+
+    public async Task<ResultModel> Register(RegistrationViewModel model)
         {
             ResultModel resultModel = new(false);
             var newUser = _mapper.Map<BlogUser>(model);
@@ -57,6 +61,24 @@ namespace FinalBlog.Services
             }
 
             return resultModel;
+        }
+
+        public async Task<List<BlogUser>> GetUserList()
+        {
+            var repository = _unitOfWork.GetRepository<BlogUser>() as UserRepository;
+            return repository.GetAll().ToList();
+        }
+
+        public async Task<BlogUser> GetUser(string id)
+        {
+            var repository = _unitOfWork.GetRepository<BlogUser>() as UserRepository;
+            return repository.Get(id);
+        }
+
+        public async Task<ResultModel> UpdateUserInfo(BlogUser newEntity)
+        {
+            var repository = _unitOfWork.GetRepository<BlogUser>() as UserRepository;
+            return new ResultModel(false, "Not supported");
         }
     }
 

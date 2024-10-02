@@ -1,4 +1,5 @@
-using FinalBlog.Models;
+using FinalBlog.DATA;
+using FinalBlog.DATA.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 

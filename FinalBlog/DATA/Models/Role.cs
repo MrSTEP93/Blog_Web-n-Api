@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace FinalBlog.Models
+namespace FinalBlog.DATA.Models
 {
     public class Role : IdentityRole
     {
