@@ -2,6 +2,7 @@
 using FinalBlog.DATA.Models;
 using FinalBlog.DATA.Repositories;
 using FinalBlog.DATA.UoW;
+using FinalBlog.Extensions;
 using FinalBlog.ViewModels.User;
 using Microsoft.AspNetCore.Identity;
 
@@ -75,10 +76,30 @@ namespace FinalBlog.Services
             return repository.Get(id);
         }
 
-        public async Task<ResultModel> UpdateUserInfo(BlogUser newEntity)
+        public async Task<ResultModel> UpdateUserInfo(UserEditViewModel model)
         {
-            var repository = _unitOfWork.GetRepository<BlogUser>() as UserRepository;
-            return new ResultModel(false, "Not supported");
+            //var repository = _unitOfWork.GetRepository<BlogUser>() as UserRepository;
+
+            var user = await _userManager.FindByIdAsync(model.Id.ToString());
+            user.Convert(model);
+
+            var resultModel = new ResultModel(false);
+
+            var result = await _userManager.UpdateAsync(user);
+            if (result.Succeeded)
+            {
+                resultModel.IsSuccessed = true;
+                resultModel.AddMessage("Updated successfully");
+            }
+            else
+            {
+                foreach (var error in result.Errors)
+                {
+                    resultModel.AddMessage(error.Description);
+                }
+            }
+
+            return resultModel;
         }
     }
 

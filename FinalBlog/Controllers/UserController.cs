@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using FinalBlog.DATA.Models;
+using FinalBlog.Extensions;
 using FinalBlog.Services;
 using FinalBlog.ViewModels.User;
 using Microsoft.AspNetCore.Identity;
@@ -71,5 +72,29 @@ namespace FinalBlog.Controllers
             await _signInManager.SignOutAsync();
             return RedirectToAction("Index", "Home");
         }
+
+        [Route("EditUser")]
+        [HttpPost]
+        public async Task<IActionResult> ShowUserEditForm()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> UpdateUser(UserEditViewModel model) 
+        {
+            ResultModel resultModel;
+            if (ModelState.IsValid)
+            {
+                // go to user service
+                // resultModel = 
+            }
+            else
+            {
+                ModelState.AddModelError("", "Некорректные данные");
+            }
+            return View("UserEdit", model);
+        }
+
     }
 }

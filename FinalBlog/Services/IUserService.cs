@@ -14,6 +14,6 @@ namespace FinalBlog.Services
 
         public Task<BlogUser> GetUser(string id);
 
-        public Task<ResultModel> UpdateUserInfo(BlogUser newEntity);
+        public Task<ResultModel> UpdateUserInfo(UserEditViewModel model);
     }
 }
