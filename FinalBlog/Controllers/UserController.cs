@@ -28,15 +28,21 @@ namespace FinalBlog.Controllers
             return View();
         }
 
-        [HttpPost]
+        [HttpGet]
         public IActionResult RegistrationShortForm()
         {
             return View();
         }
 
         [Route("Registration")]
-        [HttpPost]
+        [HttpGet]
         public IActionResult RegistrationFullForm(RegistrationViewModel model)
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult Register(RegistrationViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -55,12 +61,22 @@ namespace FinalBlog.Controllers
 
         [Route("Login")]
         [HttpPost]
-        public IActionResult Login(LoginViewModel model)
+        public async Task<IActionResult> Login(LoginViewModel model)
         {
+            //ResultModel resultModel = new(false);
             if (ModelState.IsValid)
             {
-                // go to user service - login
+                // go to user service
+                var resultModel = await _userService.Login(model);
+                if (!resultModel.IsSuccessed)
+                {
+                    foreach (var message in resultModel.Messages)
+                    {
+                        ModelState.AddModelError("", message);
+                    }
+                }
             }
+            
             return View();
         }
 
@@ -80,21 +96,40 @@ namespace FinalBlog.Controllers
             return View();
         }
 
-        [HttpGet]
+        [HttpPut]
         public async Task<IActionResult> UpdateUser(UserEditViewModel model) 
         {
-            ResultModel resultModel;
+            //ResultModel resultModel = new(false);
             if (ModelState.IsValid)
             {
                 // go to user service
-                // resultModel = 
+                var resultModel = await _userService.UpdateUserInfo(model);
+                if (!resultModel.IsSuccessed)
+                {
+                    foreach (var message in resultModel.Messages)
+                    {
+                        ModelState.AddModelError("", message);
+                    }
+                }
             }
-            else
-            {
-                ModelState.AddModelError("", "Некорректные данные");
-            }
+            
             return View("UserEdit", model);
         }
 
+        [Route("DeleteUser")]
+        [HttpPost]
+        public IActionResult AskDeleteConfirm()
+        {
+            return View();
+        }
+
+        [HttpDelete]
+        public IActionResult DeleteUser(string id)
+        {
+            // go to user service
+            _userService.DeleteUser(id);
+
+            return View();
+        }
     }
 }

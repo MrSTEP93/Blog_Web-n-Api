@@ -64,7 +64,7 @@ namespace FinalBlog.Services
             return resultModel;
         }
 
-        public async Task<List<BlogUser>> GetUserList()
+        public List<BlogUser> GetUserList()
         {
             var repository = _unitOfWork.GetRepository<BlogUser>() as UserRepository;
             return repository.GetAll().ToList();
@@ -73,7 +73,7 @@ namespace FinalBlog.Services
         public async Task<BlogUser> GetUser(string id)
         {
             var repository = _unitOfWork.GetRepository<BlogUser>() as UserRepository;
-            return repository.Get(id);
+            return await repository.Get(id);
         }
 
         public async Task<ResultModel> UpdateUserInfo(UserEditViewModel model)
@@ -100,6 +100,14 @@ namespace FinalBlog.Services
             }
 
             return resultModel;
+        }
+
+        public async void DeleteUser(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+
+            var repository = _unitOfWork.GetRepository<BlogUser>() as UserRepository;
+            repository.Delete(user);
         }
     }
 
