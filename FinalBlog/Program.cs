@@ -1,5 +1,7 @@
+using AutoMapper;
 using FinalBlog.DATA;
 using FinalBlog.DATA.Models;
+using FinalBlog.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -33,6 +35,15 @@ namespace FinalBlog
                     opts.Password.RequireUppercase = false;
                     opts.Password.RequireDigit = false;
                 }).AddEntityFrameworkStores<AppDbContext>();
+
+            var mapperConfig = new MapperConfiguration((c) =>
+            {
+                c.AddProfile(new MappingProfile());
+            });
+            IMapper mapper = mapperConfig.CreateMapper();
+            builder.Services
+                .AddSingleton(mapper)
+                .AddTransient<IUserService, UserService>();
 
             var app = builder.Build();
 

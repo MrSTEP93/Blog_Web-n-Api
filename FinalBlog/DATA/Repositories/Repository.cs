@@ -22,6 +22,11 @@ namespace FinalBlog.DATA.Repositories
             await Set.AddAsync(item);
             await _db.SaveChangesAsync();
         }
+        public async void Update(T item)
+        {
+             Set.Update(item);
+            await _db.SaveChangesAsync();
+        }
 
         public async void Delete(T item)
         {
@@ -44,10 +49,5 @@ namespace FinalBlog.DATA.Repositories
             return Set;
         }
 
-        public async void Update(T item)
-        {
-             Set.Update(item);
-            await _db.SaveChangesAsync();
-        }
     }
 }

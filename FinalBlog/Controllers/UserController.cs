@@ -12,20 +12,21 @@ namespace FinalBlog.Controllers
         IMapper mapper,
         UserManager<BlogUser> userManager,
         SignInManager<BlogUser> signInManager,
-        RoleManager<BlogUser> roleManager,
+        //RoleManager<BlogUser> roleManager,
         IUserService userService) : Controller
     {
         private readonly IMapper _mapper = mapper;
         private readonly UserManager<BlogUser> _userManager = userManager;
         private readonly SignInManager<BlogUser> _signInManager = signInManager;
-        private readonly RoleManager<BlogUser> _roleManager = roleManager;
+        //private readonly RoleManager<BlogUser> _roleManager = roleManager;
         private readonly IUserService _userService = userService;
 
         [Route("UserList")]
         [HttpGet]
         public IActionResult Index()
         {
-            return View();
+            //return View();
+            return Ok("no users");
         }
 
         [HttpGet]
@@ -38,7 +39,7 @@ namespace FinalBlog.Controllers
         [HttpGet]
         public IActionResult RegistrationFullForm(RegistrationViewModel model)
         {
-            return View();
+            return BadRequest("not ready");
         }
 
         [HttpPost]

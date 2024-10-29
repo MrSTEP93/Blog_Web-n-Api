@@ -12,14 +12,15 @@ namespace FinalBlog.Services
         IMapper mapper,
         UserManager<BlogUser> userManager,
         SignInManager<BlogUser> signInManager,
-        RoleManager<BlogUser> roleManager,
-        IUnitOfWork unitOfWork) : IUserService
+        //RoleManager<BlogUser> roleManager,
+        //IUnitOfWork unitOfWork
+        ) : IUserService
     {
         private readonly IMapper _mapper = mapper;
         private readonly UserManager<BlogUser> _userManager = userManager;
         private readonly SignInManager<BlogUser> _signInManager = signInManager;
-        private readonly RoleManager<BlogUser> _roleManager = roleManager;
-        private readonly IUnitOfWork _unitOfWork;
+        //private readonly RoleManager<BlogUser> _roleManager = roleManager;
+        //private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
     public async Task<ResultModel> Register(RegistrationViewModel model)
         {

@@ -8,7 +8,7 @@ namespace FinalBlog.DATA
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
-            Database.EnsureDeleted();
+            //Database.EnsureDeleted();
             Database.EnsureCreated();
             //Database.Migrate();
         }
@@ -19,6 +19,7 @@ namespace FinalBlog.DATA
 
             builder.ApplyConfiguration(new ArticleConfiguration());
             builder.ApplyConfiguration(new CommentConfiguration());
+            builder.ApplyConfiguration(new TagConfiguration());
         }
     }
 }
