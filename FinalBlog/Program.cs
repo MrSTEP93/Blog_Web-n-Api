@@ -1,6 +1,8 @@
 using AutoMapper;
 using FinalBlog.DATA;
 using FinalBlog.DATA.Models;
+using FinalBlog.DATA.Repositories;
+using FinalBlog.Extensions;
 using FinalBlog.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -44,6 +46,10 @@ namespace FinalBlog
             builder.Services
                 .AddSingleton(mapper)
                 .AddTransient<IUserService, UserService>();
+
+            builder.Services
+                .AddUnitOfWork()
+                .AddCustomRepository<BlogUser, UserRepository>();
 
             var app = builder.Build();
 

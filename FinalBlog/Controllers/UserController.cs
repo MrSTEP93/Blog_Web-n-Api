@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using FinalBlog.DATA;
 using FinalBlog.DATA.Models;
 using FinalBlog.Extensions;
 using FinalBlog.Services;
@@ -26,7 +27,8 @@ namespace FinalBlog.Controllers
         public IActionResult Index()
         {
             //return View();
-            return Ok("no users");
+            var result = _userService.GetUserList();
+            return Ok(result);
         }
 
         [HttpGet]
@@ -43,14 +45,26 @@ namespace FinalBlog.Controllers
         }
 
         [HttpPost]
-        public IActionResult Register(RegistrationViewModel model)
+        public async Task<IActionResult> Register(RegistrationViewModel model)
         {
             if (ModelState.IsValid)
             {
-                // go to user service - registration
-
+                var user = _mapper.Map<BlogUser>(model);
+                var result = await _userManager.CreateAsync(user, model.RegPassword);
+                if (result.Succeeded)
+                {
+                    await _signInManager.SignInAsync(user, false);
+                    return Ok("Registration successfully");
+                }
+                else
+                {
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+                }
             }
-            return View();
+            return BadRequest(ModelState);
         }
 
         [Route("Login")]
@@ -90,20 +104,33 @@ namespace FinalBlog.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+        [Route("ShowUser")]
+        [HttpGet]
+        public async Task<IActionResult> ShowUser(string id)
+        {
+            var result = await _userManager.FindByIdAsync(id);
+
+            //var model = new UserViewModel(result);
+            //return View();
+            return Ok(result);
+        }
+
         [Route("EditUser")]
-        [HttpPost]
+        [HttpGet]
         public async Task<IActionResult> ShowUserEditForm()
         {
-            return View();
+            var result = await _userManager.GetUserAsync(User);
+
+            //var model = new UserViewModel(result);
+            //return View();
+            return Ok(result);
         }
 
         [HttpPut]
         public async Task<IActionResult> UpdateUser(UserEditViewModel model) 
         {
-            //ResultModel resultModel = new(false);
             if (ModelState.IsValid)
             {
-                // go to user service
                 var resultModel = await _userService.UpdateUserInfo(model);
                 if (!resultModel.IsSuccessed)
                 {
@@ -111,10 +138,12 @@ namespace FinalBlog.Controllers
                     {
                         ModelState.AddModelError("", message);
                     }
+                    return BadRequest(ModelState);
                 }
             }
             
-            return View("UserEdit", model);
+            return Ok("Updated");
+            //return View("UserEdit", model);
         }
 
         [Route("DeleteUser")]
@@ -127,10 +156,27 @@ namespace FinalBlog.Controllers
         [HttpDelete]
         public IActionResult DeleteUser(string id)
         {
-            // go to user service
             _userService.DeleteUser(id);
 
             return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> CreateUsers()
+        {
+            byte userCount = 5;
+            var usergen = new UserGenerator();
+            var userlist = usergen.Populate(userCount);
+
+            foreach (var user in userlist)
+            {
+                var result = await _userManager.CreateAsync(user, "123456");
+
+                if (!result.Succeeded)
+                    continue;
+            }
+
+            return Ok($"The method has created {userCount} users (hopefully)");
         }
     }
 }
