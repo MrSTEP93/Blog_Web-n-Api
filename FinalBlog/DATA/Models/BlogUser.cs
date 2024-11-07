@@ -10,7 +10,7 @@ namespace FinalBlog.DATA.Models
 
         public string About { get; set; }
 
-        public Role? Role { get; set; }
+        public Role Role { get; set; }
 
         public DateTime RegDate { get; set; }
 

@@ -13,13 +13,13 @@ namespace FinalBlog.Controllers
         IMapper mapper,
         UserManager<BlogUser> userManager,
         SignInManager<BlogUser> signInManager,
-        //RoleManager<BlogUser> roleManager,
+        RoleManager<Role> roleManager,
         IUserService userService) : Controller
     {
         private readonly IMapper _mapper = mapper;
         private readonly UserManager<BlogUser> _userManager = userManager;
         private readonly SignInManager<BlogUser> _signInManager = signInManager;
-        //private readonly RoleManager<BlogUser> _roleManager = roleManager;
+        private readonly RoleManager<Role> _roleManager = roleManager;
         private readonly IUserService _userService = userService;
 
         [Route("UserList")]
@@ -173,7 +173,9 @@ namespace FinalBlog.Controllers
                 var result = await _userManager.CreateAsync(user, "123456");
 
                 if (!result.Succeeded)
-                    continue;
+                {
+                    return StatusCode(500, result);
+                }
             }
 
             return Ok($"The method has created {userCount} users (hopefully)");
