@@ -1,4 +1,5 @@
 ﻿using FinalBlog.Configurations;
+using FinalBlog.DATA.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -6,11 +7,13 @@ namespace FinalBlog.DATA
 {
     public class AppDbContext : IdentityDbContext
     {
+        public DbSet<Role> Roles { get; set; }
+
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
             //Database.EnsureDeleted();
             //Database.EnsureCreated();
-            //Database.Migrate();
+            Database.Migrate();
         }
 
         protected override void OnModelCreating(ModelBuilder builder)

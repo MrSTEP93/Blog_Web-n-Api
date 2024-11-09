@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using FinalBlog.Controllers;
 using FinalBlog.DATA.Models;
+using FinalBlog.DATA.Repositories;
 using FinalBlog.DATA.UoW;
 using FinalBlog.ViewModels.Role;
 using Microsoft.AspNetCore.Identity;
@@ -8,27 +9,59 @@ using Microsoft.Extensions.Logging;
 
 namespace FinalBlog.Services
 {
-    public class RoleService(
-        UserManager<BlogUser> userManager,
-        SignInManager<BlogUser> signInManager,
-        RoleManager<Role> roleManager,
-        IMapper mapper,
-        IUnitOfWork unitOfWork) : IRoleService
+    public class RoleService : IRoleService
     {
-        private readonly UserManager<BlogUser> _userManager = userManager;
-        private readonly SignInManager<BlogUser> _signInManager = signInManager;
-        private readonly RoleManager<Role> _roleManager = roleManager;
-        private IMapper _mapper = mapper;
-        private readonly IUnitOfWork _unitOfWork = unitOfWork;
+        private readonly UserManager<BlogUser> _userManager;
+        private readonly SignInManager<BlogUser> _signInManager;
+        private readonly RoleManager<Role> _roleManager;
+        private IMapper _mapper;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public Task AddRole(RoleViewModel model)
+        public RoleService(
+            UserManager<BlogUser> userManager,
+            SignInManager<BlogUser> signInManager,
+            RoleManager<Role> roleManager,
+            IMapper mapper,
+            IUnitOfWork unitOfWork)
         {
-            throw new NotImplementedException();
+            _userManager = userManager;
+            _signInManager = signInManager;
+            _roleManager = roleManager;
+            _mapper = mapper;
+            _unitOfWork = unitOfWork;
+
+            var repository = _unitOfWork.GetRepository<Role>() as RoleRepository;
+            if (!repository.GetAll().Any())
+            {
+                CreateStartRoles();
+            }
         }
 
-        public Task<List<RoleViewModel>> GetAllRoles()
+        private void CreateStartRoles()
         {
-            throw new NotImplementedException();
+            RoleViewModel userRoleModel = new()
+            {
+                Name = "Пользователь",
+                Description = "Пользователь сайта"
+            };
+            AddRole(userRoleModel);
+
+            RoleViewModel adminRoleModel = new()
+            {
+                Name = "Администратор",
+                Description = "Администратор сайта"
+            };
+            AddRole(adminRoleModel);
+        }
+
+        public async Task AddRole(RoleViewModel model)
+        {
+            Role newRole = new()
+            {
+                Name = model.Name,
+                Description = model.Description
+            };
+            await _roleManager.CreateAsync(newRole);
         }
 
         public Task<RoleViewModel> UpdateRole(string roleId)
@@ -44,6 +77,18 @@ namespace FinalBlog.Services
         public Task DeleteRole(string roleId)
         {
             throw new NotImplementedException();
+        }
+
+        public List<RoleViewModel> GetAllRoles()
+        {
+            var repo = _unitOfWork.GetRepository<Role>() as RoleRepository;
+            var roles = repo.GetAll();
+            var rolesView = new List<RoleViewModel>();
+            foreach (var role in roles)
+            {
+                rolesView.Add(_mapper.Map<RoleViewModel>(role));
+            }
+            return rolesView;
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using FinalBlog.DATA.Models;
+using FinalBlog.ViewModels.Role;
 using FinalBlog.ViewModels.User;
 
 namespace FinalBlog
@@ -13,10 +14,9 @@ namespace FinalBlog
 
             CreateMap<LoginViewModel, BlogUser>()
                 .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.Email));
-            /*
-            CreateMap<LoginViewModel, BlogUser>()
-                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.Email));
-            */
+
+            CreateMap<RoleViewModel, Role>();
+            CreateMap<Role, RoleViewModel>();
         }
     }
 }

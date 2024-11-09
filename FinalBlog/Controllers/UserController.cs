@@ -49,19 +49,14 @@ namespace FinalBlog.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = _mapper.Map<BlogUser>(model);
-                var result = await _userManager.CreateAsync(user, model.RegPassword);
-                if (result.Succeeded)
+                var result = await _userService.Register(model);
+                if (result.IsSuccessed)
                 {
-                    await _signInManager.SignInAsync(user, false);
-                    return Ok("Registration successfully");
+                    return Ok("Registration successfull");
                 }
                 else
                 {
-                    foreach (var error in result.Errors)
-                    {
-                        ModelState.AddModelError(string.Empty, error.Description);
-                    }
+                    return BadRequest(result.Messages);
                 }
             }
             return BadRequest(ModelState);

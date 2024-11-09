@@ -12,14 +12,16 @@ namespace FinalBlog.Services
         IMapper mapper,
         UserManager<BlogUser> userManager,
         SignInManager<BlogUser> signInManager,
-        RoleManager<Role> roleManager,
+        //RoleManager<Role> roleManager,
+        IRoleService roleService,
         IUnitOfWork unitOfWork
         ) : IUserService
     {
         private readonly IMapper _mapper = mapper;
         private readonly UserManager<BlogUser> _userManager = userManager;
         private readonly SignInManager<BlogUser> _signInManager = signInManager;
-        private readonly RoleManager<Role> _roleManager = roleManager;
+        //private readonly RoleManager<Role> _roleManager = roleManager;
+        private readonly IRoleService _roleService = roleService;
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
     public async Task<ResultModel> Register(RegistrationViewModel model)
@@ -32,10 +34,24 @@ namespace FinalBlog.Services
             if (result.Succeeded)
             {
                 await _signInManager.SignInAsync(newUser, false);
-                //await _roleManager.
+                var userRole = _roleService.GetAllRoles().Where(r => r.Name == "Пользователь").FirstOrDefault();
+                if (userRole == null)
+                {
+                    //throw new NullReferenceException("В БД не найдено ни одной роли. Создайте её вручную");
+                }
+                //newUser.Role = _mapper.Map<Role>(userRole);
+                result = await _userManager.AddToRoleAsync(newUser, userRole.Name);
+                if (result.Succeeded)
+                {
+                    resultModel.IsSuccessed = true;
+                }
+                else
+                {
+                    resultModel.IsSuccessed = false;
+                }
 
-                resultModel.IsSuccessed = true;
-            } else
+            }
+            else
             {
                 foreach (var error in result.Errors)
                 {
