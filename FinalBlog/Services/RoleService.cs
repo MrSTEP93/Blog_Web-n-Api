@@ -3,6 +3,7 @@ using FinalBlog.Controllers;
 using FinalBlog.DATA.Models;
 using FinalBlog.DATA.Repositories;
 using FinalBlog.DATA.UoW;
+using FinalBlog.Extensions;
 using FinalBlog.ViewModels.Role;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
@@ -14,7 +15,7 @@ namespace FinalBlog.Services
         private readonly UserManager<BlogUser> _userManager;
         private readonly SignInManager<BlogUser> _signInManager;
         private readonly RoleManager<Role> _roleManager;
-        private IMapper _mapper;
+        private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
 
         public RoleService(
@@ -54,29 +55,52 @@ namespace FinalBlog.Services
             AddRole(adminRoleModel);
         }
 
-        public async Task AddRole(RoleViewModel model)
+        public async Task<ResultModel> AddRole(RoleViewModel model)
         {
             Role newRole = new()
             {
                 Name = model.Name,
                 Description = model.Description
             };
-            await _roleManager.CreateAsync(newRole);
+            var result = await _roleManager.CreateAsync(newRole);
+            ResultModel resultModel = new(in result);
+            //resultModel.ProcessResult(in result);
+            return resultModel;
         }
 
-        public Task<RoleViewModel> UpdateRole(string roleId)
+        public async Task<RoleViewModel> GetRoleById(string roleId)
         {
-            throw new NotImplementedException();
+            var role = _roleManager.Roles.Where(r => r.Id == roleId).FirstOrDefault();
+            RoleViewModel model = new();
+            model = _mapper.Map<RoleViewModel>(role);
+            return model;
+        }
+        
+        public async Task<RoleViewModel> GetRoleByName(string roleName)
+        {
+            var role = _roleManager.Roles.Where(r => r.Name == roleName).FirstOrDefault();
+            RoleViewModel model = new();
+            model = _mapper.Map<RoleViewModel>(role);
+            return model;
         }
 
-        public Task UpdateRole(RoleViewModel model)
+        public async Task<ResultModel> UpdateRole(RoleViewModel model)
         {
-            throw new NotImplementedException();
+            var role = await _roleManager.FindByIdAsync(model.ID);
+            role.ConvertRole(model);
+            var result = await _roleManager.UpdateAsync(role);
+
+            ResultModel resultModel = new(in result, "Данные успешно обновлены");
+            //resultModel.ProcessResult();
+            return resultModel;
         }
 
-        public Task DeleteRole(string roleId)
+        public async Task<ResultModel> DeleteRole(string roleId)
         {
-            throw new NotImplementedException();
+            var role = await _roleManager.FindByIdAsync(roleId);
+            var result = await _roleManager.DeleteAsync(role);
+            ResultModel resultModel = new(in result, "Роль удалена");
+            return resultModel;
         }
 
         public List<RoleViewModel> GetAllRoles()

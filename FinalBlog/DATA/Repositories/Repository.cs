@@ -24,7 +24,7 @@ namespace FinalBlog.DATA.Repositories
         }
         public async void Update(T item)
         {
-             Set.Update(item);
+            Set.Update(item);
             await _db.SaveChangesAsync();
         }
 

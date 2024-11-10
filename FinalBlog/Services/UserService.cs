@@ -12,7 +12,6 @@ namespace FinalBlog.Services
         IMapper mapper,
         UserManager<BlogUser> userManager,
         SignInManager<BlogUser> signInManager,
-        //RoleManager<Role> roleManager,
         IRoleService roleService,
         IUnitOfWork unitOfWork
         ) : IUserService
@@ -20,45 +19,27 @@ namespace FinalBlog.Services
         private readonly IMapper _mapper = mapper;
         private readonly UserManager<BlogUser> _userManager = userManager;
         private readonly SignInManager<BlogUser> _signInManager = signInManager;
-        //private readonly RoleManager<Role> _roleManager = roleManager;
         private readonly IRoleService _roleService = roleService;
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
-    public async Task<ResultModel> Register(RegistrationViewModel model)
+        public async Task<ResultModel> Register(RegistrationViewModel model)
         {
             ResultModel resultModel = new(false);
             var newUser = _mapper.Map<BlogUser>(model);
-            newUser.RegDate = DateTime.Now;
 
             var result = await _userManager.CreateAsync(newUser, model.RegPassword);
             if (result.Succeeded)
             {
                 await _signInManager.SignInAsync(newUser, false);
-                var userRole = _roleService.GetAllRoles().Where(r => r.Name == "Пользователь").FirstOrDefault();
-                if (userRole == null)
-                {
-                    //throw new NullReferenceException("В БД не найдено ни одной роли. Создайте её вручную");
-                }
-                //newUser.Role = _mapper.Map<Role>(userRole);
-                result = await _userManager.AddToRoleAsync(newUser, userRole.Name);
+                result = await _userManager.AddToRoleAsync(newUser, "Пользователь");
                 if (result.Succeeded)
                 {
-                    resultModel.IsSuccessed = true;
-                }
-                else
-                {
-                    resultModel.IsSuccessed = false;
-                }
-
-            }
-            else
-            {
-                foreach (var error in result.Errors)
-                {
-                    resultModel.AddMessage(error.Description);
+                    resultModel.MarkAsSuccess();
+                    return resultModel;
                 }
             }
-
+            resultModel.FillMessagesFromResult(result);
+            
             return resultModel;
         }
 
@@ -69,10 +50,7 @@ namespace FinalBlog.Services
 
             var result = await _signInManager.PasswordSignInAsync(user.Email, model.Password, model.RememberMe, false);
             if (result.Succeeded)
-            {
-                resultModel.IsSuccessed = true;
-                resultModel.AddMessage("Authorization successed");
-            }
+                resultModel.MarkAsSuccess("Успешная авторизация");
             else
             {
                 resultModel.AddMessage("Неправильный логин и (или) пароль");
@@ -95,36 +73,27 @@ namespace FinalBlog.Services
 
         public async Task<ResultModel> UpdateUserInfo(UserEditViewModel model)
         {
-            //var repository = _unitOfWork.GetRepository<BlogUser>() as UserRepository;
-
             var user = await _userManager.FindByIdAsync(model.Id.ToString());
-            user.Convert(model);
-
-            var resultModel = new ResultModel(false);
-
+            user.ConvertUser(model);
             var result = await _userManager.UpdateAsync(user);
-            if (result.Succeeded)
-            {
-                resultModel.IsSuccessed = true;
-                resultModel.AddMessage("Updated successfully");
-            }
-            else
-            {
-                foreach (var error in result.Errors)
-                {
-                    resultModel.AddMessage(error.Description);
-                }
-            }
 
+            ResultModel resultModel = new(in result, "Данные успешно обновлены");
+            //resultModel.ProcessResult();
             return resultModel;
         }
 
-        public async void DeleteUser(string id)
+        public async Task<ResultModel> DeleteUser(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+            {
+                return new ResultModel(false, "User not found");
+            }
+            var result = await _userManager.DeleteAsync(user);
 
-            var repository = _unitOfWork.GetRepository<BlogUser>() as UserRepository;
-            repository.Delete(user);
+            ResultModel resultModel = new(in result, "Пользователь удален");
+            //resultModel.ProcessResult();
+            return resultModel;
         }
     }
 

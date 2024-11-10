@@ -10,12 +10,11 @@ namespace FinalBlog.Services
 
         public Task<ResultModel> Login(LoginViewModel model);
 
-        public List<BlogUser> GetUserList();
-
         public Task<BlogUser> GetUser(string id);
 
         public Task<ResultModel> UpdateUserInfo(UserEditViewModel model);
 
-        public void DeleteUser(string id);
+        public Task<ResultModel> DeleteUser(string id);
+        public List<BlogUser> GetUserList();
     }
 }

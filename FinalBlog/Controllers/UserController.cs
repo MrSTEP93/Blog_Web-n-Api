@@ -81,12 +81,9 @@ namespace FinalBlog.Controllers
                 if (!resultModel.IsSuccessed)
                 {
                     foreach (var message in resultModel.Messages)
-                    {
                         ModelState.AddModelError("", message);
-                    }
                 }
             }
-            
             return View();
         }
 
@@ -99,7 +96,6 @@ namespace FinalBlog.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-        [Route("ShowUser")]
         [HttpGet]
         public async Task<IActionResult> ShowUser(string id)
         {
@@ -110,7 +106,6 @@ namespace FinalBlog.Controllers
             return Ok(result);
         }
 
-        [Route("EditUser")]
         [HttpGet]
         public async Task<IActionResult> ShowUserEditForm()
         {
@@ -149,11 +144,10 @@ namespace FinalBlog.Controllers
         }
 
         [HttpDelete]
-        public IActionResult DeleteUser(string id)
+        public async Task<IActionResult> DeleteUser(string id)
         {
-            _userService.DeleteUser(id);
-
-            return View();
+            var resultModel = await _userService.DeleteUser(id);
+            return Ok(resultModel);
         }
 
         [HttpGet]
