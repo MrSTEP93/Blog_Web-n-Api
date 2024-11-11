@@ -17,18 +17,18 @@ namespace FinalBlog.DATA.Repositories
             Set = set;
         }
 
-        public async void Create(T item)
+        public async Task Create(T item)
         {
             await Set.AddAsync(item);
             await _db.SaveChangesAsync();
         }
-        public async void Update(T item)
+        public async Task Update(T item)
         {
             Set.Update(item);
             await _db.SaveChangesAsync();
         }
 
-        public async void Delete(T item)
+        public async Task Delete(T item)
         {
             Set.Remove(item);
             await _db.SaveChangesAsync();

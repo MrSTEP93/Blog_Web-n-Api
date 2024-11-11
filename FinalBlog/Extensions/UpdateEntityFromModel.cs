@@ -1,4 +1,5 @@
 ﻿using FinalBlog.DATA.Models;
+using FinalBlog.ViewModels.Article;
 using FinalBlog.ViewModels.Role;
 using FinalBlog.ViewModels.User;
 
@@ -23,6 +24,15 @@ namespace FinalBlog.Extensions
             role.Description = model.Description;
 
             return role;
+        }
+
+        public static Article ConvertArticle(this Article article, ArticleViewModel model)
+        {
+            article.Title = model.Title;
+            article.Content = model.Content;
+            //article.Author = model.Author;
+            
+            return article;
         }
     }
 }

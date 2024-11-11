@@ -2,12 +2,8 @@
 
 namespace FinalBlog.DATA.Repositories
 {
-    public class UserRepository : Repository<BlogUser>
+    public class UserRepository(AppDbContext dbContext) : Repository<BlogUser>(dbContext)
     {
-        public UserRepository(AppDbContext dbContext) : base(dbContext)
-        {
-            
-        }
 
     }
 }
