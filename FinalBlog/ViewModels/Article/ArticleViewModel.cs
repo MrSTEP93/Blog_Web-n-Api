@@ -12,8 +12,8 @@ namespace FinalBlog.ViewModels.Article
 
         public string AuthorID { get; set; }
 
-        public BlogUser Author { get; set; }
+        public BlogUser? Author { get; set; }
 
-        public DateTime CreationTime { get; private set; }
+        public DateTime CreationTime { get; private set; } = DateTime.Now;
     }
 }

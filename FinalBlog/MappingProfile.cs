@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using FinalBlog.DATA.Models;
+using FinalBlog.ViewModels.Article;
 using FinalBlog.ViewModels.Role;
 using FinalBlog.ViewModels.User;
 
@@ -17,6 +18,9 @@ namespace FinalBlog
 
             CreateMap<RoleViewModel, Role>();
             CreateMap<Role, RoleViewModel>();
+
+            CreateMap<ArticleViewModel, Article>();
+            CreateMap<Article, ArticleViewModel>();
         }
     }
 }

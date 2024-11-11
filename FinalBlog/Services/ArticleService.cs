@@ -19,7 +19,7 @@ namespace FinalBlog.Services
         {
             var repo = _unitOfWork.GetRepository<Article>() as ArticleRepository;
             var article = _mapper.Map<Article>(model);
-            ResultModel resultModel = new(true);
+            ResultModel resultModel = new(true, "Article Created");
             try
             {
                 await repo.Create(article);
@@ -36,20 +36,21 @@ namespace FinalBlog.Services
             var repo = _unitOfWork.GetRepository<Article>() as ArticleRepository;
             var article = new Article();
             article.ConvertArticle(model);
-            ResultModel resultModel = new(true);
+            ResultModel resultModel = new(true, "Article updated");
             try
             {
                 await repo.Update(article);
             }
             catch (Exception ex)
             {
-                resultModel.AddMessage(ex.Message);
+                resultModel.MarkAsFailed(ex.Message);
+                if (ex.InnerException is not null)
+                    resultModel.AddMessage(ex.InnerException.Message);
             }
             return resultModel;
         }
 
-
-        public async Task<ResultModel> DeleteArticle(string articleId)
+        public async Task<ResultModel> DeleteArticle(int articleId)
         {
             var repo = _unitOfWork.GetRepository<Article>() as ArticleRepository;
             var article = await repo.Get(articleId);
@@ -64,7 +65,8 @@ namespace FinalBlog.Services
             }
             return resultModel;
         }
-        public async Task<ArticleViewModel> GetArticleById(string articleId)
+
+        public async Task<ArticleViewModel> GetArticleById(int articleId)
         {
             var repo = _unitOfWork.GetRepository<Article>() as ArticleRepository;
             var article = await repo.Get(articleId);
@@ -72,10 +74,10 @@ namespace FinalBlog.Services
             return model;
         }
 
-        public Task<ArticleViewModel> GetArticleByName(string articleName)
-        {
-            throw new NotImplementedException();
-        }
+        //public Task<ArticleViewModel> GetArticleByName(string articleName)
+        //{
+        //    throw new NotImplementedException();
+        //}
 
         public List<ArticleViewModel> GetAllArticles()
         {
@@ -86,7 +88,6 @@ namespace FinalBlog.Services
             {
                 model.Add(_mapper.Map<ArticleViewModel>(entity));
             }
-
             return model;
         }
 
@@ -98,7 +99,6 @@ namespace FinalBlog.Services
             {
                 model.Add(_mapper.Map<ArticleViewModel>(entity));
             }
-
             return model;
         }
 

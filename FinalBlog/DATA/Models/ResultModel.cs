@@ -1,19 +1,34 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace FinalBlog.DATA.Models
 {
+    
+
     public class ResultModel
     {
+        private readonly Dictionary<bool, string> baseMessages = new()
+        {
+            { false, "Operation not completed" },
+            { true,  "Success"}
+        };
+
         public bool IsSuccessed { get; set; }
 
         public List<string> Messages { get; private set; } = [];
 
-        public ResultModel(bool isSuccessed = false, string message = "Operation not completed")
+        public ResultModel(bool isSuccessed = false)
+        {
+            IsSuccessed = isSuccessed;
+            //Messages.Add(baseMessages[isSuccessed]);
+        }
+
+        public ResultModel(bool isSuccessed, string message)
         {
             IsSuccessed = isSuccessed;
             Messages.Add(message);
         }
-        
+
         public ResultModel(in IdentityResult result, string successMessage = "Success")
         {
             ProcessResult(in result, successMessage);
@@ -24,19 +39,18 @@ namespace FinalBlog.DATA.Models
             Messages.Add(message);
         }
         
-        public void MarkAsSuccess(string newMessage = "Success")
+        public void MarkAsSuccess(string successMessage = "Success")
         {
             Messages.Clear();
-            Messages.Add(newMessage);
+            Messages.Add(successMessage);
             IsSuccessed = true;
         }
-
-        public void FillMessagesFromResult(in IdentityResult result)
+        
+        public void MarkAsFailed(string errorMessage = "Operation not completed")
         {
-            foreach (var error in result.Errors)
-            {
-                AddMessage(error.Description);
-            }
+            Messages.Clear();
+            Messages.Add(errorMessage);
+            IsSuccessed = false;
         }
 
         public void ProcessResult(in IdentityResult result, string successMessage = "Success")
@@ -45,6 +59,14 @@ namespace FinalBlog.DATA.Models
                 MarkAsSuccess(successMessage);
             else
                 FillMessagesFromResult(result);
+        }
+
+        public void FillMessagesFromResult(in IdentityResult result)
+        {
+            foreach (var error in result.Errors)
+            {
+                AddMessage(error.Description);
+            }
         }
     }
 }

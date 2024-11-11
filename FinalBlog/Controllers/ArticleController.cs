@@ -3,6 +3,7 @@ using FinalBlog.Services;
 using FinalBlog.ViewModels.Article;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace FinalBlog.Controllers
 {
@@ -11,6 +12,7 @@ namespace FinalBlog.Controllers
         IArticleService _articleService = articleService;
 
         // GET: ArticleController
+        [HttpGet]
         public IActionResult Index()
         {
             var articleList = _articleService.GetAllArticles();
@@ -18,16 +20,19 @@ namespace FinalBlog.Controllers
         }
 
         // GET: ArticleController/Details/5
-        public async Task<IActionResult> Details(string id)
+        [HttpGet]
+        public async Task<ArticleViewModel> Details(int id)
         {
             var article = await _articleService.GetArticleById(id);
-            return Ok(article);
+            return article;
             //return View();
         }
 
-        // GET: ArticleController/Create
-        public async Task<IActionResult> Create(ArticleViewModel model)
+        // POST: ArticleController/Add
+        [HttpPost]
+        public async Task<IActionResult> Add(ArticleViewModel model)
         {
+            //model.CreationTime = DateTime.Now;
             if (ModelState.IsValid)
             {
                 var resultModel = await _articleService.AddArticle(model);
@@ -37,43 +42,38 @@ namespace FinalBlog.Controllers
         }
 
         // GET: ArticleController/Edit/5
-        public ActionResult Edit(string id)
+        [HttpGet]
+        public async Task<ArticleViewModel> Edit(int id)
         {
-            return Ok(_articleService.GetArticleById(id));
+            return await _articleService.GetArticleById(id);
         }
 
         // POST: ArticleController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(ArticleViewModel model)
+        //[ValidateAntiForgeryToken]
+        [HttpPut]
+        public async Task<IActionResult> Edit(ArticleViewModel model)
         {
             if (ModelState.IsValid)
             {
-                var resultModel = new ResultModel(false);
+                var resultModel = await _articleService.UpdateArticle(model);
                 return Ok(resultModel);
             }
             return BadRequest(ModelState);
         }
 
         // GET: ArticleController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
+        //public IActionResult Delete(int id)
+        //{
+        //    return View();
+        //}
 
-        // POST: ArticleController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        // DELETE: ArticleController/Delete/5
+        //[ValidateAntiForgeryToken]
+        [HttpDelete]
+        public async Task<IActionResult> Delete(int id)
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            var resultModel = await _articleService.DeleteArticle(id);
+            return Ok(resultModel);
         }
     }
 }

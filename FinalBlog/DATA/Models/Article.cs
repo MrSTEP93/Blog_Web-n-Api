@@ -7,23 +7,22 @@
 
         }
 
-        public Article(string title, string content, BlogUser author)
+        public Article(string title, string content, string authorId)
         {
             Title = title;
             Content = content;
-            Author = author;
-            AuthorID = author.Id;
+            AuthorID = authorId;
         }
 
         public int Id { get; set; }
 
-        public string Title { get; set; }
+        public string Title { get; set; } = "no_title";
 
-        public string Content { get; set; }
+        public string Content { get; set; } = "no_content";
 
         public string AuthorID { get; set; }
 
-        public BlogUser Author { get; set; }
+        public BlogUser? Author { get; set; }
 
         public DateTime CreationTime { get; set; } = DateTime.Now;
     }

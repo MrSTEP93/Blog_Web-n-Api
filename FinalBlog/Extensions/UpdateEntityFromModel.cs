@@ -28,9 +28,11 @@ namespace FinalBlog.Extensions
 
         public static Article ConvertArticle(this Article article, ArticleViewModel model)
         {
+            article.Id= model.Id;
             article.Title = model.Title;
             article.Content = model.Content;
-            //article.Author = model.Author;
+            article.AuthorID = model.AuthorID;
+            article.CreationTime = model.CreationTime;
             
             return article;
         }

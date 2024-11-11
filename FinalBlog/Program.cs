@@ -48,12 +48,14 @@ namespace FinalBlog
             builder.Services
                 .AddSingleton(mapper)
                 .AddTransient<IUserService, UserService>()
-                .AddTransient<IRoleService, RoleService>();
+                .AddTransient<IRoleService, RoleService>()
+                .AddTransient<IArticleService, ArticleService>();
 
             builder.Services
                 .AddUnitOfWork()
                 .AddCustomRepository<BlogUser, UserRepository>()
-                .AddCustomRepository<Role, RoleRepository>();
+                .AddCustomRepository<Role, RoleRepository>()
+                .AddCustomRepository<Article, ArticleRepository>();
 
             var app = builder.Build();
 

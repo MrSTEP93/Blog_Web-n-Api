@@ -68,7 +68,7 @@ namespace FinalBlog.Services
             return resultModel;
         }
 
-        public async Task<RoleViewModel> GetRoleById(string roleId)
+        public RoleViewModel GetRoleById(string roleId)
         {
             var role = _roleManager.Roles.Where(r => r.Id == roleId).FirstOrDefault();
             RoleViewModel model = new();
@@ -76,7 +76,7 @@ namespace FinalBlog.Services
             return model;
         }
         
-        public async Task<RoleViewModel> GetRoleByName(string roleName)
+        public RoleViewModel GetRoleByName(string roleName)
         {
             var role = _roleManager.Roles.Where(r => r.Name == roleName).FirstOrDefault();
             RoleViewModel model = new();
