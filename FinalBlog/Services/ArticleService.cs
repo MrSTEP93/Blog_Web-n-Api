@@ -8,9 +8,9 @@ using FinalBlog.ViewModels.Article;
 namespace FinalBlog.Services
 {
     public class ArticleService(
-         IMapper mapper,
-         IUnitOfWork unitOfWork
-         ) : IArticleService
+        IMapper mapper,
+        IUnitOfWork unitOfWork
+        ) : IArticleService
     {
         IMapper _mapper = mapper;
         IUnitOfWork _unitOfWork = unitOfWork;

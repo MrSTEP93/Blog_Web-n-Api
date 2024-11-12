@@ -1,4 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using System.Diagnostics;
 
 namespace FinalBlog.DATA.Repositories
 {
@@ -22,8 +24,10 @@ namespace FinalBlog.DATA.Repositories
             await Set.AddAsync(item);
             await _db.SaveChangesAsync();
         }
+
         public async Task Update(T item)
         {
+            _db.ChangeTracker.Clear();
             Set.Update(item);
             await _db.SaveChangesAsync();
         }
