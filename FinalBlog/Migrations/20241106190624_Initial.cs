@@ -235,7 +235,7 @@ namespace FinalBlog.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Articles_AuthorID",
                 table: "Articles",
-                column: "AuthorID");
+                column: "AuthorId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",

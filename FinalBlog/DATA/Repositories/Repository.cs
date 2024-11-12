@@ -6,7 +6,7 @@ namespace FinalBlog.DATA.Repositories
 {
     public class Repository<T> : IRepository<T> where T : class
     {
-        protected DbContext _db;
+        protected AppDbContext _db;
 
         public DbSet<T> Set { get; private set; }
 
@@ -38,17 +38,17 @@ namespace FinalBlog.DATA.Repositories
             await _db.SaveChangesAsync();
         }
 
-        public async Task<T> Get(int id)
+        public async Task<T?> Get(int id)
         {
             return await Set.FindAsync(id);
         }
 
-        public async Task<T> Get(string id)
+        public async Task<T?> Get(string id)
         {
             return await Set.FindAsync(id);
         }
 
-        public IEnumerable<T> GetAll()
+        public virtual IEnumerable<T> GetAll()
         {
             return Set;
         }

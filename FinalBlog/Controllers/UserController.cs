@@ -128,11 +128,12 @@ namespace FinalBlog.Controllers
                     {
                         ModelState.AddModelError("", message);
                     }
-                    return BadRequest(ModelState);
-                }
+                } 
+                else
+                    return Ok("Updated");
             }
             
-            return Ok("Updated");
+            return BadRequest(ModelState);
             //return View("UserEdit", model);
         }
 

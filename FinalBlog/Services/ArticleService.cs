@@ -4,30 +4,35 @@ using FinalBlog.DATA.Repositories;
 using FinalBlog.DATA.UoW;
 using FinalBlog.Extensions;
 using FinalBlog.ViewModels.Article;
+using System.Collections.Generic;
 
 namespace FinalBlog.Services
 {
     public class ArticleService(
         IMapper mapper,
-        IUnitOfWork unitOfWork
+        IUnitOfWork unitOfWork,
+        IUserService userService
         ) : IArticleService
     {
         IMapper _mapper = mapper;
         IUnitOfWork _unitOfWork = unitOfWork;
+        IUserService _userService = userService;
 
         public async Task<ResultModel> AddArticle(ArticleViewModel model)
         {
             var repo = _unitOfWork.GetRepository<Article>() as ArticleRepository;
             var article = _mapper.Map<Article>(model);
-            ResultModel resultModel = new(true, "Article Created");
-            try
-            {
-                await repo.Create(article);
-            }
-            catch (Exception ex)
-            {
-                resultModel.AddMessage(ex.Message);
-            }
+            var resultModel = CheckAuthor(model.AuthorId);
+            if (resultModel.IsSuccessed)
+                try
+                {
+                    await repo.Create(article);
+                    resultModel.MarkAsSuccess("Article updated");
+                }
+                catch (Exception ex)
+                {
+                    resultModel.AddMessage(ex.Message);
+                }
             return resultModel;
         }
 
@@ -36,17 +41,20 @@ namespace FinalBlog.Services
             var repo = _unitOfWork.GetRepository<Article>() as ArticleRepository;
             var article = new Article();
             article.ConvertArticle(model);
-            ResultModel resultModel = new(true, "Article updated");
-            try
-            {
-                await repo.Update(article);
-            }
-            catch (Exception ex)
-            {
-                resultModel.MarkAsFailed(ex.Message);
-                if (ex.InnerException is not null)
-                    resultModel.AddMessage(ex.InnerException.Message);
-            }
+            var resultModel = CheckAuthor(model.AuthorId);
+            if (resultModel.IsSuccessed)
+                try
+                {
+                    await repo.Update(article);
+                    resultModel.MarkAsSuccess("Article created");
+                }
+                catch (Exception ex)
+                {
+                    resultModel.MarkAsFailed(ex.Message);
+                    if (ex.InnerException is not null)
+                        resultModel.AddMessage(ex.InnerException.Message);
+                }
+
             return resultModel;
         }
 
@@ -83,24 +91,37 @@ namespace FinalBlog.Services
         {
             var repo = _unitOfWork.GetRepository<Article>() as ArticleRepository;
             var list = repo.GetAll().ToList();
-            var model = new List<ArticleViewModel>();
-            foreach (var entity in  list)
-            {
-                model.Add(_mapper.Map<ArticleViewModel>(entity));
-            }
+            var model = CreateListModel(list);
             return model;
         }
 
-        public List<ArticleViewModel> GetAllArticlesOfAuthor(string authorId)
+        public List<ArticleViewModel> GetArticlesOfAuthor(string authorId)
         {
-            var list = GetAllArticles().Where(a => a.AuthorID == authorId);
+            var repo = _unitOfWork.GetRepository<Article>() as ArticleRepository;
+            var list = repo.GetArticlesByAuthorId(authorId);
+            var model = CreateListModel(list);
+            return model;
+        }
+
+        private ResultModel CheckAuthor(string authorId)
+        {
+            var resultModel = new ResultModel(true, "Author found");
+            var user = _userService.GetUserById(authorId);
+            if (user == null)
+                resultModel.MarkAsFailed("Author not exists");
+
+            return resultModel;
+        }
+
+        private List<ArticleViewModel> CreateListModel(List<Article> list)
+        {
             var model = new List<ArticleViewModel>();
             foreach (var entity in list)
             {
                 model.Add(_mapper.Map<ArticleViewModel>(entity));
             }
+
             return model;
         }
-
     }
 }

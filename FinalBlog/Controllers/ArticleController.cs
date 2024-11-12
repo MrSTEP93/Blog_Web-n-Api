@@ -9,9 +9,8 @@ namespace FinalBlog.Controllers
 {
     public class ArticleController(IArticleService articleService) : Controller
     {
-        IArticleService _articleService = articleService;
+        readonly IArticleService _articleService = articleService;
 
-        // GET: ArticleController
         [HttpGet]
         public IActionResult Index()
         {
@@ -19,7 +18,14 @@ namespace FinalBlog.Controllers
             return Ok(articleList);
         }
 
-        // GET: ArticleController/Details/5
+        [Route("Author")]
+        [HttpGet]
+        public IActionResult Author(string id)
+        {
+            var articleList = _articleService.GetArticlesOfAuthor(id);
+            return Ok(articleList);
+        }
+
         [HttpGet]
         public async Task<ArticleViewModel> Details(int id)
         {
@@ -28,11 +34,9 @@ namespace FinalBlog.Controllers
             //return View();
         }
 
-        // POST: ArticleController/Add
         [HttpPost]
         public async Task<IActionResult> Add(ArticleViewModel model)
         {
-            //model.CreationTime = DateTime.Now;
             if (ModelState.IsValid)
             {
                 var resultModel = await _articleService.AddArticle(model);
@@ -41,16 +45,14 @@ namespace FinalBlog.Controllers
             return BadRequest(ModelState);
         }
 
-        // GET: ArticleController/Edit/5
         [HttpGet]
         public async Task<ArticleViewModel> Edit(int id)
         {
             return await _articleService.GetArticleById(id);
         }
 
-        // POST: ArticleController/Edit/5
-        //[ValidateAntiForgeryToken]
         [HttpPut]
+        //[ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(ArticleViewModel model)
         {
             if (ModelState.IsValid)
@@ -67,9 +69,8 @@ namespace FinalBlog.Controllers
         //    return View();
         //}
 
-        // DELETE: ArticleController/Delete/5
-        //[ValidateAntiForgeryToken]
         [HttpDelete]
+        //[ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
             var resultModel = await _articleService.DeleteArticle(id);

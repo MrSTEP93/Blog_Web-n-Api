@@ -12,14 +12,14 @@ namespace FinalBlog.Services
         IMapper mapper,
         UserManager<BlogUser> userManager,
         SignInManager<BlogUser> signInManager,
-        IRoleService roleService,
+        //IRoleService roleService,
         IUnitOfWork unitOfWork
         ) : IUserService
     {
         private readonly IMapper _mapper = mapper;
         private readonly UserManager<BlogUser> _userManager = userManager;
         private readonly SignInManager<BlogUser> _signInManager = signInManager;
-        private readonly IRoleService _roleService = roleService;
+        //private readonly IRoleService _roleService = roleService;
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
         public async Task<ResultModel> Register(RegistrationViewModel model)
@@ -65,10 +65,14 @@ namespace FinalBlog.Services
             return repository.GetAll().ToList();
         }
 
-        public async Task<BlogUser> GetUser(string id)
+        public BlogUser? GetUserById(string id)
         {
+            return GetUserList().Where(x => x.Id == id).FirstOrDefault();
+
+            /*
             var repository = _unitOfWork.GetRepository<BlogUser>() as UserRepository;
             return await repository.Get(id);
+            */
         }
 
         public async Task<ResultModel> UpdateUserInfo(UserEditViewModel model)

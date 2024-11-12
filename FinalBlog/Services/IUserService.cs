@@ -10,7 +10,7 @@ namespace FinalBlog.Services
 
         public Task<ResultModel> Login(LoginViewModel model);
 
-        public Task<BlogUser> GetUser(string id);
+        public BlogUser? GetUserById(string id);
 
         public Task<ResultModel> UpdateUserInfo(UserEditViewModel model);
 

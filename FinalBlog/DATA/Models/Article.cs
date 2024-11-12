@@ -11,7 +11,7 @@
         {
             Title = title;
             Content = content;
-            AuthorID = authorId;
+            AuthorId = authorId;
         }
 
         public int Id { get; set; }
@@ -20,7 +20,7 @@
 
         public string Content { get; set; } = "no_content";
 
-        public string AuthorID { get; set; }
+        public string AuthorId { get; set; }
 
         public BlogUser? Author { get; set; }
 

@@ -30,7 +30,7 @@ namespace FinalBlog.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("AuthorID")
+                    b.Property<string>("AuthorId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
@@ -47,7 +47,7 @@ namespace FinalBlog.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AuthorID");
+                    b.HasIndex("AuthorId");
 
                     b.ToTable("Articles", (string)null);
                 });
@@ -360,7 +360,7 @@ namespace FinalBlog.Migrations
                 {
                     b.HasOne("FinalBlog.DATA.Models.BlogUser", "Author")
                         .WithMany()
-                        .HasForeignKey("AuthorID")
+                        .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

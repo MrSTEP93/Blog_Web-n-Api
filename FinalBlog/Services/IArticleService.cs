@@ -11,6 +11,6 @@ namespace FinalBlog.Services
         public Task<ResultModel> UpdateArticle(ArticleViewModel model);
         public Task<ResultModel> DeleteArticle(int articleId);
         public List<ArticleViewModel> GetAllArticles();
-        public List<ArticleViewModel> GetAllArticlesOfAuthor(string authorId);
+        public List<ArticleViewModel> GetArticlesOfAuthor(string authorId);
     }
 }

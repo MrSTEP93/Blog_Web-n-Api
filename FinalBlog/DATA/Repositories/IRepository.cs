@@ -6,8 +6,8 @@
         Task Update(T item);
         Task Delete(T item);
 
-        Task<T> Get(int id);
-        Task<T> Get(string id);
+        Task<T?> Get(int id);
+        Task<T?> Get(string id);
         IEnumerable<T> GetAll();
     }
 }

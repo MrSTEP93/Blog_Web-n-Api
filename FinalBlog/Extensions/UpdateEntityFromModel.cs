@@ -31,7 +31,7 @@ namespace FinalBlog.Extensions
             article.Id= model.Id;
             article.Title = model.Title;
             article.Content = model.Content;
-            article.AuthorID = model.AuthorID;
+            article.AuthorId = model.AuthorId;
             article.CreationTime = model.CreationTime;
             
             return article;
