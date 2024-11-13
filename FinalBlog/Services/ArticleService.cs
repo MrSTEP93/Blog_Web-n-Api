@@ -14,9 +14,9 @@ namespace FinalBlog.Services
         IUserService userService
         ) : IArticleService
     {
-        IMapper _mapper = mapper;
-        IUnitOfWork _unitOfWork = unitOfWork;
-        IUserService _userService = userService;
+        readonly IMapper _mapper = mapper;
+        readonly IUnitOfWork _unitOfWork = unitOfWork;
+        readonly IUserService _userService = userService;
 
         public async Task<ResultModel> AddArticle(ArticleViewModel model)
         {
@@ -27,11 +27,13 @@ namespace FinalBlog.Services
                 try
                 {
                     await repo.Create(article);
-                    resultModel.MarkAsSuccess("Article updated");
+                    resultModel.MarkAsSuccess("Article created");
                 }
                 catch (Exception ex)
                 {
                     resultModel.AddMessage(ex.Message);
+                    if (ex.InnerException is not null)
+                        resultModel.AddMessage(ex.InnerException.Message);
                 }
             return resultModel;
         }
@@ -46,7 +48,7 @@ namespace FinalBlog.Services
                 try
                 {
                     await repo.Update(article);
-                    resultModel.MarkAsSuccess("Article created");
+                    resultModel.MarkAsSuccess("Article updated");
                 }
                 catch (Exception ex)
                 {
@@ -70,6 +72,8 @@ namespace FinalBlog.Services
             catch (Exception ex)
             {
                 resultModel.AddMessage(ex.Message);
+                if (ex.InnerException is not null)
+                    resultModel.AddMessage(ex.InnerException.Message);
             }
             return resultModel;
         }
@@ -91,7 +95,7 @@ namespace FinalBlog.Services
         {
             var repo = _unitOfWork.GetRepository<Article>() as ArticleRepository;
             var list = repo.GetAll().ToList();
-            var model = CreateListModel(list);
+            var model = CreateListOfViewModel(list);
             return model;
         }
 
@@ -99,7 +103,7 @@ namespace FinalBlog.Services
         {
             var repo = _unitOfWork.GetRepository<Article>() as ArticleRepository;
             var list = repo.GetArticlesByAuthorId(authorId);
-            var model = CreateListModel(list);
+            var model = CreateListOfViewModel(list);
             return model;
         }
 
@@ -113,7 +117,7 @@ namespace FinalBlog.Services
             return resultModel;
         }
 
-        private List<ArticleViewModel> CreateListModel(List<Article> list)
+        private List<ArticleViewModel> CreateListOfViewModel(List<Article> list)
         {
             var model = new List<ArticleViewModel>();
             foreach (var entity in list)

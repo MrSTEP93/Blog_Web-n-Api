@@ -38,7 +38,7 @@ namespace FinalBlog.DATA.Repositories
             await _db.SaveChangesAsync();
         }
 
-        public async Task<T?> Get(int id)
+        public virtual async Task<T?> Get(int id)
         {
             return await Set.FindAsync(id);
         }

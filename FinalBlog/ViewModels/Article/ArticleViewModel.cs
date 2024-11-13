@@ -1,4 +1,5 @@
 ﻿using FinalBlog.DATA.Models;
+using FinalBlog.ViewModels.User;
 
 namespace FinalBlog.ViewModels.Article
 {
@@ -12,7 +13,7 @@ namespace FinalBlog.ViewModels.Article
 
         public string AuthorId { get; set; }
 
-        public BlogUser? Author { get; set; }
+        public AuthorViewModel? Author { get; set; }
 
         public DateTime CreationTime { get; private set; } = DateTime.Now;
     }
