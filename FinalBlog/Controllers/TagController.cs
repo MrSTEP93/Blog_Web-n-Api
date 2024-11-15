@@ -1,5 +1,5 @@
 ﻿using FinalBlog.Services;
-using FinalBlog.ViewModels;
+using FinalBlog.ViewModels.Tag;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -29,7 +29,7 @@ namespace FinalBlog.Controllers
 
         [HttpPost]
         //[ValidateAntiForgeryToken]
-        public async Task<IActionResult> Add(TagViewModel model)
+        public async Task<IActionResult> Add(TagAddViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -47,7 +47,7 @@ namespace FinalBlog.Controllers
         // POST: TagController/Edit/5
         [HttpPost]
         //[ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(TagViewModel model)
+        public async Task<IActionResult> Edit(TagEditViewModel model)
         {
             if (ModelState.IsValid)
             {

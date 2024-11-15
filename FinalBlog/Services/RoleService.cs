@@ -40,14 +40,14 @@ namespace FinalBlog.Services
 
         private void CreateStartRoles()
         {
-            RoleViewModel userRoleModel = new()
+            RoleAddViewModel userRoleModel = new()
             {
                 Name = "Пользователь",
                 Description = "Пользователь сайта"
             };
             AddRole(userRoleModel);
 
-            RoleViewModel adminRoleModel = new()
+            RoleAddViewModel adminRoleModel = new()
             {
                 Name = "Администратор",
                 Description = "Администратор сайта"
@@ -55,7 +55,7 @@ namespace FinalBlog.Services
             AddRole(adminRoleModel);
         }
 
-        public async Task<ResultModel> AddRole(RoleViewModel model)
+        public async Task<ResultModel> AddRole(RoleAddViewModel model)
         {
             Role newRole = new()
             {
@@ -68,49 +68,63 @@ namespace FinalBlog.Services
             return resultModel;
         }
 
-        public RoleViewModel GetRoleById(string roleId)
+        public RoleEditViewModel GetRoleById(string roleId)
         {
             var role = _roleManager.Roles.Where(r => r.Id == roleId).FirstOrDefault();
-            RoleViewModel model = new();
-            model = _mapper.Map<RoleViewModel>(role);
+            RoleEditViewModel model = new();
+            model = _mapper.Map<RoleEditViewModel>(role);
             return model;
         }
         
-        public RoleViewModel GetRoleByName(string roleName)
+        public RoleEditViewModel GetRoleByName(string roleName)
         {
             var role = _roleManager.Roles.Where(r => r.Name == roleName).FirstOrDefault();
-            RoleViewModel model = new();
-            model = _mapper.Map<RoleViewModel>(role);
+            RoleEditViewModel model = new();
+            model = _mapper.Map<RoleEditViewModel>(role);
             return model;
         }
 
-        public async Task<ResultModel> UpdateRole(RoleViewModel model)
+        public async Task<ResultModel> UpdateRole(RoleEditViewModel model)
         {
-            var role = await _roleManager.FindByIdAsync(model.ID);
-            role.ConvertRole(model);
-            var result = await _roleManager.UpdateAsync(role);
+            var role = await _roleManager.FindByIdAsync(model.Id);
+            if (role == null)
+                return new ResultModel(false, "Роль с таким Id не обнаружена!");
 
-            ResultModel resultModel = new(in result, "Данные успешно обновлены");
-            //resultModel.ProcessResult();
+            ResultModel resultModel = new(true, "Роль успешно обновлена");
+            try
+            {
+                role.ConvertRole(model);
+                var result = await _roleManager.UpdateAsync(role);
+            }
+            catch (Exception ex)
+            {
+                resultModel.MarkAsFailed();
+                resultModel.AddMessage(ex.Message);
+                if (ex.InnerException is not null)
+                    resultModel.AddMessage(ex.InnerException.Message);
+            }
             return resultModel;
         }
 
         public async Task<ResultModel> DeleteRole(string roleId)
         {
             var role = await _roleManager.FindByIdAsync(roleId);
+            if (role == null)
+                return new ResultModel(false, "Роль с таким Id не обнаружена!");
+            
             var result = await _roleManager.DeleteAsync(role);
             ResultModel resultModel = new(in result, "Роль удалена");
             return resultModel;
         }
 
-        public List<RoleViewModel> GetAllRoles()
+        public List<RoleEditViewModel> GetAllRoles()
         {
             var repo = _unitOfWork.GetRepository<Role>() as RoleRepository;
             var roles = repo.GetAll();
-            var rolesView = new List<RoleViewModel>();
+            var rolesView = new List<RoleEditViewModel>();
             foreach (var role in roles)
             {
-                rolesView.Add(_mapper.Map<RoleViewModel>(role));
+                rolesView.Add(_mapper.Map<RoleEditViewModel>(role));
             }
             return rolesView;
         }

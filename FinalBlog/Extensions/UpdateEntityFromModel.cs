@@ -18,7 +18,7 @@ namespace FinalBlog.Extensions
             return user;
         }
 
-        public static Role ConvertRole(this Role role, RoleViewModel model)
+        public static Role ConvertRole(this Role role, RoleEditViewModel model)
         {
             role.Name = model.Name;
             role.Description = model.Description;

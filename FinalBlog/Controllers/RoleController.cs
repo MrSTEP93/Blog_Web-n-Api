@@ -36,7 +36,7 @@ namespace FinalBlog.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Add(RoleViewModel model)
+        public async Task<IActionResult> Add(RoleAddViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -56,7 +56,7 @@ namespace FinalBlog.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> Update(RoleViewModel model)
+        public async Task<IActionResult> Edit(RoleEditViewModel model)
         {
             if (ModelState.IsValid)
             {
