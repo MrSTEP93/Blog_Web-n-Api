@@ -27,7 +27,7 @@ namespace FinalBlog.Controllers
         }
 
         [HttpGet]
-        public async Task<ArticleViewModel> Details(int id)
+        public async Task<ArticleEditViewModel> Details(int id)
         {
             var article = await _articleService.GetArticleById(id);
             return article;
@@ -35,7 +35,7 @@ namespace FinalBlog.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Add(ArticleViewModel model)
+        public async Task<IActionResult> Add(ArticleAddViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -46,14 +46,14 @@ namespace FinalBlog.Controllers
         }
 
         [HttpGet]
-        public async Task<ArticleViewModel> Edit(int id)
+        public async Task<ArticleEditViewModel> Edit(int id)
         {
             return await _articleService.GetArticleById(id);
         }
 
         [HttpPut]
         //[ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(ArticleViewModel model)
+        public async Task<IActionResult> Edit(ArticleEditViewModel model)
         {
             if (ModelState.IsValid)
             {

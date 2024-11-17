@@ -26,7 +26,7 @@ namespace FinalBlog.Extensions
             return role;
         }
 
-        public static Article ConvertArticle(this Article article, ArticleViewModel model)
+        public static Article ConvertArticle(this Article article, ArticleEditViewModel model)
         {
             article.Id= model.Id;
             article.Title = model.Title;

@@ -18,7 +18,7 @@ namespace FinalBlog.Services
         readonly IUnitOfWork _unitOfWork = unitOfWork;
         readonly IUserService _userService = userService;
 
-        public async Task<ResultModel> AddArticle(ArticleViewModel model)
+        public async Task<ResultModel> AddArticle(ArticleAddViewModel model)
         {
             var repo = _unitOfWork.GetRepository<Article>() as ArticleRepository;
             var article = _mapper.Map<Article>(model);
@@ -38,7 +38,7 @@ namespace FinalBlog.Services
             return resultModel;
         }
 
-        public async Task<ResultModel> UpdateArticle(ArticleViewModel model)
+        public async Task<ResultModel> UpdateArticle(ArticleEditViewModel model)
         {
             var repo = _unitOfWork.GetRepository<Article>() as ArticleRepository;
             var article = new Article();
@@ -64,7 +64,7 @@ namespace FinalBlog.Services
         {
             var repo = _unitOfWork.GetRepository<Article>() as ArticleRepository;
             var article = await repo.Get(articleId);
-            ResultModel resultModel = new(true);
+            ResultModel resultModel = new(true, "Article deleted");
             try
             {
                 await repo.Delete(article);
@@ -78,11 +78,11 @@ namespace FinalBlog.Services
             return resultModel;
         }
 
-        public async Task<ArticleViewModel> GetArticleById(int articleId)
+        public async Task<ArticleEditViewModel> GetArticleById(int articleId)
         {
             var repo = _unitOfWork.GetRepository<Article>() as ArticleRepository;
             var article = await repo.Get(articleId);
-            var model = _mapper.Map<ArticleViewModel>(article);
+            var model = _mapper.Map<ArticleEditViewModel>(article);
             return model;
         }
 
@@ -91,7 +91,7 @@ namespace FinalBlog.Services
         //    throw new NotImplementedException();
         //}
 
-        public List<ArticleViewModel> GetAllArticles()
+        public List<ArticleEditViewModel> GetAllArticles()
         {
             var repo = _unitOfWork.GetRepository<Article>() as ArticleRepository;
             var list = repo.GetAll().ToList();
@@ -99,7 +99,7 @@ namespace FinalBlog.Services
             return model;
         }
 
-        public List<ArticleViewModel> GetArticlesOfAuthor(string authorId)
+        public List<ArticleEditViewModel> GetArticlesOfAuthor(string authorId)
         {
             var repo = _unitOfWork.GetRepository<Article>() as ArticleRepository;
             var list = repo.GetArticlesByAuthorId(authorId);
@@ -117,12 +117,12 @@ namespace FinalBlog.Services
             return resultModel;
         }
 
-        private List<ArticleViewModel> CreateListOfViewModel(List<Article> list)
+        private List<ArticleEditViewModel> CreateListOfViewModel(List<Article> list)
         {
-            var model = new List<ArticleViewModel>();
+            var model = new List<ArticleEditViewModel>();
             foreach (var entity in list)
             {
-                model.Add(_mapper.Map<ArticleViewModel>(entity));
+                model.Add(_mapper.Map<ArticleEditViewModel>(entity));
             }
 
             return model;
