@@ -84,7 +84,7 @@ namespace FinalBlog.Services
             return _mapper.Map<TagEditViewModel>(tag);
         }
 
-        public List<TagEditViewModel> GetTagsOfArticle(int tagId)
+        public List<TagEditViewModel> GetTagsOfArticle(int articleId)
         {
             throw new NotImplementedException();
         }

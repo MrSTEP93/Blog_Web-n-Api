@@ -1,5 +1,6 @@
 ﻿using FinalBlog.DATA.Models;
 using FinalBlog.ViewModels.Article;
+using FinalBlog.ViewModels.Comment;
 using FinalBlog.ViewModels.Role;
 using FinalBlog.ViewModels.User;
 
@@ -35,6 +36,15 @@ namespace FinalBlog.Extensions
             article.CreationTime = model.CreationTime;
             
             return article;
+        }
+
+        public static Comment ConvertComment(this Comment comment, CommentEditViewModel model)
+        {
+            comment.ArticleId = model.ArticleId;
+            comment.AuthorId = model.AuthorId;
+            comment.Text = model.Text;
+
+            return comment;
         }
     }
 }

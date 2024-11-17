@@ -11,6 +11,6 @@ namespace FinalBlog.Services
         public Task<ResultModel> DeleteTag(int tagId);
         public Task<TagEditViewModel> GetTagById(int tagId);
         public List<TagEditViewModel> GetAllTags();
-        public List<TagEditViewModel> GetTagsOfArticle(int tagId);
+        public List<TagEditViewModel> GetTagsOfArticle(int articleId);
     }
 }

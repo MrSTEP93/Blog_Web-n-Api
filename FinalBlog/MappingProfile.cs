@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using FinalBlog.DATA.Models;
 using FinalBlog.ViewModels.Article;
+using FinalBlog.ViewModels.Comment;
 using FinalBlog.ViewModels.Role;
 using FinalBlog.ViewModels.Tag;
 using FinalBlog.ViewModels.User;
@@ -28,6 +29,10 @@ namespace FinalBlog
             CreateMap<TagAddViewModel, Tag>();
             CreateMap<TagEditViewModel, Tag>();
             CreateMap<Tag, TagEditViewModel>();
+
+            CreateMap<CommentAddViewModel, Comment>();
+            CreateMap<CommentEditViewModel, Comment>();
+            CreateMap<Comment, CommentEditViewModel>();
         }
     }
 }
