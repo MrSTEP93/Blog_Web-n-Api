@@ -1,4 +1,4 @@
-using FinalBlog.Models;
+using FinalBlog.DATA.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 

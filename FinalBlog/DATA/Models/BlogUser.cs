@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace FinalBlog.Models
+namespace FinalBlog.DATA.Models
 {
     public class BlogUser : IdentityUser
     {
@@ -9,6 +9,8 @@ namespace FinalBlog.Models
         public string LastName { get; set; }
 
         public string About { get; set; }
+
+        //public Role Role { get; set; }
 
         public DateTime RegDate { get; set; }
 

@@ -1,4 +1,4 @@
-﻿namespace FinalBlog.Models
+﻿namespace FinalBlog.DATA.Models
 {
     public class Tag(string name)
     {
