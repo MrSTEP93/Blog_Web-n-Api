@@ -19,6 +19,8 @@ namespace FinalBlog.ViewModels.Comment
 
         //public AuthorViewModel? Author { get; set; }
 
+        public AuthorViewModel? Author { get; set; }
+
         [Required(ErrorMessage = "Комментарий должен содержать текст!")]
         public string Text { get; set; }
 
