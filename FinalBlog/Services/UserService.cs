@@ -39,7 +39,7 @@ namespace FinalBlog.Services
                 }
             }
             resultModel.FillMessagesFromResult(result);
-            
+
             return resultModel;
         }
 
@@ -99,6 +99,10 @@ namespace FinalBlog.Services
             //resultModel.ProcessResult();
             return resultModel;
         }
-    }
 
+        //public async Task<BlogUser> GetCurrentUser()
+        //{
+        //    var currentUser = await _userManager.GetUserAsync(User);
+        //}
+    }
 }

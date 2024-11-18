@@ -50,14 +50,16 @@ namespace FinalBlog
                 .AddTransient<IUserService, UserService>()
                 .AddTransient<IRoleService, RoleService>()
                 .AddTransient<IArticleService, ArticleService>()
-                .AddTransient<ITagService, TagService>();
+                .AddTransient<ITagService, TagService>()
+                .AddTransient<ICommentService, CommentService>();
 
             builder.Services
                 .AddUnitOfWork()
                 .AddCustomRepository<BlogUser, UserRepository>()
                 .AddCustomRepository<Role, RoleRepository>()
                 .AddCustomRepository<Article, ArticleRepository>()
-                .AddCustomRepository<Tag, TagRepository>();
+                .AddCustomRepository<Tag, TagRepository>()
+                .AddCustomRepository<Comment, CommentRepository>();
 
             var app = builder.Build();
 

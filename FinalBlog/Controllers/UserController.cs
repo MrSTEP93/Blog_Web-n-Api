@@ -10,13 +10,11 @@ using Microsoft.AspNetCore.Mvc;
 namespace FinalBlog.Controllers
 {
     public class UserController(
-        IMapper mapper,
         UserManager<BlogUser> userManager,
         SignInManager<BlogUser> signInManager,
         RoleManager<Role> roleManager,
         IUserService userService) : Controller
     {
-        private readonly IMapper _mapper = mapper;
         private readonly UserManager<BlogUser> _userManager = userManager;
         private readonly SignInManager<BlogUser> _signInManager = signInManager;
         private readonly RoleManager<Role> _roleManager = roleManager;
