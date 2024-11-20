@@ -13,7 +13,7 @@ namespace FinalBlog.ViewModels.Article
 
         public string Content { get; } = string.Empty;
 
-        //public string AuthorId { get; set; } = string.Empty;
+        public string AuthorId { get; set; } = string.Empty;
 
         public AuthorViewModel? Author { get; }
 

@@ -17,6 +17,7 @@ namespace FinalBlog
             CreateMap<LoginViewModel, BlogUser>()
                 .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.Email));
             CreateMap<BlogUser, AuthorViewModel>();
+            CreateMap<BlogUser, UserViewModel>();
 
             CreateMap<RoleAddViewModel, Role>();
             CreateMap<RoleEditViewModel, Role>();

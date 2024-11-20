@@ -6,6 +6,7 @@ using FinalBlog.DATA.UoW;
 using FinalBlog.Extensions;
 using FinalBlog.ViewModels.Role;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace FinalBlog.Services
@@ -53,6 +54,13 @@ namespace FinalBlog.Services
                 Description = "Администратор сайта"
             };
             AddRole(adminRoleModel);
+
+            RoleAddViewModel moderatorRoleModel = new()
+            {
+                Name = "Модератор",
+                Description = "Имеет право редактировать статьи"
+            };
+            AddRole(moderatorRoleModel);
         }
 
         public async Task<ResultModel> AddRole(RoleAddViewModel model)
@@ -127,6 +135,19 @@ namespace FinalBlog.Services
                 rolesView.Add(_mapper.Map<RoleEditViewModel>(role));
             }
             return rolesView;
+        }
+
+        public async Task<List<Role>> GetRolesOfUser(BlogUser user)
+        {
+            var userRoleNames = await _userManager.GetRolesAsync(user);
+            var allRoles = await _roleManager.Roles.ToListAsync();
+            var result = new List<Role>();
+            foreach (var item in allRoles)
+            {
+                if (userRoleNames.Contains(item.Name))
+                    result.Add(item);
+            }
+            return result;
         }
     }
 }

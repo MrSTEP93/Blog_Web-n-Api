@@ -4,6 +4,7 @@ using FinalBlog.DATA;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FinalBlog.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241120174201_AddRole-ToUser")]
+    partial class AddRoleToUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -338,13 +341,8 @@ namespace FinalBlog.Migrations
                 {
                     b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityRole");
 
-                    b.Property<string>("BlogUserId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
-
-                    b.HasIndex("BlogUserId");
 
                     b.HasDiscriminator().HasValue("Role");
                 });
@@ -367,6 +365,11 @@ namespace FinalBlog.Migrations
 
                     b.Property<DateTime>("RegDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("RoleId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasIndex("RoleId");
 
                     b.HasDiscriminator().HasValue("BlogUser");
                 });
@@ -465,16 +468,13 @@ namespace FinalBlog.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("FinalBlog.DATA.Models.Role", b =>
-                {
-                    b.HasOne("FinalBlog.DATA.Models.BlogUser", null)
-                        .WithMany("Roles")
-                        .HasForeignKey("BlogUserId");
-                });
-
             modelBuilder.Entity("FinalBlog.DATA.Models.BlogUser", b =>
                 {
-                    b.Navigation("Roles");
+                    b.HasOne("FinalBlog.DATA.Models.Role", "Role")
+                        .WithMany()
+                        .HasForeignKey("RoleId");
+
+                    b.Navigation("Role");
                 });
 #pragma warning restore 612, 618
         }

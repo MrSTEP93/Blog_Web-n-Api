@@ -5,6 +5,7 @@ using FinalBlog.DATA.UoW;
 using FinalBlog.Extensions;
 using FinalBlog.ViewModels.User;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace FinalBlog.Services
 {
@@ -12,14 +13,16 @@ namespace FinalBlog.Services
         IMapper mapper,
         UserManager<BlogUser> userManager,
         SignInManager<BlogUser> signInManager,
-        //IRoleService roleService,
+        RoleManager<Role> roleManager,
+        IRoleService roleService,
         IUnitOfWork unitOfWork
         ) : IUserService
     {
         private readonly IMapper _mapper = mapper;
         private readonly UserManager<BlogUser> _userManager = userManager;
+        RoleManager<Role> _roleManager = roleManager;
         private readonly SignInManager<BlogUser> _signInManager = signInManager;
-        //private readonly IRoleService _roleService = roleService;
+        private readonly IRoleService _roleService = roleService;
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
         public async Task<ResultModel> Register(RegistrationViewModel model)
@@ -59,20 +62,31 @@ namespace FinalBlog.Services
             return resultModel;
         }
 
-        public List<BlogUser> GetUserList()
+        public async Task<List<UserViewModel>> GetAllUsers()
         {
             var repository = _unitOfWork.GetRepository<BlogUser>() as UserRepository;
-            return repository.GetAll().ToList();
+            var userList = repository.GetAll().ToList();
+
+            var model = new List<UserViewModel>();
+            foreach (var user in userList)
+            {
+                user.Roles = await _roleService.GetRolesOfUser(user);
+                model.Add(_mapper.Map<UserViewModel>(user));
+            }
+
+            return model;
         }
 
-        public BlogUser? GetUserById(string id)
+        public async Task<UserViewModel> GetUserById(string id)
         {
-            return GetUserList().Where(x => x.Id == id).FirstOrDefault();
-
-            /*
             var repository = _unitOfWork.GetRepository<BlogUser>() as UserRepository;
-            return await repository.Get(id);
-            */
+            var user = await repository.Get(id)
+                ?? throw new NullReferenceException($"Пользователь не найден в базе (id={id})");
+            user.Roles = await _roleService.GetRolesOfUser(user);
+            var model = _mapper.Map<UserViewModel>(user);
+            //model.Roles = userRoles;
+
+            return model;
         }
 
         public async Task<ResultModel> UpdateUserInfo(UserEditViewModel model)
@@ -96,13 +110,7 @@ namespace FinalBlog.Services
             var result = await _userManager.DeleteAsync(user);
 
             ResultModel resultModel = new(in result, "Пользователь удален");
-            //resultModel.ProcessResult();
             return resultModel;
         }
-
-        //public async Task<BlogUser> GetCurrentUser()
-        //{
-        //    var currentUser = await _userManager.GetUserAsync(User);
-        //}
     }
 }
