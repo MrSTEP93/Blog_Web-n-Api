@@ -44,11 +44,11 @@ namespace FinalBlog.Controllers
                 var result = await _userService.Register(model);
                 if (result.IsSuccessed)
                 {
-                    return Ok("Registration successfull");
+                    return Ok(result);
                 }
                 else
                 {
-                    return BadRequest(result.Messages);
+                    return BadRequest(result);
                 }
             }
             return BadRequest(ModelState);

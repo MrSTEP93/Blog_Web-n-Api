@@ -28,21 +28,31 @@ namespace FinalBlog.Services
 
         public async Task<ResultModel> Register(RegistrationViewModel model)
         {
+            const string defaultRoleName = "Пользователь0";
             ResultModel resultModel = new(false);
             var newUser = _mapper.Map<BlogUser>(model);
 
             var result = await _userManager.CreateAsync(newUser, model.RegPassword);
             if (result.Succeeded)
             {
+                resultModel.AddMessage("Пользователь зарегистрирован");
                 await _signInManager.SignInAsync(newUser, false);
-                result = await _userManager.AddToRoleAsync(newUser, "Пользователь");
-                if (result.Succeeded)
+                try
                 {
-                    resultModel.MarkAsSuccess();
-                    return resultModel;
+                    result = await _userManager.AddToRoleAsync(newUser, defaultRoleName);
+                    resultModel.AddMessage($"Присвоена роль по умолчанию ({defaultRoleName})");
+                    resultModel.IsSuccessed = true;
                 }
-            }
-            resultModel.FillMessagesFromResult(result);
+                catch (Exception ex)
+                {
+                    resultModel.AddMessage($"Не удалось присвоить пользователю роль по умолчанию ({defaultRoleName})");
+                    resultModel.IsSuccessed = false;
+                    resultModel.AddMessage(ex.Message);
+                    if (ex.InnerException != null)
+                        resultModel.AddMessage(ex.InnerException.Message);
+                }
+            } else 
+                resultModel.FillMessagesFromResult(result);
 
             return resultModel;
         }

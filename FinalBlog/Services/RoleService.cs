@@ -14,20 +14,17 @@ namespace FinalBlog.Services
     public class RoleService : IRoleService
     {
         private readonly UserManager<BlogUser> _userManager;
-        private readonly SignInManager<BlogUser> _signInManager;
         private readonly RoleManager<Role> _roleManager;
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
 
         public RoleService(
             UserManager<BlogUser> userManager,
-            SignInManager<BlogUser> signInManager,
             RoleManager<Role> roleManager,
             IMapper mapper,
             IUnitOfWork unitOfWork)
         {
             _userManager = userManager;
-            _signInManager = signInManager;
             _roleManager = roleManager;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
