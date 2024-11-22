@@ -1,11 +1,14 @@
 ﻿using AutoMapper;
+using FinalBlog.DATA;
 using FinalBlog.DATA.Models;
 using FinalBlog.DATA.Repositories;
 using FinalBlog.DATA.UoW;
 using FinalBlog.Extensions;
 using FinalBlog.ViewModels.User;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace FinalBlog.Services
 {
@@ -13,14 +16,12 @@ namespace FinalBlog.Services
         IMapper mapper,
         UserManager<BlogUser> userManager,
         SignInManager<BlogUser> signInManager,
-        RoleManager<Role> roleManager,
         IRoleService roleService,
         IUnitOfWork unitOfWork
         ) : IUserService
     {
         private readonly IMapper _mapper = mapper;
         private readonly UserManager<BlogUser> _userManager = userManager;
-        RoleManager<Role> _roleManager = roleManager;
         private readonly SignInManager<BlogUser> _signInManager = signInManager;
         private readonly IRoleService _roleService = roleService;
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
@@ -49,9 +50,8 @@ namespace FinalBlog.Services
         public async Task<ResultModel> Login(LoginViewModel model)
         {
             ResultModel resultModel = new(false);
-            var user = _mapper.Map<BlogUser>(model);
 
-            var result = await _signInManager.PasswordSignInAsync(user.Email, model.Password, model.RememberMe, false);
+            var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false);
             if (result.Succeeded)
                 resultModel.MarkAsSuccess("Успешная авторизация");
             else
@@ -61,6 +61,8 @@ namespace FinalBlog.Services
 
             return resultModel;
         }
+
+        public async Task Logout() => await _signInManager.SignOutAsync();
 
         public async Task<List<UserViewModel>> GetAllUsers()
         {
@@ -89,6 +91,16 @@ namespace FinalBlog.Services
             return model;
         }
 
+        public async Task<UserViewModel> GetCurrentUser(ClaimsPrincipal claimsPrincipal)
+        {
+            var user = await _userManager.GetUserAsync(claimsPrincipal)
+                ?? throw new NullReferenceException($"Пользователь не найден в базе данных");
+            user.Roles = await _roleService.GetRolesOfUser(user);
+            var model = _mapper.Map<UserViewModel>(user);
+
+            return model;
+        }
+
         public async Task<ResultModel> UpdateUserInfo(UserEditViewModel model)
         {
             var user = await _userManager.FindByIdAsync(model.Id.ToString());
@@ -110,6 +122,26 @@ namespace FinalBlog.Services
             var result = await _userManager.DeleteAsync(user);
 
             ResultModel resultModel = new(in result, "Пользователь удален");
+            return resultModel;
+        }
+
+        public async Task<ResultModel> CreateRandomUsers()
+        {
+            byte userCount = 5;
+            var usergen = new UserGenerator();
+            var userlist = usergen.Populate(userCount);
+            var resultModel = new ResultModel(false);
+
+            foreach (var user in userlist)
+            {
+                var result = await _userManager.CreateAsync(user, "123456");
+
+                if (!result.Succeeded)
+                {
+                    resultModel.ProcessResult(result);
+                }
+            }
+
             return resultModel;
         }
     }
