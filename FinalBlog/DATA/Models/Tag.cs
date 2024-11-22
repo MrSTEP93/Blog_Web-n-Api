@@ -5,5 +5,7 @@
         public int Id { get; set; }
 
         public string Name { get; set; } = name;
+
+        public List<Article>? Articles { get; set; }
     }
 }

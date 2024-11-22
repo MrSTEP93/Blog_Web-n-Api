@@ -22,10 +22,10 @@ namespace FinalBlog.Controllers
 
         [Route("UserList")]
         [HttpGet]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             //return View();
-            var result = _userService.GetUserList();
+            var result = await _userService.GetAllUsers();
             return Ok(result);
         }
 
@@ -97,11 +97,10 @@ namespace FinalBlog.Controllers
         [HttpGet]
         public async Task<IActionResult> ShowUser(string id)
         {
-            var result = await _userManager.FindByIdAsync(id);
+            //var result = await _userManager.FindByIdAsync(id);
+            var model = await _userService.GetUserById(id);
 
-            //var model = new UserViewModel(result);
-            //return View();
-            return Ok(result);
+            return Ok(model);
         }
 
         [HttpGet]

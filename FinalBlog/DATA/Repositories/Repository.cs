@@ -43,7 +43,7 @@ namespace FinalBlog.DATA.Repositories
             return await Set.FindAsync(id);
         }
 
-        public async Task<T?> Get(string id)
+        public virtual async Task<T?> Get(string id)
         {
             return await Set.FindAsync(id);
         }

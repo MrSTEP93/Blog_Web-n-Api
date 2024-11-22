@@ -4,6 +4,7 @@ using FinalBlog.DATA;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FinalBlog.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241118211225_Add_Tags_To_Article")]
+    partial class Add_Tags_To_Article
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,21 +24,6 @@ namespace FinalBlog.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("ArticleTag", b =>
-                {
-                    b.Property<int>("ArticlesId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TagsId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ArticlesId", "TagsId");
-
-                    b.HasIndex("TagsId");
-
-                    b.ToTable("ArticleTag");
-                });
 
             modelBuilder.Entity("FinalBlog.DATA.Models.Article", b =>
                 {
@@ -55,6 +43,10 @@ namespace FinalBlog.Migrations
 
                     b.Property<DateTime>("CreationTime")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("TagIds")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -109,11 +101,16 @@ namespace FinalBlog.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("ArticleId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ArticleId");
 
                     b.ToTable("Tags", (string)null);
                 });
@@ -338,13 +335,8 @@ namespace FinalBlog.Migrations
                 {
                     b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityRole");
 
-                    b.Property<string>("BlogUserId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
-
-                    b.HasIndex("BlogUserId");
 
                     b.HasDiscriminator().HasValue("Role");
                 });
@@ -369,21 +361,6 @@ namespace FinalBlog.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasDiscriminator().HasValue("BlogUser");
-                });
-
-            modelBuilder.Entity("ArticleTag", b =>
-                {
-                    b.HasOne("FinalBlog.DATA.Models.Article", null)
-                        .WithMany()
-                        .HasForeignKey("ArticlesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("FinalBlog.DATA.Models.Tag", null)
-                        .WithMany()
-                        .HasForeignKey("TagsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("FinalBlog.DATA.Models.Article", b =>
@@ -412,6 +389,13 @@ namespace FinalBlog.Migrations
                     b.Navigation("CommentAuthor");
 
                     b.Navigation("TargetArticle");
+                });
+
+            modelBuilder.Entity("FinalBlog.DATA.Models.Tag", b =>
+                {
+                    b.HasOne("FinalBlog.DATA.Models.Article", null)
+                        .WithMany("Tags")
+                        .HasForeignKey("ArticleId");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -465,16 +449,9 @@ namespace FinalBlog.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("FinalBlog.DATA.Models.Role", b =>
+            modelBuilder.Entity("FinalBlog.DATA.Models.Article", b =>
                 {
-                    b.HasOne("FinalBlog.DATA.Models.BlogUser", null)
-                        .WithMany("Roles")
-                        .HasForeignKey("BlogUserId");
-                });
-
-            modelBuilder.Entity("FinalBlog.DATA.Models.BlogUser", b =>
-                {
-                    b.Navigation("Roles");
+                    b.Navigation("Tags");
                 });
 #pragma warning restore 612, 618
         }

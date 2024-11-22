@@ -17,7 +17,7 @@ namespace FinalBlog.ViewModels.Comment
         [Required(ErrorMessage = "Поле Id не может быть пустым!")]
         public string AuthorId { get; set; }
 
-        //public AuthorViewModel? Author { get; set; }
+        public AuthorViewModel? Author { get; set; }
 
         [Required(ErrorMessage = "Комментарий должен содержать текст!")]
         public string Text { get; set; }

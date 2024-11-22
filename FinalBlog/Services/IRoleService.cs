@@ -11,5 +11,6 @@ namespace FinalBlog.Services
         public Task<ResultModel> UpdateRole(RoleEditViewModel model);
         public Task<ResultModel> DeleteRole(string roleId);
         public List<RoleEditViewModel> GetAllRoles();
+        public Task<List<Role>> GetRolesOfUser(BlogUser user);
     }
 }

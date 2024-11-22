@@ -24,6 +24,8 @@
 
         public BlogUser? Author { get; set; }
 
+        public List<Tag> Tags { get; set; }
+
         public DateTime CreationTime { get; set; } = DateTime.Now;
     }
 }
