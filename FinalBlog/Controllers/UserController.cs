@@ -4,6 +4,7 @@ using FinalBlog.DATA.Models;
 using FinalBlog.Extensions;
 using FinalBlog.Services;
 using FinalBlog.ViewModels.User;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,6 +15,8 @@ namespace FinalBlog.Controllers
     {
         private readonly IUserService _userService = userService;
 
+
+        [Authorize(Roles = "Администратор, Модератор")]
         [Route("UserList")]
         [HttpGet]
         public async Task<IActionResult> Index()
@@ -67,7 +70,7 @@ namespace FinalBlog.Controllers
         {
             if (ModelState.IsValid)
             {
-                var resultModel = await _userService.Login(model);
+                var resultModel = await _userService.LoginWithClaims(model);
                 if (!resultModel.IsSuccessed)
                 {
                     return BadRequest(resultModel);
@@ -98,10 +101,12 @@ namespace FinalBlog.Controllers
         [HttpGet]
         public async Task<IActionResult> ShowUserEditForm()
         {
+            if (!User.Identity!.IsAuthenticated)
+                return BadRequest("User not authenticated");
+            
             var model = await _userService.GetCurrentUser(User);
-
-            //return View();
             return Ok(model);
+            //return View();
         }
 
         [HttpPut]

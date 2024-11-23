@@ -71,6 +71,27 @@ namespace FinalBlog.Services
 
             return resultModel;
         }
+        
+        public async Task<ResultModel> LoginWithClaims(LoginViewModel model)
+        {
+            ResultModel resultModel = new(false);
+            var user = await _userManager.Users.FirstOrDefaultAsync(u => u.Email == model.Email)
+                ?? throw new Exception("Email was not found!");
+            user.Roles = await _roleService.GetRolesOfUser(user);
+            var result = await _signInManager.CheckPasswordSignInAsync(user!, model.Password, false);
+            if (result.Succeeded)
+            {
+                var claims = GetUserClaims(user);
+                await _signInManager.SignInWithClaimsAsync(user!, false, claims);
+                resultModel.MarkAsSuccess("Успешная авторизация");
+            }
+            else
+            {
+                resultModel.AddMessage("Неправильный логин и (или) пароль");
+            }
+
+            return resultModel;
+        }
 
         public async Task Logout() => await _signInManager.SignOutAsync();
 
@@ -87,6 +108,17 @@ namespace FinalBlog.Services
             }
 
             return model;
+        }
+
+        public List<Claim> GetUserClaims(BlogUser user)
+        {
+            var claims = new List<Claim>();
+
+            foreach (var role in user.Roles)
+                claims.Add(new Claim(ClaimsIdentity.DefaultRoleClaimType, role.Name!));
+            claims.Add(new Claim("UserID", user.Id));
+
+            return claims;
         }
 
         public async Task<UserViewModel> GetUserById(string id)

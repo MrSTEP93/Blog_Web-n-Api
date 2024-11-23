@@ -141,7 +141,7 @@ namespace FinalBlog.Services
             var result = new List<Role>();
             foreach (var item in allRoles)
             {
-                if (userRoleNames.Contains(item.Name))
+                if (userRoleNames.Contains(item.Name!))
                     result.Add(item);
             }
             return result;

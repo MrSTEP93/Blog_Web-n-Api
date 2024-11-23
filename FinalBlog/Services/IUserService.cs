@@ -11,7 +11,11 @@ namespace FinalBlog.Services
 
         public Task<ResultModel> Login(LoginViewModel model);
 
+        public Task<ResultModel> LoginWithClaims(LoginViewModel model);
+
         public Task Logout();
+
+        public List<Claim> GetUserClaims(BlogUser user);
 
         public Task<List<UserViewModel>> GetAllUsers();
 
