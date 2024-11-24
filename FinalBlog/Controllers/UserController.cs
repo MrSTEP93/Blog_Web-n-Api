@@ -4,6 +4,7 @@ using FinalBlog.DATA.Models;
 using FinalBlog.Extensions;
 using FinalBlog.Services;
 using FinalBlog.ViewModels.User;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -128,6 +129,7 @@ namespace FinalBlog.Controllers
             return BadRequest(ModelState);
         }
 
+
         [Route("DeleteUser")]
         [HttpPost]
         public IActionResult AskDeleteConfirm()
@@ -135,17 +137,19 @@ namespace FinalBlog.Controllers
             return View();
         }
 
+        [Authorize(Roles = "Администратор")]
         [HttpDelete]
         public async Task<IActionResult> DeleteUser(string id)
         {
             var resultModel = await _userService.DeleteUser(id);
             return Ok(resultModel);
         }
-
+        
+        [Authorize(Roles = "Администратор")]
         [HttpGet]
         public async Task<IActionResult> CreateUsers()
         {
-            var model = _userService.CreateRandomUsers();
+            var model = await _userService.CreateRandomUsers();
 
             return Ok(model);
         }
