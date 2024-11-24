@@ -8,16 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace FinalBlog.Controllers
 {
     public class RoleController(
-        //IMapper mapper,
-        //UserManager<BlogUser> userManager,
-        //SignInManager<BlogUser> signInManager,
-        //RoleManager<Role> roleManager,
         IRoleService roleService) : Controller
     {
-        //private readonly IMapper _mapper = mapper;
-        //private readonly UserManager<BlogUser> _userManager = userManager;
-        //private readonly SignInManager<BlogUser> _signInManager = signInManager;
-        //private readonly RoleManager<Role> _roleManager = roleManager;
         private readonly IRoleService _roleService = roleService;
 
         [HttpGet]

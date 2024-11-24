@@ -22,7 +22,7 @@ namespace FinalBlog
 
             if (string.IsNullOrEmpty(connection))
             {
-                throw new Exception("Can't get connection string from \"appsettings<Development>\" file");
+                throw new Exception("Can't get connection string from the file \"appsettings.Development.json\"");
             }
 
             // Add services to the container.
