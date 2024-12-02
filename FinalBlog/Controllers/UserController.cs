@@ -27,18 +27,9 @@ namespace FinalBlog.Controllers
             return Ok(result);
         }
 
+        [Route("Register")]
         [HttpGet]
-        public IActionResult RegistrationShortForm()
-        {
-            return View();
-        }
-
-        [Route("Registration")]
-        [HttpGet]
-        public IActionResult RegistrationFullForm(RegistrationViewModel model)
-        {
-            return BadRequest("not ready");
-        }
+        public IActionResult Register() => View();
 
         [HttpPost]
         public async Task<IActionResult> Register(RegistrationViewModel model)
@@ -48,22 +39,19 @@ namespace FinalBlog.Controllers
                 var result = await _userService.Register(model);
                 if (result.IsSuccessed)
                 {
-                    return Ok(result);
+                    return RedirectToAction("Index", "Home");
                 }
                 else
                 {
-                    return BadRequest(result);
+                    return View(result);
                 }
             }
-            return BadRequest(ModelState);
+            return View(ModelState);
         }
 
         [Route("Login")]
         [HttpGet]
-        public IActionResult Login()
-        {
-            return View();
-        }
+        public IActionResult Login() => View();
 
         [Route("Login")]
         [HttpPost]
@@ -71,14 +59,27 @@ namespace FinalBlog.Controllers
         {
             if (ModelState.IsValid)
             {
-                var resultModel = await _userService.LoginWithClaims(model);
+                var resultModel = new ResultModel();
+                try
+                {
+                    resultModel = await _userService.LoginWithClaims(model);
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", ex.Message);
+                    if (ex.InnerException != null)
+                        ModelState.AddModelError("", ex.Message);
+                }
                 if (!resultModel.IsSuccessed)
                 {
-                    return BadRequest(resultModel);
+                    foreach (var message in resultModel.Messages)
+                        ModelState.AddModelError("", message);
+                } else
+                {
+                    return RedirectToAction("Index", "Home");
                 }
-                return Ok("Login successfully");
             }
-            return BadRequest(ModelState);
+            return View(model);
         }
 
         [Route("Logout")]
@@ -87,26 +88,32 @@ namespace FinalBlog.Controllers
         public async Task<IActionResult> Logout()
         {
             await _userService.Logout();
-            return Ok();
-            //return RedirectToAction("Index", "Home");
+            //return Ok();
+            return RedirectToAction("Index", "Home");
         }
 
         [HttpGet]
-        public async Task<IActionResult> ShowUser(string id)
+        public async Task<IActionResult> Info(string id)
         {
             var model = await _userService.GetUserById(id);
 
-            return Ok(model);
+            return View(model);
         }
 
+        [Route("Profile")]
         [HttpGet]
-        public async Task<IActionResult> ShowUserEditForm()
+        public async Task<IActionResult> ShowUserEditForm(string? id = null)
         {
             if (!User.Identity!.IsAuthenticated)
-                return BadRequest("User not authenticated");
-            
-            var model = await _userService.GetCurrentUser(User);
-            return Ok(model);
+                return RedirectToAction("Index", "Home");
+            UserViewModel model;
+
+            if (id == null)
+                model = await _userService.GetCurrentUser(User);
+            else
+                model = await _userService.GetUserById(id);
+
+            return View("Edit", model);
             //return View();
         }
 

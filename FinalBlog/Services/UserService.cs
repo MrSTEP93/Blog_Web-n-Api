@@ -66,7 +66,7 @@ namespace FinalBlog.Services
                 resultModel.MarkAsSuccess("Успешная авторизация");
             else
             {
-                resultModel.AddMessage("Неправильный логин и (или) пароль");
+                resultModel.AddMessage("Неправильный пароль");
             }
 
             return resultModel;
@@ -87,7 +87,7 @@ namespace FinalBlog.Services
             }
             else
             {
-                resultModel.AddMessage("Неправильный логин и (или) пароль");
+                resultModel.AddMessage("Неправильный пароль");
             }
 
             return resultModel;

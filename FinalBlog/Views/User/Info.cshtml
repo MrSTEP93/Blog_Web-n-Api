@@ -1,0 +1,57 @@
+﻿@model FinalBlog.ViewModels.User.UserViewModel;
+@{
+    ViewData["Title"] = "Пользователь";
+
+    var claimUserId = @User.Claims.FirstOrDefault(c => c.Type == "UserID")?.Value;
+    var isSuperUser = User.IsInRole("Администратор") || User.IsInRole("Модератор");
+}
+
+<div class="m-auto max-width-800">
+    <h3 mt-5>Профиль пользователя @Model.FirstName @Model.LastName</h3>
+    <hr class="hr"/>
+    <div class="card border-muted shadow-lg h-75">
+        <div class="row g-0">
+            <div class="col-7 col-sm-8">
+                <div class="card-body h-100">
+                    <p class="card-text text-muted mb-1">
+                        @Model.Email
+                    </p>
+                    @foreach (var role in Model.Roles)
+                    {
+                        <span class="badge bg-primary">@role.Name</span>
+                    }
+                    <div>
+                        <a class="m-3 text-decoration-none" asp-action="GetPosts" asp-controller="Post" asp-route-userId="@Model.Id">Статьи</a>
+                        @if(isSuperUser)
+                        {
+                            <a class="m-3 text-decoration-none" asp-action="GetComments" asp-controller="Comment" asp-route-userId="@Model.Id">Коментарии</a>   
+                        }
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <a class="m-3 text-decoration-none" asp-action="GetRoles" asp-controller="Role" asp-route-userId="@Model.Id">Роли</a>
+                        }
+                    </div>
+                    <div class="row pt-5">
+                        @if (User.IsInRole("Администратор") || ((!User.IsInRole("Администратор") && Model.Id.ToString() == claimUserId)))
+                        {
+                            <div class="col mt-4 mb-2 justify-content-end">
+                                <a class="btn btn-outline-primary" asp-action="ShowUserEditForm" asp-controller="User"
+                                    asp-route-id="@Model.Id" asp-route-returnUrl="@Context.Request.Path">
+                                    Редактировать эту падлу
+                                </a>
+                            </div>
+                            <div class="col mt-4 d-flex justify-content-sm-end justify-content-start">
+                                <form method="post" asp-action="AskDeleteConfirm" asp-controller="User">
+                                    <input type="hidden" name="id" value="@Model.Id" />
+                                    <input type="hidden" name="userId" value="@claimUserId" />
+
+                                    <button type="submit" class="btn btn-outline-danger">Удалить</button>
+                                </form>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>    
+</div>
