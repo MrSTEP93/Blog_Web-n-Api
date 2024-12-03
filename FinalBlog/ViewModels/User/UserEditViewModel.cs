@@ -2,7 +2,7 @@
 
 namespace FinalBlog.ViewModels.User
 {
-    public class UserEditViewModel : BaseUserData
+    class UserEditViewModel : BaseUserData
     {
         public string Id { get; set; }
 

@@ -4,6 +4,7 @@ using FinalBlog.DATA.Models;
 using FinalBlog.DATA.Repositories;
 using FinalBlog.DATA.UoW;
 using FinalBlog.Extensions;
+using FinalBlog.Services.Interfaces;
 using FinalBlog.ViewModels.User;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -51,7 +52,7 @@ namespace FinalBlog.Services
                     if (ex.InnerException != null)
                         resultModel.AddMessage(ex.InnerException.Message);
                 }
-            } else 
+            } else
                 resultModel.FillMessagesFromResult(result);
 
             return resultModel;
@@ -71,7 +72,7 @@ namespace FinalBlog.Services
 
             return resultModel;
         }
-        
+
         public async Task<ResultModel> LoginWithClaims(LoginViewModel model)
         {
             ResultModel resultModel = new(false);
@@ -95,19 +96,20 @@ namespace FinalBlog.Services
 
         public async Task Logout() => await _signInManager.SignOutAsync();
 
-        public async Task<List<UserViewModel>> GetAllUsers()
+        public async Task<List<BlogUser>> GetAllUsers()
         {
             var repository = _unitOfWork.GetRepository<BlogUser>() as UserRepository;
             var userList = repository.GetAll().ToList();
 
-            var model = new List<UserViewModel>();
+            //var model = new List<UserViewModel>();
+            List<BlogUser> list = [];
             foreach (var user in userList)
             {
                 user.Roles = await _roleService.GetRolesOfUser(user);
-                model.Add(_mapper.Map<UserViewModel>(user));
+                //model.Add(_mapper.Map<UserViewModel>(user));
             }
 
-            return model;
+            return list;
         }
 
         public List<Claim> GetUserClaims(BlogUser user)
@@ -121,29 +123,29 @@ namespace FinalBlog.Services
             return claims;
         }
 
-        public async Task<UserViewModel> GetUserById(string id)
+        public async Task<BlogUser> GetUserById(string id)
         {
             var repository = _unitOfWork.GetRepository<BlogUser>() as UserRepository;
             var user = await repository.Get(id)
                 ?? throw new NullReferenceException($"Пользователь не найден в базе (id={id})");
             user.Roles = await _roleService.GetRolesOfUser(user);
-            var model = _mapper.Map<UserViewModel>(user);
+            //var model = _mapper.Map<UserViewModel>(user);
             //model.Roles = userRoles;
 
-            return model;
+            return user;
         }
 
-        public async Task<UserViewModel> GetCurrentUser(ClaimsPrincipal claimsPrincipal)
+        public async Task<BlogUser> GetCurrentUser(ClaimsPrincipal claimsPrincipal)
         {
             var user = await _userManager.GetUserAsync(claimsPrincipal)
                 ?? throw new NullReferenceException($"Пользователь не найден в базе данных");
             user.Roles = await _roleService.GetRolesOfUser(user);
-            var model = _mapper.Map<UserViewModel>(user);
+            //var model = _mapper.Map<UserViewModel>(user);
 
-            return model;
+            return user;
         }
 
-        public async Task<ResultModel> UpdateUserInfo(UserEditViewModel model)
+        public async Task<ResultModel> UpdateUserInfo(UserViewModel model)
         {
             var user = await _userManager.FindByIdAsync(model.Id.ToString());
             user.ConvertUser(model);

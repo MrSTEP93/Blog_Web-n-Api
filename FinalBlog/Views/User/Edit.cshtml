@@ -1,8 +1,11 @@
-﻿@model FinalBlog.ViewModels.User.UserViewModel
+﻿@using Microsoft.AspNetCore.Identity;
+@using FinalBlog.DATA.Models;
+@inject RoleManager<Role> roleManager
+@model FinalBlog.ViewModels.User.UserViewModel
 @{
     ViewData["Title"] = "Редактирование пользователя";
-
     var returnUrl = Context.Request.Query["returnUrl"];
+    var allRoles = roleManager.Roles;
 }
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.js"></script>
@@ -10,7 +13,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.11/jquery.validate.unobtrusive.js"></script>
 
 <div class="max-width-550 m-auto">
-    <form class="mt-5" method="post" asp-controller="User" asp-action="Edit">
+    <form class="mt-5" method="post" asp-controller="User" asp-action="UpdateUser">
         <h3>Редактирование пользователя</h3>
         <hr class="hr" />
         <div asp-validation-summary="ModelOnly" class="text-danger fs-6"></div>
@@ -20,17 +23,13 @@
         @if (User.IsInRole("Администратор"))
         {
             <div class="row">
-                @foreach (var role in Model.Roles)
+                @foreach (var role in allRoles)
                 {
                     <div class="col-md-3 col-sm-4">
                         <div class="form-check">
-                            @if(role.Name == "Пользователь")
-                            {
-                                <input type="hidden" name="User" value="on" />
-                            }
-                            <input class="form-check-input" type="checkbox" id="@role.Id" @(role.Name == "Пользователь" ? "disabled" : "")
-                                   name="@(role.Name != "Пользователь" ? $"{role.Name}" : "")" @(Model.Roles.Contains(role) ? "checked" : "") />
-                            <label class="from-check-label @(role.Name == "Пользователь" ? "text-secondary" : "")" for="@role">
+                            <input class="form-check-input" type="checkbox" value="@role.Id"
+                                   name="roles" @(Model.Roles.Contains(role) ? "checked" : "") />
+                            <label class="from-check-label" for="@role">
                                 @role.Name
                             </label>
                         </div>
@@ -72,7 +71,7 @@
 
         <button type="submit" class="btn btn-primary mb-2">Сохранить</button>
         <p class="form-text">
-            <a asp-action="Info" asp-controller="User" asp-route-returnUrl="@returnUrl"
+            <a asp-action="Info" asp-controller="User" asp-route-id="@Model.Id" asp-route-returnUrl="@returnUrl"
                 class="text-decoration-none"> Выйти без сохранения
             </a>
         </p>

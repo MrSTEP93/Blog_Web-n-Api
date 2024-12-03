@@ -2,7 +2,7 @@
 using FinalBlog.ViewModels.Article;
 using FinalBlog.ViewModels.Tag;
 
-namespace FinalBlog.Services
+namespace FinalBlog.Services.Interfaces
 {
     public interface ITagService
     {

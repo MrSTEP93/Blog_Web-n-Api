@@ -3,6 +3,7 @@ using FinalBlog.DATA.Models;
 using FinalBlog.DATA.Repositories;
 using FinalBlog.DATA.UoW;
 using FinalBlog.Extensions;
+using FinalBlog.Services.Interfaces;
 using FinalBlog.ViewModels.Article;
 using System.Collections.Generic;
 

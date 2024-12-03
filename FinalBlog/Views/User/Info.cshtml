@@ -4,6 +4,7 @@
 
     var claimUserId = @User.Claims.FirstOrDefault(c => c.Type == "UserID")?.Value;
     var isSuperUser = User.IsInRole("Администратор") || User.IsInRole("Модератор");
+    var isCurrentUser = Model.Id.ToString() == claimUserId;
 }
 
 <div class="m-auto max-width-800">
@@ -21,7 +22,7 @@
                         <span class="badge bg-primary">@role.Name</span>
                     }
                     <div>
-                        <a class="m-3 text-decoration-none" asp-action="GetPosts" asp-controller="Post" asp-route-userId="@Model.Id">Статьи</a>
+                        <a class="m-3 text-decoration-none" asp-action="Index" asp-controller="Article" asp-route-userId="@Model.Id">Статьи</a>
                         @if(isSuperUser)
                         {
                             <a class="m-3 text-decoration-none" asp-action="GetComments" asp-controller="Comment" asp-route-userId="@Model.Id">Коментарии</a>   
@@ -32,12 +33,12 @@
                         }
                     </div>
                     <div class="row pt-5">
-                        @if (User.IsInRole("Администратор") || ((!User.IsInRole("Администратор") && Model.Id.ToString() == claimUserId)))
+                        @if (isSuperUser || isCurrentUser)
                         {
                             <div class="col mt-4 mb-2 justify-content-end">
                                 <a class="btn btn-outline-primary" asp-action="ShowUserEditForm" asp-controller="User"
                                     asp-route-id="@Model.Id" asp-route-returnUrl="@Context.Request.Path">
-                                    Редактировать эту падлу
+                                    Редактировать профиль
                                 </a>
                             </div>
                             <div class="col mt-4 d-flex justify-content-sm-end justify-content-start">

@@ -1,21 +1,24 @@
 ﻿using AutoMapper;
+using Azure.Core;
 using FinalBlog.DATA;
 using FinalBlog.DATA.Models;
 using FinalBlog.Extensions;
-using FinalBlog.Services;
+using FinalBlog.Services.Interfaces;
 using FinalBlog.ViewModels.User;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 
 namespace FinalBlog.Controllers
 {
     public class UserController(
-        IUserService userService) : Controller
+        IUserService userService,
+        IMapper mapper) : Controller
     {
         private readonly IUserService _userService = userService;
-
+        private readonly IMapper _mapper = mapper;
 
         [Authorize(Roles = "Администратор, Модератор")]
         [Route("UserList")]
@@ -97,7 +100,7 @@ namespace FinalBlog.Controllers
         {
             var model = await _userService.GetUserById(id);
 
-            return View(model);
+            return View(model.ToViewModel(_mapper));
         }
 
         [Route("Profile")]
@@ -106,34 +109,39 @@ namespace FinalBlog.Controllers
         {
             if (!User.Identity!.IsAuthenticated)
                 return RedirectToAction("Index", "Home");
-            UserViewModel model;
+            BlogUser userData;
 
             if (id == null)
-                model = await _userService.GetCurrentUser(User);
+                userData = await _userService.GetCurrentUser(User);
             else
-                model = await _userService.GetUserById(id);
+                userData = await _userService.GetUserById(id);
 
-            return View("Edit", model);
-            //return View();
+            return View("Edit", userData.ToViewModel(_mapper));
         }
 
-        [HttpPut]
-        public async Task<IActionResult> UpdateUser(UserEditViewModel model) 
+        [HttpPost]
+        public async Task<IActionResult> UpdateUser(UserViewModel model, List<string> roles) 
         {
+            // we are staying here!!!
+            roles;
+            List<string> list = [];
+            foreach (var pair in Request.Form)
+            {
+                if (pair.Value == "on")
+                    list.Add(pair.Key);
+            }
+
             if (ModelState.IsValid)
             {
                 var resultModel = await _userService.UpdateUserInfo(model);
-                if (!resultModel.IsSuccessed)
-                {
-                    foreach (var message in resultModel.Messages)
-                        ModelState.AddModelError("", message);
-                } 
-                else
-                    return Ok("Updated");
+                if (resultModel.IsSuccessed)
+                    return RedirectToAction("ShowUserEditForm", "User", model);
+
+                foreach (var message in resultModel.Messages)
+                    ModelState.AddModelError("", message);
             }
             
-            //return View("UserEdit", model);
-            return BadRequest(ModelState);
+            return View("Edit", model);
         }
 
 

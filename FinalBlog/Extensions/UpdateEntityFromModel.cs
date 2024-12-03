@@ -8,7 +8,7 @@ namespace FinalBlog.Extensions
 {
     public static class UpdateEntityFromModel
     {
-        public static BlogUser ConvertUser(this BlogUser user, UserEditViewModel model)
+        public static BlogUser ConvertUser(this BlogUser user, UserViewModel model)
         {
             user.LastName = model.LastName;
             user.FirstName = model.FirstName;

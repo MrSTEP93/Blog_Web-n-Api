@@ -5,15 +5,7 @@
 @if (SignInManager.IsSignedIn(User))
 {
     <ul class="navbar-nav flex-grow-1">
-        <li class="nav-item">
-            <a class="nav-link" asp-action="GetTags" asp-controller="Tag">Теги</a>
-        </li>
-        @if(User.IsInRole("Администратор") || User.IsInRole("Модератор"))
-        {
-            <li class="nav-item">
-                <a class="nav-link" asp-action="GetComments" asp-controller="Comment">Комментарии</a>
-            </li>
-        }
+        
         @if (User.IsInRole("Администратор"))
         {
             <li class="nav-item">
@@ -23,6 +15,18 @@
                 <a class="nav-link" asp-action="GetRoles" asp-controller="Role">Роли</a>
             </li>
         }
+        @if (User.IsInRole("Администратор") || User.IsInRole("Модератор"))
+        {
+            <li class="nav-item">
+                <a class="nav-link" asp-action="GetComments" asp-controller="Comment">Комментарии</a>
+            </li>
+        }
+        <li class="nav-item">
+            <a class="nav-link" asp-action="Index" asp-controller="Article">Статьи</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" asp-action="Index" asp-controller="Tag">Теги</a>
+        </li>
     </ul>
 
     <ul class="navbar-nav">
@@ -33,7 +37,8 @@
             <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark" id="navbarDropdownMenuLink">
                 <li>
                     <a class="dropdown-item @(Context.Request.Path.StartsWithSegments("/Profile") ? "disabled" : "")" asp-action="Info" asp-controller="User"
-                   asp-route-id="@User.Claims.FirstOrDefault(c => c.Type == "UserID")?.Value">Профиль</a></li>
+                    asp-route-id="@User.Claims.FirstOrDefault(c => c.Type == "UserID")?.Value">Профиль</a>
+               </li>
                 <li>
                     <hr class="dropdown-divider" />
                 </li>

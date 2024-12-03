@@ -3,7 +3,7 @@ using FinalBlog.ViewModels.User;
 using Microsoft.Identity.Client;
 using System.Security.Claims;
 
-namespace FinalBlog.Services
+namespace FinalBlog.Services.Interfaces
 {
     public interface IUserService
     {
@@ -17,13 +17,13 @@ namespace FinalBlog.Services
 
         public List<Claim> GetUserClaims(BlogUser user);
 
-        public Task<List<UserViewModel>> GetAllUsers();
+        public Task<List<BlogUser>> GetAllUsers();
 
-        public Task<UserViewModel> GetUserById(string id);
+        public Task<BlogUser> GetUserById(string id);
 
-        public Task<UserViewModel> GetCurrentUser(ClaimsPrincipal claimsPrincipal);
+        public Task<BlogUser> GetCurrentUser(ClaimsPrincipal claimsPrincipal);
 
-        public Task<ResultModel> UpdateUserInfo(UserEditViewModel model);
+        public Task<ResultModel> UpdateUserInfo(UserViewModel model);
 
         public Task<ResultModel> DeleteUser(string id);
 

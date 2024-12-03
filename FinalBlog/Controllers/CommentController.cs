@@ -1,4 +1,4 @@
-﻿using FinalBlog.Services;
+﻿using FinalBlog.Services.Interfaces;
 using FinalBlog.ViewModels.Comment;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

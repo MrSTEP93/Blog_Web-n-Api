@@ -2,6 +2,7 @@
 using FinalBlog.DATA.Models;
 using FinalBlog.DATA.Repositories;
 using FinalBlog.DATA.UoW;
+using FinalBlog.Services.Interfaces;
 using FinalBlog.ViewModels.Comment;
 using FinalBlog.ViewModels.Tag;
 using System.ComponentModel.Design;

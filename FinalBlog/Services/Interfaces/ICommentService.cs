@@ -1,7 +1,7 @@
 ﻿using FinalBlog.DATA.Models;
 using FinalBlog.ViewModels.Comment;
 
-namespace FinalBlog.Services
+namespace FinalBlog.Services.Interfaces
 {
     public interface ICommentService
     {
