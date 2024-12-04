@@ -98,6 +98,7 @@ namespace FinalBlog.Controllers
         [HttpGet]
         public async Task<IActionResult> Info(string id)
         {
+            здесь надо лечить пустой ID
             var model = await _userService.GetUserById(id);
 
             return View(model.ToViewModel(_mapper));
@@ -120,20 +121,16 @@ namespace FinalBlog.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> UpdateUser(UserViewModel model, List<string> roles) 
+        public async Task<IActionResult> UpdateUser(UserViewModel model, List<string> newRoles) 
         {
-            // we are staying here!!!
-            roles;
-            List<string> list = [];
-            foreach (var pair in Request.Form)
-            {
-                if (pair.Value == "on")
-                    list.Add(pair.Key);
-            }
-
             if (ModelState.IsValid)
             {
-                var resultModel = await _userService.UpdateUserInfo(model);
+                ResultModel resultModel = new();
+                if (newRoles != null)
+                    resultModel = await _userService.UpdateUserInfo(model, newRoles);
+                else 
+                    resultModel = await _userService.UpdateUserInfo(model);
+
                 if (resultModel.IsSuccessed)
                     return RedirectToAction("ShowUserEditForm", "User", model);
 
@@ -143,7 +140,6 @@ namespace FinalBlog.Controllers
             
             return View("Edit", model);
         }
-
 
         [Route("DeleteUser")]
         [HttpPost]

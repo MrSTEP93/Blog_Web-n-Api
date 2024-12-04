@@ -24,6 +24,8 @@ namespace FinalBlog.Services.Interfaces
         public Task<BlogUser> GetCurrentUser(ClaimsPrincipal claimsPrincipal);
 
         public Task<ResultModel> UpdateUserInfo(UserViewModel model);
+        
+        public Task<ResultModel> UpdateUserInfo(UserViewModel model, List<string> newRolesList);
 
         public Task<ResultModel> DeleteUser(string id);
 

@@ -145,6 +145,35 @@ namespace FinalBlog.Services
             return user;
         }
 
+        public async Task<ResultModel> UpdateUserInfo(UserViewModel model, List<string> newRolesList)
+        {
+            var resultModel = await UpdateUserInfo(model);
+            var user = await _userManager.FindByIdAsync(model.Id.ToString());
+            var allRoles = _roleService.GetAllRoles();
+            foreach (var role in allRoles)
+            {
+                if (newRolesList.Contains(role.Name))
+                {
+                    if (!await _userManager.IsInRoleAsync(user, role.Name))
+                    {
+                        var result = await _userManager.AddToRoleAsync(user, role.Name);
+                        string resMessage = $"Роль \"{role.Name}\" " + (result.Succeeded ? "успешно добавлена" : "добавить не удалось" );
+                        resultModel.AddMessage(resMessage);
+                    }
+                }
+                else
+                {
+                    if (await _userManager.IsInRoleAsync(user, role.Name))
+                    {
+                        var result = await _userManager.RemoveFromRoleAsync(user, role.Name);
+                        string resMessage = $"Роль \"{role.Name}\" " + (result.Succeeded ? "успешно удалена" : "удалить не удалось");
+                        resultModel.AddMessage(resMessage);
+                    }
+                }
+            }
+            return resultModel;
+        }
+
         public async Task<ResultModel> UpdateUserInfo(UserViewModel model)
         {
             var user = await _userManager.FindByIdAsync(model.Id.ToString());
@@ -152,7 +181,6 @@ namespace FinalBlog.Services
             var result = await _userManager.UpdateAsync(user);
 
             ResultModel resultModel = new(in result, "Данные успешно обновлены");
-            //resultModel.ProcessResult();
             return resultModel;
         }
 

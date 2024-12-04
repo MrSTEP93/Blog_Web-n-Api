@@ -14,12 +14,54 @@
         <div class="row g-0">
             <div class="col-7 col-sm-8">
                 <div class="card-body h-100">
-                    <p class="card-text text-muted mb-1">
-                        @Model.Email
-                    </p>
+                    <div class="form-group mb-4 position-relative">
+                        <div class="row">
+                            <label asp-for="FirstName" class="form-label col-sm-3 text-muted"></label>
+                            <div class="col-sm-9">
+                                <span class="card-text mb-1"> @Model.FirstName </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group mb-4 position-relative">
+                        <div class="row">
+                            <label asp-for="LastName" class="form-label col-sm-3 text-muted"></label>
+                            <div class="col-sm-9">
+                                <span class="card-text mb-1"> @Model.LastName </span>
+                            </div>
+                        </div>
+                    </div>
+                    @if(isSuperUser || isCurrentUser)
+                    {
+                        <div class="form-group mb-4 position-relative">
+                            <div class="row">
+                                <label asp-for="Email" class="form-label col-sm-3 text-muted"></label>
+                                <div class="col-sm-9">
+                                    <span class="card-text mb-1"> @Model.Email </span>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    <div class="form-group mb-4 position-relative">
+                        <div class="row">
+                            <label asp-for="About" class="form-label col-sm-3 "></label>
+                            <div class="col-sm-9">
+                                <textarea readonly class="form-control">@Model.About</textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group mb-4 position-relative">
+                        <div class="row">
+                            <label asp-for="RegDate" class="form-label col-sm-3 text-muted"></label>
+                            <div class="col-sm-9">
+                                <span class="card-text mb-1"> @Model.RegDate </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <br/>Роли:
                     @foreach (var role in Model.Roles)
                     {
-                        <span class="badge bg-primary">@role.Name</span>
+                        <span class="badge bg-primary">@role</span>
                     }
                     <div>
                         <a class="m-3 text-decoration-none" asp-action="Index" asp-controller="Article" asp-route-userId="@Model.Id">Статьи</a>
@@ -32,7 +74,7 @@
                             <a class="m-3 text-decoration-none" asp-action="GetRoles" asp-controller="Role" asp-route-userId="@Model.Id">Роли</a>
                         }
                     </div>
-                    <div class="row pt-5">
+                    <div class="row">
                         @if (isSuperUser || isCurrentUser)
                         {
                             <div class="col mt-4 mb-2 justify-content-end">
