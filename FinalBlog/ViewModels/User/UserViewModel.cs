@@ -15,5 +15,7 @@ namespace FinalBlog.ViewModels.User
         public DateTime RegDate { get; set; }
 
         public List<string>? Roles { get; set; }
+
+        public string FullName => $"{FirstName} {LastName}";
     }
 }

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using AutoMapper.Configuration.Annotations;
 using Azure.Core;
 using FinalBlog.DATA;
 using FinalBlog.DATA.Models;
@@ -23,11 +24,15 @@ namespace FinalBlog.Controllers
         [Authorize(Roles = "Администратор, Модератор")]
         [Route("UserList")]
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> UserList(string viewMode = "block")
         {
-            //return View();
-            var result = await _userService.GetAllUsers();
-            return Ok(result);
+            var allUsers = await _userService.GetAllUsers();
+            var result = new UserListViewModel()
+            {
+                Users = allUsers.ToViewModel(_mapper),
+                ViewMode = viewMode
+            };
+            return View(result);
         }
 
         [Route("Register")]
@@ -87,21 +92,26 @@ namespace FinalBlog.Controllers
 
         [Route("Logout")]
         [HttpPost]
-        //[ValidateAntiForgeryToken]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
         {
             await _userService.Logout();
-            //return Ok();
             return RedirectToAction("Index", "Home");
         }
 
         [HttpGet]
         public async Task<IActionResult> Info(string id)
         {
-            здесь надо лечить пустой ID
-            var model = await _userService.GetUserById(id);
+            if (!User.Identity!.IsAuthenticated)
+                return RedirectToAction("Index", "Home");
 
-            return View(model.ToViewModel(_mapper));
+            BlogUser userData;
+            if (id == null)
+                userData = await _userService.GetCurrentUser(User);
+            else
+                userData = await _userService.GetUserById(id);
+            
+            return View(userData.ToViewModel(_mapper));
         }
 
         [Route("Profile")]
@@ -110,8 +120,8 @@ namespace FinalBlog.Controllers
         {
             if (!User.Identity!.IsAuthenticated)
                 return RedirectToAction("Index", "Home");
-            BlogUser userData;
 
+            BlogUser userData;
             if (id == null)
                 userData = await _userService.GetCurrentUser(User);
             else
@@ -125,7 +135,7 @@ namespace FinalBlog.Controllers
         {
             if (ModelState.IsValid)
             {
-                ResultModel resultModel = new();
+                ResultModel resultModel;
                 if (newRoles != null)
                     resultModel = await _userService.UpdateUserInfo(model, newRoles);
                 else 
@@ -141,7 +151,6 @@ namespace FinalBlog.Controllers
             return View("Edit", model);
         }
 
-        [Route("DeleteUser")]
         [HttpPost]
         public IActionResult AskDeleteConfirm()
         {

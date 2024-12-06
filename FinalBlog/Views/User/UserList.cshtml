@@ -1,0 +1,31 @@
+﻿@model FinalBlog.ViewModels.User.UserListViewModel
+@{
+    ViewData["Title"] = "Пользователи";
+}
+
+<div class="m-auto max-width-800">
+    <h3 class="mt-5">Все пользователи</h3>
+    <div class="text-end">Вид:
+        @if (Model.ViewMode == "list")
+        {
+            <partial name="ViewSwitchList" />
+        } else
+        {
+            <partial name="ViewSwitchBlock" />
+        }
+    </div>
+    <hr class="hr" />
+    <div class="row justify-content-center">
+        @foreach (var user in Model.Users)
+        {
+            @if (Model.ViewMode == "list")
+            {
+                <partial name="ListViewPartial" model="user" />
+            }
+            else
+            {
+                <partial name="BlockViewPartial" model="user" />
+            }
+        }
+    </div>
+</div>

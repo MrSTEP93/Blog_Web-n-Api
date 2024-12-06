@@ -9,7 +9,7 @@
         @if (User.IsInRole("Администратор"))
         {
             <li class="nav-item">
-                <a class="nav-link" asp-action="GetUsers" asp-controller="User">Пользователи</a>
+                <a class="nav-link" asp-action="UserList" asp-controller="User">Пользователи</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" asp-action="GetRoles" asp-controller="Role">Роли</a>

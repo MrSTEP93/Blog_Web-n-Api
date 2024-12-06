@@ -101,15 +101,12 @@ namespace FinalBlog.Services
             var repository = _unitOfWork.GetRepository<BlogUser>() as UserRepository;
             var userList = repository.GetAll().ToList();
 
-            //var model = new List<UserViewModel>();
-            List<BlogUser> list = [];
             foreach (var user in userList)
             {
                 user.Roles = await _roleService.GetRolesOfUser(user);
-                //model.Add(_mapper.Map<UserViewModel>(user));
             }
 
-            return list;
+            return userList;
         }
 
         public List<Claim> GetUserClaims(BlogUser user)

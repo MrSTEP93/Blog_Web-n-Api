@@ -2,7 +2,7 @@
 
 namespace FinalBlog.ViewModels.User
 {
-    class UserEditViewModel : BaseUserData
+    public class UserEditViewModel : BaseUserData
     {
         public string Id { get; set; }
 
@@ -11,5 +11,7 @@ namespace FinalBlog.ViewModels.User
         public string? About { get; set; }
 
         public List<DATA.Models.Role> Roles { get; set; }
+
+        public string FullName => $"{FirstName} {LastName}";
     }
 }

@@ -8,7 +8,7 @@
 }
 
 <div class="m-auto max-width-800">
-    <h3 mt-5>Профиль пользователя @Model.FirstName @Model.LastName</h3>
+    <h3 mt-5>Профиль пользователя @Model.FullName</h3>
     <hr class="hr"/>
     <div class="card border-muted shadow-lg h-75">
         <div class="row g-0">
@@ -57,19 +57,21 @@
                             </div>
                         </div>
                     </div>
-
-                    <br/>Роли:
-                    @foreach (var role in Model.Roles)
-                    {
-                        <span class="badge bg-primary">@role</span>
-                    }
-                    <div>
+                    <div class="form-group mb-4 position-relative">
+                        Роли:
+                        @foreach (var role in Model.Roles)
+                        {
+                            <span class="badge bg-primary">@role</span>
+                        }
+                    </div>
+                    <div class="form-group position-relative">
+                        <label>Посмотреть активность пользователя:</label> <br/>
                         <a class="m-3 text-decoration-none" asp-action="Index" asp-controller="Article" asp-route-userId="@Model.Id">Статьи</a>
                         @if(isSuperUser)
                         {
-                            <a class="m-3 text-decoration-none" asp-action="GetComments" asp-controller="Comment" asp-route-userId="@Model.Id">Коментарии</a>   
+                            <a class="m-3 text-decoration-none" asp-action="GetComments" asp-controller="Comment" asp-route-userId="@Model.Id">Комментарии</a>
                         }
-                        @if (User.IsInRole("Admin"))
+                        @if (User.IsInRole("Администратор"))
                         {
                             <a class="m-3 text-decoration-none" asp-action="GetRoles" asp-controller="Role" asp-route-userId="@Model.Id">Роли</a>
                         }
