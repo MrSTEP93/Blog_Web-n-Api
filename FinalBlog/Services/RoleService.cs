@@ -74,23 +74,23 @@ namespace FinalBlog.Services
             return resultModel;
         }
 
-        public RoleEditViewModel GetRoleById(string roleId)
+        public RoleViewModel GetRoleById(string roleId)
         {
             var role = _roleManager.Roles.Where(r => r.Id == roleId).FirstOrDefault();
-            RoleEditViewModel model = new();
-            model = _mapper.Map<RoleEditViewModel>(role);
+            RoleViewModel model = new();
+            model = _mapper.Map<RoleViewModel>(role);
             return model;
         }
         
-        public RoleEditViewModel GetRoleByName(string roleName)
+        public RoleViewModel GetRoleByName(string roleName)
         {
             var role = _roleManager.Roles.Where(r => r.Name == roleName).FirstOrDefault();
-            RoleEditViewModel model = new();
-            model = _mapper.Map<RoleEditViewModel>(role);
+            RoleViewModel model = new();
+            model = _mapper.Map<RoleViewModel>(role);
             return model;
         }
 
-        public async Task<ResultModel> UpdateRole(RoleEditViewModel model)
+        public async Task<ResultModel> UpdateRole(RoleViewModel model)
         {
             var role = await _roleManager.FindByIdAsync(model.Id);
             if (role == null)
@@ -123,14 +123,14 @@ namespace FinalBlog.Services
             return resultModel;
         }
 
-        public List<RoleEditViewModel> GetAllRoles()
+        public List<RoleViewModel> GetAllRoles()
         {
             var repo = _unitOfWork.GetRepository<Role>() as RoleRepository;
             var roles = repo.GetAll();
-            var rolesView = new List<RoleEditViewModel>();
+            var rolesView = new List<RoleViewModel>();
             foreach (var role in roles)
             {
-                rolesView.Add(_mapper.Map<RoleEditViewModel>(role));
+                rolesView.Add(_mapper.Map<RoleViewModel>(role));
             }
             return rolesView;
         }

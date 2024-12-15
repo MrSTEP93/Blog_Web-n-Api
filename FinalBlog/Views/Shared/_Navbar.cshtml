@@ -9,14 +9,14 @@
         @if (User.IsInRole("Администратор"))
         {
             <li class="nav-item">
-                <a class="nav-link" asp-action="UserList" asp-controller="User">Пользователи</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" asp-action="GetRoles" asp-controller="Role">Роли</a>
+                <a class="nav-link" asp-action="Index" asp-controller="Role">Роли</a>
             </li>
         }
         @if (User.IsInRole("Администратор") || User.IsInRole("Модератор"))
         {
+            <li class="nav-item">
+                <a class="nav-link" asp-action="UserList" asp-controller="User">Пользователи</a>
+            </li>
             <li class="nav-item">
                 <a class="nav-link" asp-action="GetComments" asp-controller="Comment">Комментарии</a>
             </li>

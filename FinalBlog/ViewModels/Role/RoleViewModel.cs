@@ -2,7 +2,7 @@
 
 namespace FinalBlog.ViewModels.Role
 {
-    public class RoleEditViewModel
+    public class RoleViewModel
     {
         [Required(ErrorMessage = "Поле Id не может быть пустым!")]
         public string Id { get; set; }

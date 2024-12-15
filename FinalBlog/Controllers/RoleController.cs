@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using FinalBlog.DATA.Models;
+using FinalBlog.Services;
 using FinalBlog.Services.Interfaces;
 using FinalBlog.ViewModels.Role;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,61 +17,69 @@ namespace FinalBlog.Controllers
         [HttpGet]
         public IActionResult Index()
         {
-            //return View();
-            var result = _roleService.GetAllRoles();
-            return Ok(result);
+            var model = new RoleListViewModel()
+            {
+                Roles = _roleService.GetAllRoles()
+            };
+
+            return View("Roles", model);
         }
 
         [HttpGet]
-        public async Task<IActionResult> NewRole()
-        {
-            return BadRequest("Not supported");
-            //return View();
-        }
+        public IActionResult NewRole() => View();
 
+        [Authorize(Roles = "Администратор")]
         [HttpPost]
         public async Task<IActionResult> Add(RoleAddViewModel model)
         {
             if (ModelState.IsValid)
             {
                 var result = await _roleService.AddRole(model);
-                if (result.IsSuccessed)
+                if (!result.IsSuccessed)
                 {
-                    return Ok("Роль успешно добавлена");
+                    foreach (var message in result.Messages)
+                        ModelState.AddModelError("", message);
                 }
                 else
                 {
-                    return BadRequest(result.Messages);
+                    return RedirectToAction("Index","Role");
                 }
             }
-            
-            return BadRequest(ModelState);
-            //return View();
+            return View(model);
         }
 
-        [HttpPut]
-        public async Task<IActionResult> Edit(RoleEditViewModel model)
+        [HttpGet]
+        public IActionResult Edit(string id) => View(_roleService.GetRoleById(id));
+
+        [Authorize(Roles = "Администратор")] 
+        [HttpPost]
+        public async Task<IActionResult> Edit(RoleViewModel model)
         {
             if (ModelState.IsValid)
             {
                 var result = await _roleService.UpdateRole(model);
-                if (result.IsSuccessed)
+                if (!result.IsSuccessed)
                 {
-                    return Ok("Роль изменена");
+                    foreach (var message in result.Messages)
+                        ModelState.AddModelError("", message);
                 }
                 else
                 {
-                    return BadRequest(result.Messages);
+                    return RedirectToAction("Index", "Role");
                 }
             }
 
-            return BadRequest(ModelState);
+            return View(model);
         }
 
-        [HttpDelete]
-        public async Task<IActionResult> Delete(string id)
+        [HttpGet]
+        public ActionResult Delete(string id) => View(_roleService.GetRoleById(id));
+        
+
+        [HttpPost]
+        public async Task<IActionResult> Delete(string id, string confirmed = "yes")
         {
-            if (ModelState.IsValid)
+            if (ModelState.IsValid && confirmed == "yes")
             {
                 var result = await _roleService.DeleteRole(id);
                 if (result.IsSuccessed)
