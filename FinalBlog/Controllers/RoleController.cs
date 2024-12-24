@@ -48,6 +48,7 @@ namespace FinalBlog.Controllers
             return View(model);
         }
 
+        [Authorize(Roles = "Администратор")]
         [HttpGet]
         public IActionResult Edit(string id) => View(_roleService.GetRoleById(id));
 

@@ -5,22 +5,17 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FinalBlog.ViewModels.Article
 {
-    public class ArticleViewModel
+    public class ArticleViewModel : ArticleEditViewModel
     {
-        public int Id { get; }
+        public List<CommentViewModel> Comments { get; } = [];
 
-        public string Title { get; } = string.Empty;
+        public int CommentsCount { get; } = 0;
 
-        public string Content { get; } = string.Empty;
+        public CommentAddViewModel CommentAddViewModel { get; set; } = new();
 
-        public string AuthorId { get; set; } = string.Empty;
-
-        public AuthorViewModel? Author { get; }
-
-        public DateTime CreationTime { get; }
-
-        public List<CommentViewModel> Commets { get; } = [];
-
-        public List<TagViewModel> Tags { get; } = [];
+        public ArticleViewModel()
+        {
+            CommentsCount = Comments.Count;
+        }
     }
 }

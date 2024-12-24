@@ -4,6 +4,7 @@ using FinalBlog.ViewModels.Article;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System.Security.Claims;
 
 namespace FinalBlog.Controllers
 {
@@ -15,7 +16,7 @@ namespace FinalBlog.Controllers
         public IActionResult Index()
         {
             var articleList = _articleService.GetAllArticles();
-            return Ok(articleList);
+            return View("Articles", articleList);
         }
 
         [Route("Author")]
@@ -23,16 +24,19 @@ namespace FinalBlog.Controllers
         public IActionResult Author(string id)
         {
             var articleList = _articleService.GetArticlesOfAuthor(id);
-            return Ok(articleList);
+            return View("Articles", articleList);
         }
 
         [HttpGet]
-        public async Task<ArticleEditViewModel> Details(int id)
+        public async Task<IActionResult> View(int id)
         {
             var article = await _articleService.GetArticleById(id);
-            return article;
-            //return View();
+            return View("View", article);
         }
+
+        [HttpGet]
+        public IActionResult Add() => View();
+
 
         [HttpPost]
         public async Task<IActionResult> Add(ArticleAddViewModel model)
@@ -40,19 +44,24 @@ namespace FinalBlog.Controllers
             if (ModelState.IsValid)
             {
                 var resultModel = await _articleService.AddArticle(model);
-                return Ok(resultModel);
+                if (resultModel.IsSuccessed)
+                    return RedirectToAction("Author", User.FindFirstValue(ClaimTypes.NameIdentifier));
+                
+                foreach (var message in resultModel.Messages)
+                    ModelState.AddModelError("", message);
             }
-            return BadRequest(ModelState);
+            return View("Add", ModelState);
         }
 
         [HttpGet]
-        public async Task<ArticleEditViewModel> Edit(int id)
+        public async Task<IActionResult> Edit(int id)
         {
-            return await _articleService.GetArticleById(id);
+            var article = await _articleService.GetArticleById(id);
+            return View("Edit", article);
         }
 
-        [HttpPut]
-        //[ValidateAntiForgeryToken]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(ArticleEditViewModel model)
         {
             if (ModelState.IsValid)
@@ -69,8 +78,8 @@ namespace FinalBlog.Controllers
         //    return View();
         //}
 
-        [HttpDelete]
-        //[ValidateAntiForgeryToken]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
             var resultModel = await _articleService.DeleteArticle(id);

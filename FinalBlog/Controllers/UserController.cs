@@ -136,7 +136,7 @@ namespace FinalBlog.Controllers
             if (ModelState.IsValid)
             {
                 ResultModel resultModel;
-                if (newRoles.Any())
+                if (newRoles.Count != 0)
                     resultModel = await _userService.UpdateUserInfo(model, newRoles);
                 else 
                     resultModel = await _userService.UpdateUserInfo(model);

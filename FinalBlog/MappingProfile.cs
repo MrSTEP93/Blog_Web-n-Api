@@ -25,6 +25,7 @@ namespace FinalBlog
 
             CreateMap<ArticleEditViewModel, Article>();
             CreateMap<ArticleAddViewModel, Article>();
+            CreateMap<Article, ArticleViewModel>();
             CreateMap<Article, ArticleEditViewModel>();
 
             CreateMap<TagAddViewModel, Tag>();

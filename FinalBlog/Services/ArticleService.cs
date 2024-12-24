@@ -79,11 +79,11 @@ namespace FinalBlog.Services
             return resultModel;
         }
 
-        public async Task<ArticleEditViewModel> GetArticleById(int articleId)
+        public async Task<ArticleViewModel> GetArticleById(int articleId)
         {
             var repo = _unitOfWork.GetRepository<Article>() as ArticleRepository;
             var article = await repo.Get(articleId);
-            var model = _mapper.Map<ArticleEditViewModel>(article);
+            var model = _mapper.Map<ArticleViewModel>(article);
             return model;
         }
 
@@ -92,7 +92,7 @@ namespace FinalBlog.Services
         //    throw new NotImplementedException();
         //}
 
-        public List<ArticleEditViewModel> GetAllArticles()
+        public ArticleListViewModel GetAllArticles()
         {
             var repo = _unitOfWork.GetRepository<Article>() as ArticleRepository;
             var list = repo.GetAll().ToList();
@@ -100,7 +100,7 @@ namespace FinalBlog.Services
             return model;
         }
 
-        public List<ArticleEditViewModel> GetArticlesOfAuthor(string authorId)
+        public List<ArticleViewModel> GetArticlesOfAuthor(string authorId)
         {
             var repo = _unitOfWork.GetRepository<Article>() as ArticleRepository;
             var list = repo.GetArticlesByAuthorId(authorId);
@@ -118,12 +118,12 @@ namespace FinalBlog.Services
             return resultModel;
         }
 
-        private List<ArticleEditViewModel> CreateListOfViewModel(List<Article> list)
+        private List<ArticleViewModel> CreateListOfViewModel(List<Article> list)
         {
-            var model = new List<ArticleEditViewModel>();
+            var model = new List<ArticleViewModel>();
             foreach (var entity in list)
             {
-                model.Add(_mapper.Map<ArticleEditViewModel>(entity));
+                model.Add(_mapper.Map<ArticleViewModel>(entity));
             }
 
             return model;
