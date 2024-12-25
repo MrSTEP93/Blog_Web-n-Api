@@ -44,7 +44,13 @@ namespace FinalBlog.Services
             var repo = _unitOfWork.GetRepository<Article>() as ArticleRepository;
             var article = new Article();
             article.ConvertArticle(model);
-            var resultModel = CheckAuthor(model.AuthorId);
+            var resultModel = new ResultModel(true);
+            //var resultModel = CheckAuthor(model.AuthorId);
+            /*
+            A second operation was started on this context instance before a previous operation completed. 
+            This is usually caused by different threads concurrently using the same instance of DbContext.
+            For more information on how to avoid threading issues with DbContext, see https://go.microsoft.com/fwlink/?linkid=2097913.
+             */
             if (resultModel.IsSuccessed)
                 try
                 {
@@ -100,7 +106,7 @@ namespace FinalBlog.Services
             return model;
         }
 
-        public List<ArticleViewModel> GetArticlesOfAuthor(string authorId)
+        public ArticleListViewModel GetArticlesOfAuthor(string authorId)
         {
             var repo = _unitOfWork.GetRepository<Article>() as ArticleRepository;
             var list = repo.GetArticlesByAuthorId(authorId);
@@ -118,12 +124,12 @@ namespace FinalBlog.Services
             return resultModel;
         }
 
-        private List<ArticleViewModel> CreateListOfViewModel(List<Article> list)
+        private ArticleListViewModel CreateListOfViewModel(List<Article> list)
         {
-            var model = new List<ArticleViewModel>();
+            var model = new ArticleListViewModel() { Articles = new()};
             foreach (var entity in list)
             {
-                model.Add(_mapper.Map<ArticleViewModel>(entity));
+                model.Articles.Add(_mapper.Map<ArticleViewModel>(entity));
             }
 
             return model;

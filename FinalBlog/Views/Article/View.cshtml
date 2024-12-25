@@ -40,45 +40,43 @@
     <p class="text-pre-wrap">@Model.Content</p>
 
     <hr class="hr" />
-    <p class="form-text text-end mb-5">@Model.Author.FirstName @Model.Author.FirstName</p>
+    <span>Дата публикации: </span><label asp-for="CreationTime">@Model.CreationTime</label>
+    <p class="form-text text-end mb-1">@Model.Author.FirstName @Model.Author.LastName</p>
 
-    <div>
-        @foreach(var comment in Model.Comments)
-        {
-            <div class="card p-2 m-2">
-                <div class="card-body">
-                    @comment.Text
-                </div>
-                <div class="row">
-                    <div class="col">
-                        @if (isSuperUser || (!isSuperUser && currentUserId == comment.AuthorId))
-                        {
-                            <div class="col-sm-8">
-                                <form method="post" asp-action="Delete" asp-controller="Comment" asp-route-id="@comment.Id">
-                                    <input type="hidden" name="userId" value="@currentUserId" />
-                                    <input type="hidden" value="@Context.Request.Path" name="returnUrl" />
+    @foreach(var comment in Model.Comments)
+    {
+        <div class="card p-2 m-2">
+            <div class="card-body">
+                @comment.Text
+            </div>
+            <div class="row">
+                <div class="col">
+                    @if (isSuperUser || (!isSuperUser && currentUserId == comment.AuthorId))
+                    {
+                        <div class="col-sm-8">
+                            <form method="post" asp-action="Delete" asp-controller="Comment" asp-route-id="@comment.Id">
+                                <input type="hidden" name="userId" value="@currentUserId" />
+                                <input type="hidden" value="@Context.Request.Path" name="returnUrl" />
 
-                                    <div class="btn-group">
-                                        <a class="btn btn-outline-success btn-sm" onclick="setScrollPos()" asp-action="Edit" asp-controller="Comment" asp-route-id="@comment.Id"
-                                            asp-route-returnUrl="@Context.Request.Path">
-                                            Редактировать
-                                        </a>
-                                        <button type="submit" class="btn btn-outline-danger btn-sm" onclick="setScrollPos()">Удалить</button>
-                                    </div>
-                                </form>
-                            </div>
-                        }
-                    </div>
-                    <div class=" col form-text text-end">
-                        <span class="badge email-badge me-2" onclick="document.getElementById('@(comment.Id)').submit()">
-                            @comment.Author.FirstName @comment.Author.LastName
-                        </span>
-                        <form class="d-none" method="get" id="@comment.Id" asp-action="View" asp-controller="User" asp-route-id="@comment.AuthorId"></form>
-                    </div>
+                                <div class="btn-group">
+                                    <a class="btn btn-outline-success btn-sm" onclick="setScrollPos()" asp-action="Edit" asp-controller="Comment" asp-route-id="@comment.Id"
+                                        asp-route-returnUrl="@Context.Request.Path">
+                                        Редактировать
+                                    </a>
+                                    <button type="submit" class="btn btn-outline-danger btn-sm" onclick="setScrollPos()">Удалить</button>
+                                </div>
+                            </form>
+                        </div>
+                    }
                 </div>
-            </div>   
-        }
-    </div>
-    <hr class="hr mt-5 mb-5"/>
-    <partial name="~/Views/Comment/Create.cshtml" model="@Model.CommentAddViewModel"/>
+                <div class=" col form-text text-end">
+                    <span class="badge email-badge me-2" onclick="document.getElementById('@(comment.Id)').submit()">
+                        @comment.Author.FirstName @comment.Author.LastName
+                    </span>
+                    <form class="d-none" method="get" id="@comment.Id" asp-action="View" asp-controller="User" asp-route-id="@comment.AuthorId"></form>
+                </div>
+            </div>
+        </div>   
+    }
+    <hr class="hr mt-1 mb-5"/>
 </div>

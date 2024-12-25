@@ -67,9 +67,13 @@ namespace FinalBlog.Controllers
             if (ModelState.IsValid)
             {
                 var resultModel = await _articleService.UpdateArticle(model);
-                return Ok(resultModel);
+                if (resultModel.IsSuccessed)
+                    return RedirectToAction("View", "Article", new { id = model.Id });
+
+                foreach (var message in resultModel.Messages)
+                    ModelState.AddModelError("", message);
             }
-            return BadRequest(ModelState);
+            return View("Edit", model);
         }
 
         // GET: ArticleController/Delete/5
