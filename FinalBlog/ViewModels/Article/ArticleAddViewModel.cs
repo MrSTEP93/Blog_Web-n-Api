@@ -14,6 +14,6 @@ namespace FinalBlog.ViewModels.Article
         [Required(ErrorMessage = "Поле Id не может быть пустым!")]
         public string AuthorId { get; set; }
 
-        public virtual DateTime CreationTime { get; } = DateTime.Now;
+        public virtual DateTime CreationTime { get; set; } = DateTime.Now;
     }
 }

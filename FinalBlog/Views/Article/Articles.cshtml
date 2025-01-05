@@ -10,8 +10,7 @@
         : "col mb-0 font-m75 form-text text-end";
 }
 
-<h3 class="mt-5">Все статьи</h3>
-<a asp-action="Create" asp-controller="Article" class="mb-3 text-decoration-none">Добавить статью</a>
+<h3 class="mt-5">@Model.Title</h3>
 
 <div class="row justify-content-center">
     @foreach (var post in Model.Articles)

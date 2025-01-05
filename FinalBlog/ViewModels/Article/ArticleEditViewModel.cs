@@ -13,7 +13,7 @@ namespace FinalBlog.ViewModels.Article
 
         public AuthorViewModel? Author { get; set; }
 
-        public override DateTime CreationTime { get; }
+        public override DateTime CreationTime{ get; set;  }
 
         public List<TagViewModel> Tags { get; } = [];
 

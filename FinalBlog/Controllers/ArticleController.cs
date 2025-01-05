@@ -21,9 +21,9 @@ namespace FinalBlog.Controllers
 
         [Route("Author")]
         [HttpGet]
-        public IActionResult Author(string id)
+        public IActionResult Author(string authorId)
         {
-            var articleList = _articleService.GetArticlesOfAuthor(id);
+            var articleList = _articleService.GetArticlesOfAuthor(authorId);
             return View("Articles", articleList);
         }
 
@@ -45,7 +45,7 @@ namespace FinalBlog.Controllers
             {
                 var resultModel = await _articleService.AddArticle(model);
                 if (resultModel.IsSuccessed)
-                    return RedirectToAction("Author", User.FindFirstValue(ClaimTypes.NameIdentifier));
+                    return RedirectToAction("Author", "Article", User.FindFirstValue(ClaimTypes.NameIdentifier));
                 
                 foreach (var message in resultModel.Messages)
                     ModelState.AddModelError("", message);
