@@ -21,21 +21,19 @@
                    asp-controller="Article" asp-route-id="@post.Id">
                     @post.Title
                 </a>
-                <div class="mb-4">
-                    @foreach (var tag in post.Tags)
-                    {
-                        <span class="badge tag-badge" onclick="document.getElementById('@(tag.Id)').submit()">
-                            @tag.Name
-                        </span>
-                        /*<form class="d-none" id="@tag.Id" method="get" asp-action="Index" asp-controller="Article" asp-route-tagId="@tag.Id"></form>*/
-                    }
-                </div>
                 <div class="row">
-                    @if(isSuperUser || (!isSuperUser && currentUserId == post.AuthorId))
-                    {
-                        <div class="col-sm-8" >
-                            <form method="post" asp-action="Delete" asp-controller="Article" asp-route-id="@post.Id" >
-                            <input type="hidden" name="userId" value="@currentUserId" />
+                    <div class="col-sm-8">
+                        <span>Дата публикации: </span><label asp-for="@post.CreationTime">@post.CreationTime</label>
+                        <a asp-action="Info" asp-controller="User" asp-route-id="@post.Author.Id">
+                            <span class="form-text text-end mb-1"> <b>@post.Author.FirstName @post.Author.LastName</b></span>
+                        </a><br />
+                        <span>Комментариев: @post.CommentsCount</span>
+                    </div>
+                    <div class="col-sm-4">
+                        @if (isSuperUser || (!isSuperUser && currentUserId == post.AuthorId))
+                        {
+                            <form method="post" asp-action="Delete" asp-controller="Article" asp-route-id="@post.Id">
+                                <input type="hidden" name="userId" value="@currentUserId" />
                                 <div class="btn-group">
                                     <a class="btn btn-outline-success btn-sm" asp-action="Edit" asp-controller="Article" asp-route-id="@post.Id">
                                         Редактировать
@@ -43,9 +41,16 @@
                                     <button type="submit" class="btn btn-outline-danger btn-sm">Удалить</button>
                                 </div>
                             </form>
-                        </div>
-                    }
-                    <p class="@labelClasses">Комментариев: @post.CommentsCount</p>
+                        }
+                        Тэги:
+                        @foreach (var tag in post.Tags)
+                        {
+                            <span class="badge tag-badge" onclick="document.getElementById('@(tag.Id)').submit()">
+                                @tag.Name
+                            </span>
+                            /*<form class="d-none" id="@tag.Id" method="get" asp-action="Index" asp-controller="Article" asp-route-tagId="@tag.Id"></form>*/
+                        }
+                    </div>
                 </div>
             </div>
         </div>

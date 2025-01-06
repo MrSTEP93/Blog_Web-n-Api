@@ -128,9 +128,7 @@ namespace FinalBlog.Services
         {
             var model = new ArticleListViewModel() { Articles = [] };
             foreach (var entity in list)
-            {
                 model.Articles.Add(_mapper.Map<ArticleViewModel>(entity));
-            }
 
             return model;
         }

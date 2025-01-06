@@ -41,7 +41,9 @@
 
     <hr class="hr" />
     <span>Дата публикации: </span><label asp-for="CreationTime">@Model.CreationTime</label>
-    <p class="form-text text-end mb-1">@Model.Author.FirstName @Model.Author.LastName</p>
+    <a asp-action="Info" asp-controller="User" asp-route-id="@Model.Author.Id">
+        <p class="form-text text-end mb-1">@Model.Author.FirstName @Model.Author.LastName</p>
+    </a>
 
     @foreach(var comment in Model.Comments)
     {
