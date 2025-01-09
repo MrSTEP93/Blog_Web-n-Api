@@ -2,7 +2,7 @@
 @{
     ViewData["Title"] = "Статья";
 
-    var isSuperUser = User.IsInRole("Admin") || User.IsInRole("Moderator");
+    var isSuperUser = User.IsInRole("Администратор") || User.IsInRole("Модератор");
     var currentUserId = User.Claims.FirstOrDefault(c => c.Type == "UserID")?.Value;
 }
 
@@ -16,7 +16,7 @@
             <h3>@Model.Title</h3>
         </div>
         <div class="col d-flex align-items-center justify-content-end">
-            @if (isSuperUser || (!isSuperUser && currentUserId == Model.AuthorId))
+            @if (isSuperUser || (currentUserId == Model.AuthorId))
             {
                 <a class="btn btn-outline-primary btn-sm m-0" asp-action="Edit" asp-controller="Article" asp-route-id="@Model.Id"
                     asp-route-returnUrl="@Context.Request.Path">

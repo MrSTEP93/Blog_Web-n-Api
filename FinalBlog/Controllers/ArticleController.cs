@@ -1,6 +1,7 @@
 ﻿using FinalBlog.DATA.Models;
 using FinalBlog.Services.Interfaces;
 using FinalBlog.ViewModels.Article;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
@@ -38,10 +39,13 @@ namespace FinalBlog.Controllers
         [HttpGet]
         public IActionResult Add() => View();
 
-
         [HttpPost]
         public async Task<IActionResult> Add(ArticleAddViewModel model)
         {
+            var ifUserCanAdd = _articleService.CheckIfUserCanAdd(User);
+            if (!ifUserCanAdd.IsSuccessed)
+                ModelState.AddModelError("", ifUserCanAdd.Messages[0]);
+
             if (ModelState.IsValid)
             {
                 var resultModel = await _articleService.AddArticle(model);
@@ -65,6 +69,10 @@ namespace FinalBlog.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(ArticleEditViewModel model)
         {
+            var ifUserCanEdit = _articleService.CheckIfUserCanEdit(User, model.AuthorId);
+            if (!ifUserCanEdit.IsSuccessed)
+                ModelState.AddModelError("", ifUserCanEdit.Messages[0]);
+
             if (ModelState.IsValid)
             {
                 var resultModel = await _articleService.UpdateArticle(model);
@@ -85,16 +93,22 @@ namespace FinalBlog.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Delete(int id, string returnUrl = "/")
+        public async Task<IActionResult> Delete(int id)
         {
-            var resultModel = await _articleService.DeleteArticle(id);
-            if (resultModel.IsSuccessed)
-                return RedirectToAction("Index", "Article");
+            var ifUserCanEdit = _articleService.CheckIfUserCanEdit(User, _articleService.GetArticleById(id).Result.AuthorId);
+            if (!ifUserCanEdit.IsSuccessed)
+                ModelState.AddModelError("", ifUserCanEdit.Messages[0]);
 
-            foreach (var message in resultModel.Messages)
-                ModelState.AddModelError("", message);
-            
-            return RedirectToRoute(returnUrl);
+            if (ModelState.IsValid)
+            {
+                var resultModel = await _articleService.DeleteArticle(id);
+                if (resultModel.IsSuccessed)
+                    return RedirectToAction("Index", "Article");
+
+                foreach (var message in resultModel.Messages)
+                    ModelState.AddModelError("", message);
+            }
+            return RedirectToAction("Edit", "Article", new { id });
         }
     }
 }

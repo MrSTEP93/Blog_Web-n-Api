@@ -8,6 +8,7 @@ namespace FinalBlog.ViewModels.Article
     public class ArticleEditViewModel : ArticleAddViewModel
     {
         [Required(ErrorMessage = "Поле Id не может быть пустым!")]
+        [Display(Name = "ID автора", Prompt = "служебное поле")]
         [Range(1, int.MaxValue, ErrorMessage = "Значение Id должно быть больше {1}")]
         public int Id { get; set; }
 

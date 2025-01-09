@@ -40,21 +40,18 @@ namespace FinalBlog.Controllers
         public IActionResult Register() => View();
 
         [HttpPost]
-        public async Task<IActionResult> Register(RegistrationViewModel model)
+        public async Task<IActionResult> Registration(RegistrationViewModel model)
         {
             if (ModelState.IsValid)
             {
                 var result = await _userService.Register(model);
                 if (result.IsSuccessed)
-                {
                     return RedirectToAction("Index", "Home");
-                }
-                else
-                {
-                    return View(result);
-                }
+
+                foreach (var message in result.Messages)
+                    ModelState.AddModelError("", message);
             }
-            return View(ModelState);
+            return View("Register", model);
         }
 
         [Route("Login")]

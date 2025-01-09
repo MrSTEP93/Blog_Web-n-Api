@@ -6,6 +6,7 @@ using FinalBlog.Extensions;
 using FinalBlog.Services.Interfaces;
 using FinalBlog.ViewModels.Article;
 using System.Collections.Generic;
+using System.Security.Claims;
 
 namespace FinalBlog.Services
 {
@@ -23,7 +24,7 @@ namespace FinalBlog.Services
         {
             var repo = _unitOfWork.GetRepository<Article>() as ArticleRepository;
             var article = _mapper.Map<Article>(model);
-            var resultModel = CheckAuthor(model.AuthorId);
+            var resultModel = CheckIfAuthorExists(model.AuthorId);
             if (resultModel.IsSuccessed)
                 try
                 {
@@ -114,7 +115,29 @@ namespace FinalBlog.Services
             return model;
         }
 
-        private ResultModel CheckAuthor(string authorId)
+        public ResultModel CheckIfUserCanEdit(ClaimsPrincipal user, string authorId)
+        {
+            var resultModel = new ResultModel(false, "Вы не можете редактировать эту статью");
+            if (
+                    (user.FindFirstValue(ClaimTypes.NameIdentifier) == authorId)
+                    && user.IsInRole("Администратор") 
+                    && user.IsInRole("Модератор")
+                )
+                resultModel.MarkAsSuccess("Редактирование статьи разрешено");
+
+            return resultModel;
+        }
+        
+        public ResultModel CheckIfUserCanAdd(ClaimsPrincipal user)
+        {
+            var resultModel = new ResultModel(false, "Вы не можете добавлять статьи");
+            if (user.IsInRole("Администратор") && user.IsInRole("Модератор") && user.IsInRole("Пользователь"))
+                resultModel.MarkAsSuccess("Добавление статьи разрешено");
+
+            return resultModel;
+        }
+
+        private ResultModel CheckIfAuthorExists(string authorId)
         {
             var resultModel = new ResultModel(true, "Author found");
             var user = _userService.GetUserById(authorId).Result;

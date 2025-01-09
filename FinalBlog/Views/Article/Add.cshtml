@@ -14,7 +14,6 @@
         <div asp-validation-summary="ModelOnly" class="text-danger fs-6"></div>
         <input type="hidden" asp-for="AuthorId" value="@User.Claims.FirstOrDefault(c => c.Type == "UserID")?.Value" />
 
-        <h5 class="text-muted ms-2">Статья</h5>
         <div class="form-group mb-4 position-relative">
             <div class="row">
                 <label asp-for="Title" class="form-label"></label>
