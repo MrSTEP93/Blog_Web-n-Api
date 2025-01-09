@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Security.Claims;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace FinalBlog.Controllers
 {
@@ -45,12 +46,12 @@ namespace FinalBlog.Controllers
             {
                 var resultModel = await _articleService.AddArticle(model);
                 if (resultModel.IsSuccessed)
-                    return RedirectToAction("Author", "Article", User.FindFirstValue(ClaimTypes.NameIdentifier));
+                    return RedirectToAction("Author", "Article", new { authorId = User.FindFirstValue(ClaimTypes.NameIdentifier) });
                 
                 foreach (var message in resultModel.Messages)
                     ModelState.AddModelError("", message);
             }
-            return View("Add", ModelState);
+            return View("Add", model);
         }
 
         [HttpGet]
@@ -84,10 +85,16 @@ namespace FinalBlog.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(int id, string returnUrl = "/")
         {
             var resultModel = await _articleService.DeleteArticle(id);
-            return Ok(resultModel);
+            if (resultModel.IsSuccessed)
+                return RedirectToAction("Index", "Article");
+
+            foreach (var message in resultModel.Messages)
+                ModelState.AddModelError("", message);
+            
+            return RedirectToRoute(returnUrl);
         }
     }
 }

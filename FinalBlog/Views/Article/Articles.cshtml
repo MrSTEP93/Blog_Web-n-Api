@@ -23,10 +23,10 @@
                 </a>
                 <div class="row">
                     <div class="col-sm-8">
-                        <span>Дата публикации: </span><label asp-for="@post.CreationTime">@post.CreationTime</label>
                         <a asp-action="Info" asp-controller="User" asp-route-id="@post.Author.Id">
                             <span class="form-text text-end mb-1"> <b>@post.Author.FirstName @post.Author.LastName</b></span>
-                        </a><br />
+                        </a>
+                        <span> Опубликовано </span><label asp-for="@post.CreationTime">@post.CreationTime</label><br />
                         <span>Комментариев: @post.CommentsCount</span>
                     </div>
                     <div class="col-sm-4">
