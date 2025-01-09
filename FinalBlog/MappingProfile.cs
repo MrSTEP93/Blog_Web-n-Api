@@ -20,11 +20,12 @@ namespace FinalBlog
             CreateMap<BlogUser, UserViewModel>();
 
             CreateMap<RoleAddViewModel, Role>();
-            CreateMap<RoleEditViewModel, Role>();
-            CreateMap<Role, RoleEditViewModel>();
+            CreateMap<RoleViewModel, Role>();
+            CreateMap<Role, RoleViewModel>();
 
             CreateMap<ArticleEditViewModel, Article>();
             CreateMap<ArticleAddViewModel, Article>();
+            CreateMap<Article, ArticleViewModel>();
             CreateMap<Article, ArticleEditViewModel>();
 
             CreateMap<TagAddViewModel, Tag>();

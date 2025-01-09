@@ -1,0 +1,102 @@
+﻿@model FinalBlog.ViewModels.User.UserViewModel;
+@{
+    ViewData["Title"] = "Пользователь";
+
+    var claimUserId = @User.Claims.FirstOrDefault(c => c.Type == "UserID")?.Value;
+    var isSuperUser = User.IsInRole("Администратор") || User.IsInRole("Модератор");
+    var isCurrentUser = Model.Id.ToString() == claimUserId;
+}
+
+<div class="m-auto max-width-800">
+    <h3 mt-5>Профиль пользователя @Model.FullName</h3>
+    <hr class="hr"/>
+    <div class="card border-muted shadow-lg h-75">
+        <div class="row g-0">
+            <div class="col-7 col-sm-8">
+                <div class="card-body h-100">
+                    <div class="form-group mb-4 position-relative">
+                        <div class="row">
+                            <label asp-for="FirstName" class="form-label col-sm-3 text-muted"></label>
+                            <div class="col-sm-9">
+                                <span class="card-text mb-1"> @Model.FirstName </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group mb-4 position-relative">
+                        <div class="row">
+                            <label asp-for="LastName" class="form-label col-sm-3 text-muted"></label>
+                            <div class="col-sm-9">
+                                <span class="card-text mb-1"> @Model.LastName </span>
+                            </div>
+                        </div>
+                    </div>
+                    @if(isSuperUser || isCurrentUser)
+                    {
+                        <div class="form-group mb-4 position-relative">
+                            <div class="row">
+                                <label asp-for="Email" class="form-label col-sm-3 text-muted"></label>
+                                <div class="col-sm-9">
+                                    <span class="card-text mb-1"> @Model.Email </span>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    <div class="form-group mb-4 position-relative">
+                        <div class="row">
+                            <label asp-for="About" class="form-label col-sm-3 "></label>
+                            <div class="col-sm-9">
+                                <textarea readonly class="form-control">@Model.About</textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group mb-4 position-relative">
+                        <div class="row">
+                            <label asp-for="RegDate" class="form-label col-sm-3 text-muted"></label>
+                            <div class="col-sm-9">
+                                <span class="card-text mb-1"> @Model.RegDate </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group mb-4 position-relative">
+                        Роли:
+                        @foreach (var role in Model.Roles)
+                        {
+                            <span class="badge bg-primary">@role</span>
+                        }
+                    </div>
+                    <div class="form-group position-relative">
+                        <label>Посмотреть активность пользователя:</label> <br/>
+                        <a class="m-3 text-decoration-none" asp-action="Author" asp-controller="Article" asp-route-authorId="@Model.Id">Статьи</a>
+                        @if(isSuperUser)
+                        {
+                            <a class="m-3 text-decoration-none" asp-action="GetComments" asp-controller="Comment" asp-route-userId="@Model.Id">Комментарии</a>
+                        }
+                        @if (User.IsInRole("Администратор"))
+                        {
+                            <a class="m-3 text-decoration-none" asp-action="GetRoles" asp-controller="Role" asp-route-userId="@Model.Id">Роли</a>
+                        }
+                    </div>
+                    <div class="row">
+                        @if (isSuperUser || isCurrentUser)
+                        {
+                            <div class="col mt-4 mb-2 justify-content-end">
+                                <a class="btn btn-outline-primary" asp-action="ShowUserEditForm" asp-controller="User"
+                                    asp-route-id="@Model.Id" asp-route-returnUrl="@Context.Request.Path">
+                                    Редактировать профиль
+                                </a>
+                            </div>
+                            <div class="col mt-4 d-flex justify-content-sm-end justify-content-start">
+                                <form method="post" asp-action="AskDeleteConfirm" asp-controller="User">
+                                    <input type="hidden" name="id" value="@Model.Id" />
+                                    <input type="hidden" name="userId" value="@claimUserId" />
+
+                                    <button type="submit" class="btn btn-outline-danger">Удалить</button>
+                                </form>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>    
+</div>

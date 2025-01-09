@@ -1,69 +1,62 @@
 ﻿using AutoMapper;
+using AutoMapper.Configuration.Annotations;
+using Azure.Core;
 using FinalBlog.DATA;
 using FinalBlog.DATA.Models;
 using FinalBlog.Extensions;
-using FinalBlog.Services;
+using FinalBlog.Services.Interfaces;
 using FinalBlog.ViewModels.User;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 
 namespace FinalBlog.Controllers
 {
     public class UserController(
-        IUserService userService) : Controller
+        IUserService userService,
+        IMapper mapper) : Controller
     {
         private readonly IUserService _userService = userService;
-
+        private readonly IMapper _mapper = mapper;
 
         [Authorize(Roles = "Администратор, Модератор")]
         [Route("UserList")]
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> UserList(string viewMode = "block")
         {
-            //return View();
-            var result = await _userService.GetAllUsers();
-            return Ok(result);
+            var allUsers = await _userService.GetAllUsers();
+            var result = new UserListViewModel()
+            {
+                Users = allUsers.ToViewModel(_mapper),
+                ViewMode = viewMode
+            };
+            return View(result);
         }
 
+        [Route("Register")]
         [HttpGet]
-        public IActionResult RegistrationShortForm()
-        {
-            return View();
-        }
-
-        [Route("Registration")]
-        [HttpGet]
-        public IActionResult RegistrationFullForm(RegistrationViewModel model)
-        {
-            return BadRequest("not ready");
-        }
+        public IActionResult Register() => View();
 
         [HttpPost]
-        public async Task<IActionResult> Register(RegistrationViewModel model)
+        public async Task<IActionResult> Registration(RegistrationViewModel model)
         {
             if (ModelState.IsValid)
             {
                 var result = await _userService.Register(model);
                 if (result.IsSuccessed)
-                {
-                    return Ok(result);
-                }
-                else
-                {
-                    return BadRequest(result);
-                }
+                    return RedirectToAction("Index", "Home");
+
+                foreach (var message in result.Messages)
+                    ModelState.AddModelError("", message);
             }
-            return BadRequest(ModelState);
+            return View("Register", model);
         }
 
         [Route("Login")]
         [HttpGet]
-        public IActionResult Login()
-        {
-            return View();
-        }
+        public IActionResult Login() => View();
 
         [Route("Login")]
         [HttpPost]
@@ -71,66 +64,90 @@ namespace FinalBlog.Controllers
         {
             if (ModelState.IsValid)
             {
-                var resultModel = await _userService.LoginWithClaims(model);
-                if (!resultModel.IsSuccessed)
+                var resultModel = new ResultModel();
+                try
                 {
-                    return BadRequest(resultModel);
+                    resultModel = await _userService.LoginWithClaims(model);
                 }
-                return Ok("Login successfully");
-            }
-            return BadRequest(ModelState);
-        }
-
-        [Route("Logout")]
-        [HttpPost]
-        //[ValidateAntiForgeryToken]
-        public async Task<IActionResult> Logout()
-        {
-            await _userService.Logout();
-            return Ok();
-            //return RedirectToAction("Index", "Home");
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> ShowUser(string id)
-        {
-            var model = await _userService.GetUserById(id);
-
-            return Ok(model);
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> ShowUserEditForm()
-        {
-            if (!User.Identity!.IsAuthenticated)
-                return BadRequest("User not authenticated");
-            
-            var model = await _userService.GetCurrentUser(User);
-            return Ok(model);
-            //return View();
-        }
-
-        [HttpPut]
-        public async Task<IActionResult> UpdateUser(UserEditViewModel model) 
-        {
-            if (ModelState.IsValid)
-            {
-                var resultModel = await _userService.UpdateUserInfo(model);
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", ex.Message);
+                    if (ex.InnerException != null)
+                        ModelState.AddModelError("", ex.Message);
+                }
                 if (!resultModel.IsSuccessed)
                 {
                     foreach (var message in resultModel.Messages)
                         ModelState.AddModelError("", message);
-                } 
-                else
-                    return Ok("Updated");
+                } else
+                {
+                    return RedirectToAction("Index", "Home");
+                }
             }
-            
-            //return View("UserEdit", model);
-            return BadRequest(ModelState);
+            return View(model);
         }
 
+        [Route("Logout")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Logout()
+        {
+            await _userService.Logout();
+            return RedirectToAction("Index", "Home");
+        }
 
-        [Route("DeleteUser")]
+        [HttpGet]
+        public async Task<IActionResult> Info(string id)
+        {
+            if (!User.Identity!.IsAuthenticated)
+                return RedirectToAction("Index", "Home");
+
+            BlogUser userData;
+            if (id == null)
+                userData = await _userService.GetCurrentUser(User);
+            else
+                userData = await _userService.GetUserById(id);
+            
+            return View(userData.ToViewModel(_mapper));
+        }
+
+        [Route("Profile")]
+        [HttpGet]
+        public async Task<IActionResult> ShowUserEditForm(string? id = null)
+        {
+            if (!User.Identity!.IsAuthenticated)
+                return RedirectToAction("Index", "Home");
+
+            BlogUser userData;
+            if (id == null)
+                userData = await _userService.GetCurrentUser(User);
+            else
+                userData = await _userService.GetUserById(id);
+
+            return View("Edit", userData.ToViewModel(_mapper));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateUser(UserViewModel model, List<string> newRoles) 
+        {
+            if (ModelState.IsValid)
+            {
+                ResultModel resultModel;
+                if (newRoles.Count != 0)
+                    resultModel = await _userService.UpdateUserInfo(model, newRoles);
+                else 
+                    resultModel = await _userService.UpdateUserInfo(model);
+
+                if (resultModel.IsSuccessed)
+                    return RedirectToAction("ShowUserEditForm", "User", model);
+
+                foreach (var message in resultModel.Messages)
+                    ModelState.AddModelError("", message);
+            }
+            
+            return View("Edit", model);
+        }
+
         [HttpPost]
         public IActionResult AskDeleteConfirm()
         {

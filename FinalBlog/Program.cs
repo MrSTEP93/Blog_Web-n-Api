@@ -4,6 +4,7 @@ using FinalBlog.DATA.Models;
 using FinalBlog.DATA.Repositories;
 using FinalBlog.Extensions;
 using FinalBlog.Services;
+using FinalBlog.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 

@@ -1,0 +1,40 @@
+﻿@model FinalBlog.ViewModels.Role.RoleViewModel
+@{
+    ViewData["Title"] = "Удаление роли";
+}
+
+<div class="max-width-450 m-auto">
+    <form class="mt-5" method="post" asp-controller="Role" asp-action="Delete">
+        <h3>Подтвердите удаление роли</h3>
+        <hr class="hr" />
+        <div asp-validation-summary="ModelOnly" class="text-danger fs-6"></div>
+
+        <input type="hidden" asp-for="Id" />
+
+        <h3>Вы действительно хотите удалить эту роль?</h3>
+        <div class="form-group mb-4 position-relative">
+            <div class="row">
+                <label asp-for="Name" class="form-label col-sm-3 col-form-label"></label>
+                <div class="col-sm-9">
+                    <input asp-for="Name" />
+                    <input class="form-control" value="@Model.Name" disabled />
+                </div>
+            </div>
+            <span asp-validation-for="Name" class="text-danger error-message"></span>
+        </div>
+
+        <div class="form-group mb-4">
+            <div class="row">
+                <label asp-for="Description" class="form-label col-sm-3 col-form-label"></label>
+                <div class="col-sm-9">
+                    <textarea asp-for="Description" class="form-control textarea" rows="4" disabled></textarea>
+                </div>
+            </div>
+        </div>
+
+        <input name="confirmed" type="hidden" value="yes" />
+        <button type="submit" class="btn btn-primary mb-2">ДА</button>
+        <p class="form-text"><a asp-action="Index" asp-controller="Role" class="text-decoration-none">Отмена</a></p>
+    </form>
+</div>
+

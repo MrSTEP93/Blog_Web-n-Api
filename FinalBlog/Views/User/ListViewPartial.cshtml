@@ -1,0 +1,22 @@
+﻿@model FinalBlog.ViewModels.User.UserViewModel;
+
+<div class="card card-body border-muted shadow-lg h-75 mb-4">
+    <div class="form-group position-relative">
+        <div class="row">
+            <div class="col-sm-9 mb-4">
+                <a class="fs-5 mb-0 link-primary text-decoration-none"
+                   asp-action="Info" asp-controller="User" asp-route-id="@Model.Id">
+                    @Model.FullName
+                </a>
+            </div>
+            <div class="col-sm-3">@Model.Email</div>
+            <div class="col-sm-9">Зарегистрирован: @Model.RegDate</div>
+            <div class="col-sm-3">
+                @foreach (var role in Model.Roles)
+                {
+                    <label class="badge bg-primary">@role</label>
+                }
+            </div>
+        </div>
+    </div>
+</div>

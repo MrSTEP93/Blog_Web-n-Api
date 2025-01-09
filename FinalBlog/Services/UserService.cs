@@ -4,6 +4,7 @@ using FinalBlog.DATA.Models;
 using FinalBlog.DATA.Repositories;
 using FinalBlog.DATA.UoW;
 using FinalBlog.Extensions;
+using FinalBlog.Services.Interfaces;
 using FinalBlog.ViewModels.User;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -51,7 +52,7 @@ namespace FinalBlog.Services
                     if (ex.InnerException != null)
                         resultModel.AddMessage(ex.InnerException.Message);
                 }
-            } else 
+            } else
                 resultModel.FillMessagesFromResult(result);
 
             return resultModel;
@@ -66,12 +67,12 @@ namespace FinalBlog.Services
                 resultModel.MarkAsSuccess("Успешная авторизация");
             else
             {
-                resultModel.AddMessage("Неправильный логин и (или) пароль");
+                resultModel.AddMessage("Неправильный пароль");
             }
 
             return resultModel;
         }
-        
+
         public async Task<ResultModel> LoginWithClaims(LoginViewModel model)
         {
             ResultModel resultModel = new(false);
@@ -87,7 +88,7 @@ namespace FinalBlog.Services
             }
             else
             {
-                resultModel.AddMessage("Неправильный логин и (или) пароль");
+                resultModel.AddMessage("Неправильный пароль");
             }
 
             return resultModel;
@@ -95,19 +96,17 @@ namespace FinalBlog.Services
 
         public async Task Logout() => await _signInManager.SignOutAsync();
 
-        public async Task<List<UserViewModel>> GetAllUsers()
+        public async Task<List<BlogUser>> GetAllUsers()
         {
             var repository = _unitOfWork.GetRepository<BlogUser>() as UserRepository;
             var userList = repository.GetAll().ToList();
 
-            var model = new List<UserViewModel>();
             foreach (var user in userList)
             {
                 user.Roles = await _roleService.GetRolesOfUser(user);
-                model.Add(_mapper.Map<UserViewModel>(user));
             }
 
-            return model;
+            return userList;
         }
 
         public List<Claim> GetUserClaims(BlogUser user)
@@ -121,36 +120,64 @@ namespace FinalBlog.Services
             return claims;
         }
 
-        public async Task<UserViewModel> GetUserById(string id)
+        public async Task<BlogUser> GetUserById(string id)
         {
             var repository = _unitOfWork.GetRepository<BlogUser>() as UserRepository;
             var user = await repository.Get(id)
                 ?? throw new NullReferenceException($"Пользователь не найден в базе (id={id})");
             user.Roles = await _roleService.GetRolesOfUser(user);
-            var model = _mapper.Map<UserViewModel>(user);
+            //var model = _mapper.Map<UserViewModel>(user);
             //model.Roles = userRoles;
 
-            return model;
+            return user;
         }
 
-        public async Task<UserViewModel> GetCurrentUser(ClaimsPrincipal claimsPrincipal)
+        public async Task<BlogUser> GetCurrentUser(ClaimsPrincipal claimsPrincipal)
         {
             var user = await _userManager.GetUserAsync(claimsPrincipal)
                 ?? throw new NullReferenceException($"Пользователь не найден в базе данных");
             user.Roles = await _roleService.GetRolesOfUser(user);
-            var model = _mapper.Map<UserViewModel>(user);
+            //var model = _mapper.Map<UserViewModel>(user);
 
-            return model;
+            return user;
         }
 
-        public async Task<ResultModel> UpdateUserInfo(UserEditViewModel model)
+        public async Task<ResultModel> UpdateUserInfo(UserViewModel model, List<string> newRolesList)
+        {
+            var resultModel = await UpdateUserInfo(model);
+            var user = await _userManager.FindByIdAsync(model.Id.ToString());
+            var allRoles = _roleService.GetAllRoles();
+            foreach (var role in allRoles)
+            {
+                if (newRolesList.Contains(role.Name))
+                {
+                    if (!await _userManager.IsInRoleAsync(user, role.Name))
+                    {
+                        var result = await _userManager.AddToRoleAsync(user, role.Name);
+                        string resMessage = $"Роль \"{role.Name}\" " + (result.Succeeded ? "успешно добавлена" : "добавить не удалось" );
+                        resultModel.AddMessage(resMessage);
+                    }
+                }
+                else
+                {
+                    if (await _userManager.IsInRoleAsync(user, role.Name))
+                    {
+                        var result = await _userManager.RemoveFromRoleAsync(user, role.Name);
+                        string resMessage = $"Роль \"{role.Name}\" " + (result.Succeeded ? "успешно удалена" : "удалить не удалось");
+                        resultModel.AddMessage(resMessage);
+                    }
+                }
+            }
+            return resultModel;
+        }
+
+        public async Task<ResultModel> UpdateUserInfo(UserViewModel model)
         {
             var user = await _userManager.FindByIdAsync(model.Id.ToString());
             user.ConvertUser(model);
             var result = await _userManager.UpdateAsync(user);
 
             ResultModel resultModel = new(in result, "Данные успешно обновлены");
-            //resultModel.ProcessResult();
             return resultModel;
         }
 

@@ -9,8 +9,8 @@ namespace FinalBlog.ViewModels.Comment
 
         public int ArticleId { get; }
 
-        //[Required(ErrorMessage = "Поле Id не может быть пустым!")]
-        //public string AuthorId { get; set; }
+        [Required(ErrorMessage = "Поле Id не может быть пустым!")]
+        public string AuthorId { get; set; }
 
         //public AuthorViewModel? Author { get; set; }
 

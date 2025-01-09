@@ -1,0 +1,36 @@
+﻿@model FinalBlog.ViewModels.Article.ArticleAddViewModel
+@{
+    ViewData["Title"] = "Создание статьи";
+}
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.11/jquery.validate.unobtrusive.js"></script>
+
+<div class="m-auto mt-5">
+    <h3>Добавление статьи</h3>
+    <hr class="hr" />
+    <form method="post" asp-controller="Article" asp-action="Add">
+        <div asp-validation-summary="ModelOnly" class="text-danger fs-6"></div>
+        <input type="hidden" asp-for="AuthorId" value="@User.Claims.FirstOrDefault(c => c.Type == "UserID")?.Value" />
+
+        <div class="form-group mb-4 position-relative">
+            <div class="row">
+                <label asp-for="Title" class="form-label"></label>
+                <input asp-for="Title" class="form-control" />
+            </div>
+            <span asp-validation-for="Title" class="text-danger error-message"></span>
+        </div>
+
+        <div class="form-group mb-4 position-relative">
+            <div class="row">
+                <label asp-for="Content" class="form-label"></label>
+                <textarea asp-for="Content" class="form-control" rows="15"></textarea>
+            </div>
+            <span asp-validation-for="Content" class="text-danger error-message"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary mb-2">Добавить</button>
+        <p class="form-text"><a asp-action="Index" asp-controller="Article" class="text-decoration-none">Перейти к списку всех статей</a></p>
+    </form>
+</div>
