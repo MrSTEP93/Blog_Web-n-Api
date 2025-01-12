@@ -1,4 +1,5 @@
-﻿using FinalBlog.ViewModels.User;
+﻿using FinalBlog.ViewModels.Article;
+using FinalBlog.ViewModels.User;
 using System.ComponentModel.DataAnnotations;
 
 namespace FinalBlog.ViewModels.Comment
@@ -7,17 +8,22 @@ namespace FinalBlog.ViewModels.Comment
     {
         [Required(ErrorMessage = "Поле ArticleId не может быть пустым!")]
         [Range(1, int.MaxValue, ErrorMessage = "Значение ArticleId должно быть больше {1}")]
+        [Display(Name = "ID статьи", Prompt = "ID статьи (должен заполниться автоматически)")]
         public int ArticleId { get; set; }
+
+        public ArticleViewModel? Article { get; set; }
         
-        /// <summary>
-        /// Временный атрибут Required
-        /// </summary>
-        [Required(ErrorMessage = "Поле Id не может быть пустым!")]
+        [Required(ErrorMessage = "Id автора не может быть пустым!")]
+        [Display(Name = "ID автора", Prompt = "ID автора (должен заполниться автоматически)")]
         public string AuthorId { get; set; }
 
+        public AuthorViewModel? Author { get; set; }
+
         [Required(ErrorMessage = "Комментарий должен содержать текст!")]
+        [Display(Name = "Текст комментария", Prompt = "Введите текст комментария")]
         public string Text { get; set; }
 
-        public DateTime CreationTime { get; set; } = DateTime.Now;
+        [Display(Name = "Дата создания комментария", Prompt = "Дата создания комментария (должна заполниться автоматически)")]
+        public virtual DateTime CreationTime { get; set; } = DateTime.Now;
     }
 }

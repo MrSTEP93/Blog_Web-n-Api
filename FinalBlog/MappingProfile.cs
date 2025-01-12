@@ -35,6 +35,7 @@ namespace FinalBlog
             CreateMap<CommentAddViewModel, Comment>();
             CreateMap<CommentEditViewModel, Comment>();
             CreateMap<Comment, CommentEditViewModel>();
+            CreateMap<Comment, CommentViewModel>();
         }
     }
 }

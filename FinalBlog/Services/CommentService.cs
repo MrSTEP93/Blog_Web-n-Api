@@ -72,31 +72,31 @@ namespace FinalBlog.Services
             return resultModel;
         }
 
-        public List<CommentEditViewModel> GetAllComments()
+        public List<CommentViewModel> GetAllComments()
         {
             var repo = _unitOfWork.GetRepository<Comment>() as CommentRepository;
             var commentList = repo.GetAll().ToList();
             return CreateListOfViewModel(commentList);
         }
 
-        public async Task<CommentEditViewModel> GetCommentById(int commentId)
+        public async Task<CommentViewModel> GetCommentById(int commentId)
         {
             var repo = _unitOfWork.GetRepository<Comment>() as CommentRepository;
             var comment = await repo.Get(commentId);
-            return _mapper.Map<CommentEditViewModel>(comment);
+            return _mapper.Map<CommentViewModel>(comment);
         }
 
-        public List<CommentEditViewModel> GetCommentsOfArticle(int articleId)
+        public List<CommentViewModel> GetCommentsOfArticle(int articleId)
         {
             throw new NotImplementedException();
         }
 
-        private List<CommentEditViewModel> CreateListOfViewModel(List<Comment> list)
+        private List<CommentViewModel> CreateListOfViewModel(List<Comment> list)
         {
-            var model = new List<CommentEditViewModel>();
+            var model = new List<CommentViewModel>();
             foreach (var entity in list)
             {
-                model.Add(_mapper.Map<CommentEditViewModel>(entity));
+                model.Add(_mapper.Map<CommentViewModel>(entity));
             }
 
             return model;

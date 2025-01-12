@@ -17,11 +17,11 @@
 
         public int ArticleId { get; set; }
 
-        public Article? TargetArticle { get; set; }
+        public Article? Article { get; set; }
 
         public string AuthorId { get; set; }
 
-        public BlogUser? CommentAuthor { get; set; }
+        public BlogUser? Author { get; set; }
 
         public string Text { get; set; }
 

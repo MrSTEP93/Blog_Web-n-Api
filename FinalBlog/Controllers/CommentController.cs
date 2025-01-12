@@ -1,7 +1,9 @@
-﻿using FinalBlog.Services.Interfaces;
+﻿using FinalBlog.DATA.Models;
+using FinalBlog.Services.Interfaces;
 using FinalBlog.ViewModels.Comment;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace FinalBlog.Controllers
 {
@@ -13,8 +15,12 @@ namespace FinalBlog.Controllers
 
         public ActionResult Index()
         {
-            var list = _commentService.GetAllComments();
-            return Ok(list);
+            var model = new CommentListViewModel
+            {
+                CommentList = [.. _commentService.GetAllComments().OrderByDescending(x => x.CreationTime)],
+            };
+            model.CommentsCount = model.CommentList.Count;
+            return View("CommentsList", model);
         }
 
         public async Task<IActionResult> Details(int id)
@@ -23,38 +29,44 @@ namespace FinalBlog.Controllers
             return Ok(model);
         }
 
-        public IActionResult Add()
-        {
-            return View();
-        }
+        public IActionResult Add() => View();
 
         [HttpPost]
-        //[ValidateAntiForgeryToken]
+        [ValidateAntiForgeryToken]
         public async Task<ActionResult> Add(CommentAddViewModel model)
         {
             if (ModelState.IsValid)
             {
-                var result = await _commentService.AddComment(model);
-                return Ok(result);
+                var resultModel = await _commentService.AddComment(model);
+                if (resultModel.IsSuccessed)
+                    return RedirectToAction("View", "Article", new { id = model.ArticleId });
+
+                foreach (var message in resultModel.Messages)
+                    ModelState.AddModelError("", message);
             }
-            return BadRequest(ModelState);
+            return View("Add", model);
         }
 
         public ActionResult Edit(int id)
         {
-            return View();
+            var model = _commentService.GetCommentById(id).Result;
+            return View("Edit", model);
         }
 
-        [HttpPut]
-        //[ValidateAntiForgeryToken]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(CommentEditViewModel model)
         {
             if (ModelState.IsValid)
             {
-                var result = await _commentService.UpdateComment(model);
-                return Ok(result);
+                var resultModel = await _commentService.UpdateComment(model);
+                if (resultModel.IsSuccessed)
+                    return RedirectToAction("View", "Article", new { id = model.ArticleId });
+
+                foreach (var message in resultModel.Messages)
+                    ModelState.AddModelError("", message);
             }
-            return BadRequest(ModelState);
+            return View("Edit", model);
         }
 
         // GET: CommentController/Delete/5
@@ -63,17 +75,20 @@ namespace FinalBlog.Controllers
         //    return View();
         //}
 
-        // POST: CommentController/Delete/5
-        [HttpDelete]
-        //[ValidateAntiForgeryToken]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
             if (ModelState.IsValid)
             {
-                var result = await _commentService.DeleteComment(id);
-                return Ok(result);
+                var resultModel = await _commentService.DeleteComment(id);
+                if (resultModel.IsSuccessed)
+                    return RedirectToAction("Index", "Article");
+
+                foreach (var message in resultModel.Messages)
+                    ModelState.AddModelError("", message);
             }
-            return BadRequest(ModelState);
+            return RedirectToAction("Edit", "Comment", new { id });
         }
     }
 }

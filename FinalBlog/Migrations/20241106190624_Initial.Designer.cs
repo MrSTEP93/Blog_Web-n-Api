@@ -372,19 +372,19 @@ namespace FinalBlog.Migrations
 
             modelBuilder.Entity("FinalBlog.DATA.Models.Comment", b =>
                 {
-                    b.HasOne("FinalBlog.DATA.Models.Article", "TargetArticle")
+                    b.HasOne("FinalBlog.DATA.Models.Article", "Article")
                         .WithMany()
                         .HasForeignKey("ArticleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("FinalBlog.DATA.Models.BlogUser", "CommentAuthor")
+                    b.HasOne("FinalBlog.DATA.Models.BlogUser", "Author")
                         .WithMany()
                         .HasForeignKey("CommentAuthorId");
 
-                    b.Navigation("CommentAuthor");
+                    b.Navigation("Author");
 
-                    b.Navigation("TargetArticle");
+                    b.Navigation("Article");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
