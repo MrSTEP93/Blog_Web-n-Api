@@ -7,6 +7,10 @@
 }
 
 <h3 class="mt-5">Все комментарии (новые вверху)</h3>
+@if (!string.IsNullOrEmpty(Model.authorFullName))
+{
+    <h4>пользователя Model.authorFullName</h4>
+}
 <div class="row justify-content-center">
     @foreach (var comment in Model.CommentList)
     {

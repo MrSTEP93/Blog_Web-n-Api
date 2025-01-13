@@ -5,5 +5,7 @@
         public List<CommentViewModel> CommentList { get; set; } = [];
 
         public int CommentsCount { get; set; }
+
+        public string? authorFullName { get; set; }
     }
 }

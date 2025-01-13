@@ -10,7 +10,7 @@ namespace FinalBlog.ViewModels.Comment
         [Range(1, int.MaxValue, ErrorMessage = "Значение Id должно быть больше {1}")]
         public int Id { get; set; }
 
-        public override DateTime CreationTime { get; set; }
+        //public override DateTime CreationTime { get; set; }
 
         public string? ReturnUrl { get; set; }
     }

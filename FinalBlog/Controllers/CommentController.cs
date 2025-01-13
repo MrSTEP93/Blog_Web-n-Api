@@ -13,12 +13,18 @@ namespace FinalBlog.Controllers
     {
         readonly ICommentService _commentService = commentService;
 
-        public ActionResult Index()
+        public ActionResult Index(string? authorId = null, string? authorFullName = null)
         {
-            var model = new CommentListViewModel
+            var model = new CommentListViewModel();
+            if (string.IsNullOrEmpty(authorId))
             {
-                CommentList = [.. _commentService.GetAllComments().OrderByDescending(x => x.CreationTime)],
-            };
+                model.CommentList = [.. _commentService.GetAllComments().OrderByDescending(x => x.CreationTime)];
+            } else
+            {
+                model.CommentList = [.. _commentService.GetCommentsOfAuthor(authorId).OrderByDescending(x => x.CreationTime)];
+                model.authorFullName = authorFullName;
+            }
+            
             model.CommentsCount = model.CommentList.Count;
             return View("CommentsList", model);
         }
@@ -35,6 +41,7 @@ namespace FinalBlog.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Add(CommentAddViewModel model)
         {
+            model.CreationTime = DateTime.Now;
             if (ModelState.IsValid)
             {
                 var resultModel = await _commentService.AddComment(model);

@@ -14,7 +14,7 @@ namespace FinalBlog.ViewModels.Article
         public string Content { get; set; }
 
         [Required(ErrorMessage = "Поле Id не может быть пустым!")]
-        [Display(Name = "ID автора", Prompt = "служебное поле")]
+        [Display(Name = "ID автора", Prompt = "служебное поле (должно заполниться автоматически)")]
         public string AuthorId { get; set; }
 
         public virtual DateTime CreationTime { get; set; } = DateTime.Now;

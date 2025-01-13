@@ -13,12 +13,14 @@ namespace FinalBlog.Services
     public class ArticleService(
         IMapper mapper,
         IUnitOfWork unitOfWork,
-        IUserService userService
+        IUserService userService,
+        ICommentService commentService
         ) : IArticleService
     {
         readonly IMapper _mapper = mapper;
         readonly IUnitOfWork _unitOfWork = unitOfWork;
         readonly IUserService _userService = userService;
+        readonly ICommentService _commentService = commentService;
 
         public async Task<ResultModel> AddArticle(ArticleAddViewModel model)
         {
@@ -91,6 +93,7 @@ namespace FinalBlog.Services
             var repo = _unitOfWork.GetRepository<Article>() as ArticleRepository;
             var article = await repo.Get(articleId);
             var model = _mapper.Map<ArticleViewModel>(article);
+            model.Comments = _commentService.GetCommentsOfArticle(articleId);
             return model;
         }
 
@@ -104,6 +107,10 @@ namespace FinalBlog.Services
             var repo = _unitOfWork.GetRepository<Article>() as ArticleRepository;
             var list = repo.GetAll().OrderByDescending(x => x.CreationTime).ToList();
             var model = CreateListOfViewModel(list);
+            foreach (var post in model.Articles)
+            {
+                post.Comments = _commentService.GetCommentsOfArticle(post.Id);
+            }
             return model;
         }
 
@@ -119,9 +126,9 @@ namespace FinalBlog.Services
         {
             var resultModel = new ResultModel(false, "Вы не можете редактировать эту статью");
             if (
-                    (user.FindFirstValue(ClaimTypes.NameIdentifier) == authorId)
-                    && user.IsInRole("Администратор") 
-                    && user.IsInRole("Модератор")
+                    user.FindFirstValue(ClaimTypes.NameIdentifier) == authorId
+                    || user.IsInRole("Администратор") 
+                    || user.IsInRole("Модератор")
                 )
                 resultModel.MarkAsSuccess("Редактирование статьи разрешено");
 
@@ -131,7 +138,7 @@ namespace FinalBlog.Services
         public ResultModel CheckIfUserCanAdd(ClaimsPrincipal user)
         {
             var resultModel = new ResultModel(false, "Вы не можете добавлять статьи");
-            if (user.IsInRole("Администратор") && user.IsInRole("Модератор") && user.IsInRole("Пользователь"))
+            if (user.IsInRole("Администратор") || user.IsInRole("Модератор") || user.IsInRole("Пользователь"))
                 resultModel.MarkAsSuccess("Добавление статьи разрешено");
 
             return resultModel;

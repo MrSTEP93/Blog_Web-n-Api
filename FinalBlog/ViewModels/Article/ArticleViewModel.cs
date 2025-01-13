@@ -7,15 +7,21 @@ namespace FinalBlog.ViewModels.Article
 {
     public class ArticleViewModel : ArticleEditViewModel
     {
-        public List<CommentViewModel> Comments { get; } = [];
+        public List<CommentViewModel> Comments { get; set; } = [];
 
-        public int CommentsCount { get; } = 0;
+        public int CommentsCount { 
+                get { return Comments.Count; }
+            }
 
-        public CommentAddViewModel CommentAddViewModel { get; set; } = new();
+        private CommentAddViewModel _commentAddViewModel = new();
 
-        public ArticleViewModel()
-        {
-            CommentsCount = Comments.Count;
-        }
+        public CommentAddViewModel CommentAddViewModel {
+            get 
+            {
+                _commentAddViewModel.ArticleId = Id;
+                return _commentAddViewModel; 
+            }
+            set { }
+        } 
     }
 }

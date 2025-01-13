@@ -3,9 +3,11 @@ using FinalBlog.DATA.Models;
 using FinalBlog.DATA.Repositories;
 using FinalBlog.DATA.UoW;
 using FinalBlog.Services.Interfaces;
+using FinalBlog.ViewModels.Article;
 using FinalBlog.ViewModels.Comment;
 using FinalBlog.ViewModels.Tag;
 using System.ComponentModel.Design;
+using System.Security.Claims;
 
 namespace FinalBlog.Services
 {
@@ -76,7 +78,7 @@ namespace FinalBlog.Services
         {
             var repo = _unitOfWork.GetRepository<Comment>() as CommentRepository;
             var commentList = repo.GetAll().ToList();
-            return CreateListOfViewModel(commentList);
+            return CreateViewModelList(commentList);
         }
 
         public async Task<CommentViewModel> GetCommentById(int commentId)
@@ -88,16 +90,56 @@ namespace FinalBlog.Services
 
         public List<CommentViewModel> GetCommentsOfArticle(int articleId)
         {
-            throw new NotImplementedException();
+            var repo = _unitOfWork.GetRepository<Comment>() as CommentRepository;
+            var comments = repo.GetAll()
+                .Where(x => x.ArticleId == articleId)
+                .OrderBy(x => x.CreationTime)
+                .ToList();
+            var model = CreateViewModelList(comments);
+            return model;
         }
 
-        private List<CommentViewModel> CreateListOfViewModel(List<Comment> list)
+        public List<CommentViewModel> GetCommentsOfAuthor(string authorId)
+        {
+            var repo = _unitOfWork.GetRepository<Comment>() as CommentRepository;
+            var comments = repo.GetAll()
+                .Where(x => x.AuthorId == authorId)
+                .ToList();
+            var model = CreateViewModelList(comments);
+            return model;
+        }
+
+        public ResultModel CheckIfUserCanEdit(ClaimsPrincipal user, string authorId)
+        {
+            var resultModel = new ResultModel(false, "Вы не можете редактировать этот комментарий");
+            if (
+                    user.FindFirstValue(ClaimTypes.NameIdentifier) == authorId
+                    || user.IsInRole("Администратор")
+                    || user.IsInRole("Модератор")
+                )
+                resultModel.MarkAsSuccess("Редактирование комментария разрешено");
+
+            return resultModel;
+        }
+
+        public ResultModel CheckIfUserCanAdd(ClaimsPrincipal user)
+        {
+            var resultModel = new ResultModel(false, "Вы не можете писать комментарии");
+            if (
+                    user.IsInRole("Администратор") 
+                    || user.IsInRole("Модератор") 
+                    || user.IsInRole("Пользователь")
+               )
+               resultModel.MarkAsSuccess("Добавление комментов разрешено");
+
+            return resultModel;
+        }
+
+        private List<CommentViewModel> CreateViewModelList(List<Comment> list)
         {
             var model = new List<CommentViewModel>();
             foreach (var entity in list)
-            {
                 model.Add(_mapper.Map<CommentViewModel>(entity));
-            }
 
             return model;
         }
