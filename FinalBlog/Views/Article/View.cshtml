@@ -34,7 +34,9 @@
             <form class="d-none" id="@tag.Id" method="get" asp-action="Index" asp-controller="Article" asp-route-tagId="@tag.Id"></form>
         }
     </div>
-    <p class="text-pre-wrap">@Model.Content</p>
+    <div class="card p-2 m-2">
+        <p class="text-pre-wrap">@Model.Content</p>
+    </div>
 
     <hr class="hr" />
     <span class="text-muted">Дата публикации: </span><label asp-for="CreationTime">@Model.CreationTime</label>
@@ -49,13 +51,11 @@
         <div class="card p-2 m-2">
             <div class="row">
                 <div class="col">
-                    <div class="col-sm-8">
-                        <a asp-action="Info" asp-controller="User" asp-route-id="@comment.AuthorId">
-                            @comment.Author.FullName 
-                        </a><span class="text-muted">
-                            @comment.CreationTime
-                        </span>
-                    </div>
+                    <a asp-action="Info" asp-controller="User" asp-route-id="@comment.AuthorId">
+                        @comment.Author.FullName 
+                    </a><span class="text-muted">
+                        @comment.CreationTime
+                    </span>
                 </div>
                 @if (isSuperUser || currentUserId == comment.AuthorId)
                 {
@@ -81,6 +81,6 @@
             </div>
         </div>   
     }
+    <hr class="hr mt-1 mb-1"/>
     <partial name="~/Views/Comment/Add.cshtml" model="@Model.CommentAddViewModel" />
-    <hr class="hr mt-1 mb-5"/>
 </div>

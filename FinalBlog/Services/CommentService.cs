@@ -13,11 +13,13 @@ namespace FinalBlog.Services
 {
     public class CommentService(
         IMapper mapper,
-        IUnitOfWork unitOfWork
+        IUnitOfWork unitOfWork,
+        IUserService userService
         ) : ICommentService
     {
         readonly IMapper _mapper = mapper;
         readonly IUnitOfWork _unitOfWork = unitOfWork;
+        readonly IUserService _userService = userService;
 
         public async Task<ResultModel> AddComment(CommentAddViewModel model)
         {

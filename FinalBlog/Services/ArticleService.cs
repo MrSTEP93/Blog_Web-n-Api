@@ -97,11 +97,6 @@ namespace FinalBlog.Services
             return model;
         }
 
-        //public Task<ArticleViewModel> GetArticleByName(string articleName)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
         public ArticleListViewModel GetAllArticles()
         {
             var repo = _unitOfWork.GetRepository<Article>() as ArticleRepository;
@@ -138,7 +133,11 @@ namespace FinalBlog.Services
         public ResultModel CheckIfUserCanAdd(ClaimsPrincipal user)
         {
             var resultModel = new ResultModel(false, "Вы не можете добавлять статьи");
-            if (user.IsInRole("Администратор") || user.IsInRole("Модератор") || user.IsInRole("Пользователь"))
+            if (
+                    user.IsInRole("Администратор")
+                    || user.IsInRole("Модератор")
+                    || user.IsInRole("Пользователь")
+                )
                 resultModel.MarkAsSuccess("Добавление статьи разрешено");
 
             return resultModel;
@@ -171,6 +170,5 @@ namespace FinalBlog.Services
             
             return model;
         }
-
     }
 }

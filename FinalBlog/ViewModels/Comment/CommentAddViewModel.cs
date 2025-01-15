@@ -24,7 +24,7 @@ namespace FinalBlog.ViewModels.Comment
         public string Text { get; set; }
 
         //[Range(typeof(DateTime), "01.01.2020", "31.12.2090", ErrorMessage = "Неверная дата")]
-        [Range(typeof(DateTime), "2020-01-01", "2090-12-31", ErrorMessage = "Неверная дата")]
+        //[Range(typeof(DateTime), "2020-01-01", "2090-12-31", ErrorMessage = "Неверная дата")]
         [Display(Name = "Дата создания комментария", Prompt = "Дата создания комментария (должна заполниться автоматически)")]
         public virtual DateTime CreationTime { get; set; }
     }

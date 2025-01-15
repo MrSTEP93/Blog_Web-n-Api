@@ -6,6 +6,6 @@
 
         public int CommentsCount { get; set; }
 
-        public string? authorFullName { get; set; }
+        public string? AuthorFullName { get; set; }
     }
 }

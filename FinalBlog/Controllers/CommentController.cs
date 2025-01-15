@@ -1,4 +1,5 @@
 ﻿using FinalBlog.DATA.Models;
+using FinalBlog.Services;
 using FinalBlog.Services.Interfaces;
 using FinalBlog.ViewModels.Comment;
 using Microsoft.AspNetCore.Http;
@@ -22,7 +23,7 @@ namespace FinalBlog.Controllers
             } else
             {
                 model.CommentList = [.. _commentService.GetCommentsOfAuthor(authorId).OrderByDescending(x => x.CreationTime)];
-                model.authorFullName = authorFullName;
+                model.AuthorFullName = authorFullName;
             }
             
             model.CommentsCount = model.CommentList.Count;
@@ -41,6 +42,10 @@ namespace FinalBlog.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Add(CommentAddViewModel model)
         {
+            var ifUserCanAdd = _commentService.CheckIfUserCanAdd(User);
+            if (!ifUserCanAdd.IsSuccessed)
+                ModelState.AddModelError("", ifUserCanAdd.Messages[0]);
+
             model.CreationTime = DateTime.Now;
             if (ModelState.IsValid)
             {
@@ -64,6 +69,10 @@ namespace FinalBlog.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(CommentEditViewModel model)
         {
+            var ifUserCanEdit = _commentService.CheckIfUserCanEdit(User, model.AuthorId);
+            if (!ifUserCanEdit.IsSuccessed)
+                ModelState.AddModelError("", ifUserCanEdit.Messages[0]);
+
             if (ModelState.IsValid)
             {
                 var resultModel = await _commentService.UpdateComment(model);
@@ -86,6 +95,10 @@ namespace FinalBlog.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
+            var ifUserCanEdit = _commentService.CheckIfUserCanEdit(User, _commentService.GetCommentById(id).Result.AuthorId);
+            if (!ifUserCanEdit.IsSuccessed)
+                ModelState.AddModelError("", ifUserCanEdit.Messages[0]);
+
             if (ModelState.IsValid)
             {
                 var resultModel = await _commentService.DeleteComment(id);
