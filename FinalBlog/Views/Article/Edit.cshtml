@@ -25,14 +25,14 @@
             </div>
 
             <div class="form-group">
-                <select class="form-select form-select-sm shadow-none input-primary-board" id="tags" size="4">
-                    @foreach (var tag in Model.AllTags!)
+                <select class="form-select form-select-sm shadow-none input-primary-board" id="AllTags" size="5">
+                    @foreach (var tag in Model.AllTags.Tags)
                     {
                         <option value="@tag.Id">@tag.Name</option>
                     }
                 </select>
             </div>
-            <p class="form-text">Если вы не нашли нужный тег, <a asp-action="Create" asp-controller="Tag" class="text-decoration-none">создайте его</a></p>
+            <p class="form-text">Если вы не нашли нужный тег, <a asp-action="Add" asp-controller="Tag" class="text-decoration-none">создайте его</a></p>
         </div>
 
         <hr class="hr" />

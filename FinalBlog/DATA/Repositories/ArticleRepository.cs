@@ -7,7 +7,10 @@ namespace FinalBlog.DATA.Repositories
     {
         public override async Task<Article?> Get(int id)
         {
-            return await _db.Articles.Include(a => a.Author).Where(a => a.Id == id).FirstOrDefaultAsync();
+            return await _db.Articles
+                .Include(a => a.Author)
+                .Include(a => a.Tags)
+                .Where(a => a.Id == id).FirstOrDefaultAsync();
         }
         
         public override IEnumerable<Article> GetAll()
@@ -18,6 +21,11 @@ namespace FinalBlog.DATA.Repositories
         public List<Article> GetArticlesByAuthorId(string authorId)
         {
             return [.. _db.Articles.Include(a => a.Author).Where(a => a.AuthorId == authorId)];
+        }
+
+        public List<Article> GetArticlesByTagId(int tagId)
+        {
+            return [.. _db.Articles.Where(a => a.Tags.Any(x => x.Id == tagId))];
         }
     }
 }

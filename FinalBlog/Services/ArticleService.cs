@@ -14,13 +14,15 @@ namespace FinalBlog.Services
         IMapper mapper,
         IUnitOfWork unitOfWork,
         IUserService userService,
-        ICommentService commentService
+        ICommentService commentService,
+        ITagService tagService
         ) : IArticleService
     {
         readonly IMapper _mapper = mapper;
         readonly IUnitOfWork _unitOfWork = unitOfWork;
         readonly IUserService _userService = userService;
         readonly ICommentService _commentService = commentService;
+        readonly ITagService _tagService = tagService;
 
         public async Task<ResultModel> AddArticle(ArticleAddViewModel model)
         {
@@ -94,6 +96,7 @@ namespace FinalBlog.Services
             var article = await repo.Get(articleId);
             var model = _mapper.Map<ArticleViewModel>(article);
             model.Comments = _commentService.GetCommentsOfArticle(articleId);
+            model.AllTags = _tagService.GetAllTags();
             return model;
         }
 
@@ -114,6 +117,14 @@ namespace FinalBlog.Services
             var repo = _unitOfWork.GetRepository<Article>() as ArticleRepository;
             var list = repo.GetArticlesByAuthorId(authorId).OrderByDescending(x => x.CreationTime).ToList();
             var model = CreateListOfViewModel(list, authorId);
+            return model;
+        }
+        
+        public ArticleListViewModel GetArticlesByTag(int tagId)
+        {
+            var repo = _unitOfWork.GetRepository<Article>() as ArticleRepository;
+            var list = repo.GetArticlesByTagId(tagId).OrderByDescending(x => x.CreationTime).ToList();
+            var model = CreateListOfViewModel(list);
             return model;
         }
 

@@ -1,7 +1,10 @@
-﻿using FinalBlog.Services.Interfaces;
+﻿using FinalBlog.DATA.Models;
+using FinalBlog.Services;
+using FinalBlog.Services.Interfaces;
 using FinalBlog.ViewModels.Tag;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Reflection.Metadata.Ecma335;
 
 namespace FinalBlog.Controllers
 {
@@ -11,68 +14,68 @@ namespace FinalBlog.Controllers
 
         public IActionResult Index()
         {
-            var list = _tagService.GetAllTags();
-            return Ok(list);
+            var model = _tagService.GetAllTags();
+            return View("TagList", model);
         }
 
-        public async Task<IActionResult> Details(int id)
+        public async Task<IActionResult> View(int id)
         {
             var model = await _tagService.GetTagById(id);
-            return Ok(model);
+            return View(model);
         }
 
         [HttpGet]
-        public IActionResult Add()
-        {
-            return BadRequest();
-        }
+        public IActionResult Add() => View();
 
         [HttpPost]
-        //[ValidateAntiForgeryToken]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Add(TagAddViewModel model)
         {
             if (ModelState.IsValid)
             {
-                var result = await _tagService.AddTag(model);
-                return Ok(result);
+                var resultModel = await _tagService.AddTag(model);
+                if (resultModel.IsSuccessed)
+                    return RedirectToAction("Index", "Tag");
+
+                foreach (var message in resultModel.Messages)
+                    ModelState.AddModelError("", message);
             }
-            return BadRequest(ModelState);
+            return View("Add", model);
         }
 
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
+        [HttpGet]
+        public ActionResult Edit(int id) => View("Edit", _tagService.GetTagById(id).Result);
 
-        // POST: TagController/Edit/5
-        [HttpPut]
-        //[ValidateAntiForgeryToken]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(TagEditViewModel model)
         {
             if (ModelState.IsValid)
             {
-                var result = await _tagService.UpdateTag(model);
-                return Ok(result);
+                var resultModel = await _tagService.UpdateTag(model);
+                if (resultModel.IsSuccessed)
+                    return RedirectToAction("Index", "Tag");
+
+                foreach (var message in resultModel.Messages)
+                    ModelState.AddModelError("", message);
             }
-            return BadRequest(ModelState);
+            return View("Edit", model);
         }
 
-        // GET: TagController/Delete/5
-        public ActionResult Delete()
-        {
-            return View();
-        }
-
-        [HttpDelete]
-        //[ValidateAntiForgeryToken]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
             if (ModelState.IsValid)
             {
-                var result = await _tagService.DeleteTag(id);
-                return Ok(result);
+                var resultModel = await _tagService.DeleteTag(id);
+                if (resultModel.IsSuccessed)
+                    return RedirectToAction("Index", "Tag");
+
+                foreach (var message in resultModel.Messages)
+                    ModelState.AddModelError("", message);
             }
-            return BadRequest(ModelState);
+            return RedirectToAction("Edit", "Tag");
         }
     }
 }

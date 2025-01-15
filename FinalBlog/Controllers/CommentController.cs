@@ -59,11 +59,8 @@ namespace FinalBlog.Controllers
             return View("Add", model);
         }
 
-        public ActionResult Edit(int id)
-        {
-            var model = _commentService.GetCommentById(id).Result;
-            return View("Edit", model);
-        }
+        [HttpGet]
+        public ActionResult Edit(int id) => View("Edit", _commentService.GetCommentById(id).Result);
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -84,12 +81,6 @@ namespace FinalBlog.Controllers
             }
             return View("Edit", model);
         }
-
-        // GET: CommentController/Delete/5
-        //public ActionResult Delete(int id)
-        //{
-        //    return View();
-        //}
 
         [HttpPost]
         [ValidateAntiForgeryToken]

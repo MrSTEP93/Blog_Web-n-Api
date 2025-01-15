@@ -11,10 +11,12 @@ namespace FinalBlog.Services
     public class TagService(
         IMapper mapper,
         IUnitOfWork unitOfWork
+        //IArticleService articleService
         ) : ITagService
     {
         readonly IMapper _mapper = mapper;
         readonly IUnitOfWork _unitOfWork = unitOfWork;
+        //readonly IArticleService _articleService = articleService;
 
         public async Task<ResultModel> AddTag(TagAddViewModel model)
         {
@@ -71,11 +73,11 @@ namespace FinalBlog.Services
             return resultModel;
         }
 
-        public List<TagEditViewModel> GetAllTags()
+        public TagListViewModel GetAllTags()
         {
             var repo = _unitOfWork.GetRepository<Tag>() as TagRepository;
             var tags = repo.GetAll().ToList();
-            return CreateListOfViewModel(tags);
+            return CreateListViewModel(tags);
         }
 
         public async Task<TagEditViewModel> GetTagById(int tagId)
@@ -85,19 +87,20 @@ namespace FinalBlog.Services
             return _mapper.Map<TagEditViewModel>(tag);
         }
 
-        public List<TagEditViewModel> GetTagsOfArticle(int articleId)
+        public TagListViewModel GetTagsOfArticle(int articleId)
         {
             throw new NotImplementedException();
         }
 
-        private List<TagEditViewModel> CreateListOfViewModel(List<Tag> list)
+        private TagListViewModel CreateListViewModel(List<Tag> list)
         {
-            var model = new List<TagEditViewModel>();
+            var model = new TagListViewModel();
             foreach (var entity in list)
             {
-                model.Add(_mapper.Map<TagEditViewModel>(entity));
+                var newItem = _mapper.Map<TagViewModel>(entity);
+                //newItem.ArticleCount = _articleService.GetArticlesByTag(entity.Id).Articles.Count;
+                model.Tags.Add(newItem);
             }
-
             return model;
         }
     }

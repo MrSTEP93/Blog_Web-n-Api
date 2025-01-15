@@ -28,14 +28,15 @@ namespace FinalBlog
             CreateMap<Article, ArticleViewModel>();
             CreateMap<Article, ArticleEditViewModel>();
 
-            CreateMap<TagAddViewModel, Tag>();
-            CreateMap<TagEditViewModel, Tag>();
-            CreateMap<Tag, TagEditViewModel>();
-
             CreateMap<CommentAddViewModel, Comment>();
             CreateMap<CommentEditViewModel, Comment>();
             CreateMap<Comment, CommentEditViewModel>();
             CreateMap<Comment, CommentViewModel>();
+
+            CreateMap<TagAddViewModel, Tag>();
+            CreateMap<TagEditViewModel, Tag>();
+            CreateMap<Tag, TagViewModel>();
+            CreateMap<Tag, TagEditViewModel>();
         }
     }
 }

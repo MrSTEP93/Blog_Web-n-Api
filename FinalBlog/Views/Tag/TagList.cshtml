@@ -1,0 +1,34 @@
+﻿@model FinalBlog.ViewModels.Tag.TagListViewModel
+@{
+    ViewData["Title"] = "Список тегов";
+    var isSuperUser = User.IsInRole("Администратор") || User.IsInRole("Модератор");
+}
+
+<h3 class="mt-5">Все теги</h3>
+@if (isSuperUser)
+{
+    <a asp-action="Add" asp-controller="Tag" class="text-decoration-none">Добавить тег</a>
+}
+
+<div class="row mt-3 justify-content-evenly">
+    @foreach (var tag in Model.Tags)
+    {
+        <div class="card m-3 col-8 col-sm-4 col-md-3 col-lg-2">
+            <div class="card-body p-1 mb-0">
+                <b>@tag.Name</b>
+                
+                @if (isSuperUser)
+                {
+                    <a class="mb-0 link-primary text-decoration-none" asp-action="View" asp-controller="Tag" 
+                        asp-route-id="@tag.Id">
+                             (Посмотреть)
+                    </a>
+                }
+                <a class="mb-0 link-primary text-decoration-none" asp-action="Tag" asp-controller="Article"
+                   asp-route-id="@tag.Id">
+                    <p class="mb-0 form-text font-m75 text-end">@($"Статей по тегу: {@tag.ArticleCount}")</p>
+               </a>
+            </div>
+        </div>
+    }
+</div>

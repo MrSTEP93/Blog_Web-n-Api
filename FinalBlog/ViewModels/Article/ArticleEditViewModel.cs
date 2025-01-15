@@ -16,8 +16,8 @@ namespace FinalBlog.ViewModels.Article
 
         public override DateTime CreationTime { get; set; }
 
-        public List<TagViewModel> Tags { get; } = [];
+        public List<TagViewModel> Tags { get; set; } = [];
 
-        public List<TagViewModel> AllTags { get; } = [];
+        public TagListViewModel AllTags { get; set; }
     }
 }

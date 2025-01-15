@@ -28,6 +28,13 @@ namespace FinalBlog.Controllers
             var articleList = _articleService.GetArticlesOfAuthor(authorId);
             return View("Articles", articleList);
         }
+        
+        [HttpGet]
+        public IActionResult Tag(int id)
+        {
+            var articleList = _articleService.GetArticlesByTag(id);
+            return View("Articles", articleList);
+        }
 
         [HttpGet]
         public async Task<IActionResult> View(int id)

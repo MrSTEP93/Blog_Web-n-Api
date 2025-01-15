@@ -8,11 +8,11 @@ namespace FinalBlog.Services.Interfaces
     {
         public Task<ResultModel> AddArticle(ArticleAddViewModel model);
         public Task<ArticleViewModel> GetArticleById(int articleId);
-        //public Task<ArticleViewModel> GetArticleByName(string articleName);
         public Task<ResultModel> UpdateArticle(ArticleEditViewModel model);
         public Task<ResultModel> DeleteArticle(int articleId);
         public ArticleListViewModel GetAllArticles();
         public ArticleListViewModel GetArticlesOfAuthor(string authorId);
+        public ArticleListViewModel GetArticlesByTag(int tagId);
         public ResultModel CheckIfUserCanEdit(ClaimsPrincipal user, string authorId);
         public ResultModel CheckIfUserCanAdd(ClaimsPrincipal user);
     }

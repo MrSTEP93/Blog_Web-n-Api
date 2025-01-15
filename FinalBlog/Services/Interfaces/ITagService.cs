@@ -10,7 +10,7 @@ namespace FinalBlog.Services.Interfaces
         public Task<ResultModel> UpdateTag(TagEditViewModel model);
         public Task<ResultModel> DeleteTag(int tagId);
         public Task<TagEditViewModel> GetTagById(int tagId);
-        public List<TagEditViewModel> GetAllTags();
-        public List<TagEditViewModel> GetTagsOfArticle(int articleId);
+        public TagListViewModel GetAllTags();
+        public TagListViewModel GetTagsOfArticle(int articleId);
     }
 }
