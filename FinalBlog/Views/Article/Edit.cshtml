@@ -23,14 +23,19 @@
                 <input class="form-control form-control-sm shadow-none input-primary-board" id="filter-input" placeholder="Поиск тега" oninput="filter()" />
                 <button type="button" class="btn btn-outline-primary btn-sm shadow-none" onclick="addTag()">Добавить</button>
             </div>
-
+            
             <div class="form-group">
-                <select class="form-select form-select-sm shadow-none input-primary-board" id="AllTags" size="5">
-                    @foreach (var tag in Model.AllTags.Tags)
+                <select name="SelectedTagIds" class="form-select form-select-sm shadow-none input-primary-board" size="5" multiple>
+                    @foreach (var tag in Model.AllTags)
                     {
                         <option value="@tag.Id">@tag.Name</option>
                     }
                 </select>
+                @foreach (var tag in Model.AllTags.Select((t, i) => new { tag = t, i }))
+                {
+                    <input type="hidden" name="AllTags[@tag.i].Id" value="@tag.tag.Id" />
+                    <input type="hidden" name="AllTags[@tag.i].Name" value="@tag.tag.Name" />
+                }
             </div>
             <p class="form-text">Если вы не нашли нужный тег, <a asp-action="Add" asp-controller="Tag" class="text-decoration-none">создайте его</a></p>
         </div>
@@ -70,5 +75,5 @@
 </div>
 
 <script>
-    window.addEventListener('load', () => changeViewTags('post-tags', 'add-tags'));
+    //window.addEventListener('load', () => changeViewTags('post-tags', 'add-tags'));
 </script>

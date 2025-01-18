@@ -5,6 +5,7 @@ using FinalBlog.DATA.UoW;
 using FinalBlog.Extensions;
 using FinalBlog.Services.Interfaces;
 using FinalBlog.ViewModels.Article;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Security.Claims;
 
@@ -47,27 +48,28 @@ namespace FinalBlog.Services
         public async Task<ResultModel> UpdateArticle(ArticleEditViewModel model)
         {
             var repo = _unitOfWork.GetRepository<Article>() as ArticleRepository;
-            var article = new Article();
+            //var article = new Article();
+            var resultModel = new ResultModel(false, "Internal error");
+            var article = await repo.Get(model.Id);
+
+            if (article == null)
+                return new ResultModel(false, "Article not found");
+            
             article.ConvertArticle(model);
-            var resultModel = new ResultModel(true);
-            //var resultModel = CheckAuthor(model.AuthorId);
-            /*
-            A second operation was started on this context instance before a previous operation completed. 
-            This is usually caused by different threads concurrently using the same instance of DbContext.
-            For more information on how to avoid threading issues with DbContext, see https://go.microsoft.com/fwlink/?linkid=2097913.
-             */
-            if (resultModel.IsSuccessed)
-                try
+            if (model.SelectedTagIds.Count != 0)
+            {
+                var newTags = await _tagService.GetTagsByIds(model.SelectedTagIds);
+                //article.Tags.Clear();
+                while (article.Tags.Any())
                 {
-                    await repo.Update(article);
-                    resultModel.MarkAsSuccess("Article updated");
+                    var tag = article.Tags.First();
+                    repo(tag).State = EntityState.Detached; // Отсоединяем тег от контекста
+                    article.Tags.Remove(tag);
                 }
-                catch (Exception ex)
-                {
-                    resultModel.MarkAsFailed(ex.Message);
-                    if (ex.InnerException is not null)
-                        resultModel.AddMessage(ex.InnerException.Message);
-                }
+                resultModel = await TryToUpdate(repo, article);
+                article.Tags = newTags.Distinct().ToList();
+            }
+            resultModel = await TryToUpdate(repo, article);
 
             return resultModel;
         }
@@ -96,7 +98,7 @@ namespace FinalBlog.Services
             var article = await repo.Get(articleId);
             var model = _mapper.Map<ArticleViewModel>(article);
             model.Comments = _commentService.GetCommentsOfArticle(articleId);
-            model.AllTags = _tagService.GetAllTags();
+            model.AllTags = _tagService.GetAllTagsList();
             return model;
         }
 
@@ -126,6 +128,24 @@ namespace FinalBlog.Services
             var list = repo.GetArticlesByTagId(tagId).OrderByDescending(x => x.CreationTime).ToList();
             var model = CreateListOfViewModel(list);
             return model;
+        }
+
+        private static async Task<ResultModel> TryToUpdate(ArticleRepository? repo, Article? article)
+        {
+            var resultModel = new ResultModel(true);
+            try
+            {
+                await repo.Update(article);
+                resultModel.MarkAsSuccess("Article updated");
+            }
+            catch (Exception ex)
+            {
+                resultModel.MarkAsFailed(ex.Message);
+                if (ex.InnerException is not null)
+                    resultModel.AddMessage(ex.InnerException.Message);
+            }
+
+            return resultModel;
         }
 
         public ResultModel CheckIfUserCanEdit(ClaimsPrincipal user, string authorId)

@@ -15,17 +15,25 @@ namespace FinalBlog.DATA.Repositories
         
         public override IEnumerable<Article> GetAll()
         {
-            return [.. _db.Articles.Include(a => a.Author)];
+            return [.. _db.Articles
+                .Include(a => a.Author)
+                .Include(a => a.Tags)];
         }
 
         public List<Article> GetArticlesByAuthorId(string authorId)
         {
-            return [.. _db.Articles.Include(a => a.Author).Where(a => a.AuthorId == authorId)];
+            return [.. _db.Articles
+                .Include(a => a.Author)
+                .Include(a => a.Tags)
+                .Where(a => a.AuthorId == authorId)];
         }
 
         public List<Article> GetArticlesByTagId(int tagId)
         {
-            return [.. _db.Articles.Where(a => a.Tags.Any(x => x.Id == tagId))];
+            return [.. _db.Articles
+                .Include(a => a.Author)
+                .Include(a => a.Tags)
+                .Where(a => a.Tags.Any(x => x.Id == tagId))];
         }
     }
 }

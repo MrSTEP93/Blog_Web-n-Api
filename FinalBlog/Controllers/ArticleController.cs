@@ -1,4 +1,5 @@
 ﻿using FinalBlog.DATA.Models;
+using FinalBlog.Services;
 using FinalBlog.Services.Interfaces;
 using FinalBlog.ViewModels.Article;
 using Microsoft.AspNetCore.Authorization;
@@ -76,6 +77,7 @@ namespace FinalBlog.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(ArticleEditViewModel model)
         {
+            //model.NewTags = newTags;
             var ifUserCanEdit = _articleService.CheckIfUserCanEdit(User, model.AuthorId);
             if (!ifUserCanEdit.IsSuccessed)
                 ModelState.AddModelError("", ifUserCanEdit.Messages[0]);

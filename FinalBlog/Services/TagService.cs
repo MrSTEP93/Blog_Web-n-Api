@@ -77,7 +77,16 @@ namespace FinalBlog.Services
         {
             var repo = _unitOfWork.GetRepository<Tag>() as TagRepository;
             var tags = repo.GetAll().ToList();
+            //return CreateListViewModel(tags);
             return CreateListViewModel(tags);
+        }
+        
+        public List<TagViewModel> GetAllTagsList()
+        {
+            var repo = _unitOfWork.GetRepository<Tag>() as TagRepository;
+            var tags = repo.GetAll().ToList();
+            //return CreateListViewModel(tags);
+            return CreateListOfViewModels(tags);
         }
 
         public async Task<TagEditViewModel> GetTagById(int tagId)
@@ -92,6 +101,15 @@ namespace FinalBlog.Services
             throw new NotImplementedException();
         }
 
+        public async Task<List<Tag>> GetTagsByIds(List<int> selectedIds)
+        {
+            var list = new List<Tag>();
+            foreach (var id in selectedIds)
+                list.Add(_mapper.Map<Tag>(await GetTagById(id)));
+
+            return list;
+        }
+
         private TagListViewModel CreateListViewModel(List<Tag> list)
         {
             var model = new TagListViewModel();
@@ -100,6 +118,18 @@ namespace FinalBlog.Services
                 var newItem = _mapper.Map<TagViewModel>(entity);
                 //newItem.ArticleCount = _articleService.GetArticlesByTag(entity.Id).Articles.Count;
                 model.Tags.Add(newItem);
+            }
+            return model;
+        }
+
+        private List<TagViewModel> CreateListOfViewModels(List<Tag> list)
+        {
+            var model = new List<TagViewModel>();
+            foreach (var entity in list)
+            {
+                var newItem = _mapper.Map<TagViewModel>(entity);
+                //newItem.ArticleCount = _articleService.GetArticlesByTag(entity.Id).Articles.Count;
+                model.Add(newItem);
             }
             return model;
         }
