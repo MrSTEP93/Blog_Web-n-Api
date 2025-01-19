@@ -35,7 +35,8 @@ namespace FinalBlog
 
             CreateMap<TagAddViewModel, Tag>();
             CreateMap<TagEditViewModel, Tag>();
-            CreateMap<Tag, TagViewModel>();
+            CreateMap<Tag, TagViewModel>()
+                .ForMember(dest => dest.ArticleCount, opt => opt.MapFrom(src => src.Articles.Count));
             CreateMap<Tag, TagEditViewModel>();
         }
     }

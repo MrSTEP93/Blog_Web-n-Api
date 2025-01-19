@@ -56,12 +56,10 @@ namespace FinalBlog.Services
                 return new ResultModel(false, "Article not found");
             
             article.ConvertArticle(model);
-            if (model.SelectedTagIds.Count != 0)
+            if (model.SelectedTagIds?.Count != 0)
             {
-                var newTags = await _tagService.GetTagsByIds(model.SelectedTagIds);
                 article.Tags.Clear();
-                article.Tags.AddRange(newTags);
-
+                article.Tags = (await _tagService.GetTagsByIds(model.SelectedTagIds)).Distinct().ToList();
             }
             resultModel = await TryToUpdate(repo, article);
 
@@ -113,6 +111,10 @@ namespace FinalBlog.Services
             var repo = _unitOfWork.GetRepository<Article>() as ArticleRepository;
             var list = repo.GetArticlesByAuthorId(authorId).OrderByDescending(x => x.CreationTime).ToList();
             var model = CreateListOfViewModel(list, authorId);
+            foreach (var post in model.Articles)
+            {
+                post.Comments = _commentService.GetCommentsOfArticle(post.Id);
+            }
             return model;
         }
         
@@ -121,6 +123,10 @@ namespace FinalBlog.Services
             var repo = _unitOfWork.GetRepository<Article>() as ArticleRepository;
             var list = repo.GetArticlesByTagId(tagId).OrderByDescending(x => x.CreationTime).ToList();
             var model = CreateListOfViewModel(list);
+            foreach (var post in model.Articles)
+            {
+                post.Comments = _commentService.GetCommentsOfArticle(post.Id);
+            }
             return model;
         }
 
