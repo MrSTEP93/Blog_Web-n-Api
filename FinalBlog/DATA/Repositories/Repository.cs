@@ -27,9 +27,9 @@ namespace FinalBlog.DATA.Repositories
 
         public async Task Update(T item)
         {
-            _db.ChangeTracker.Clear();
             Set.Update(item);
             await _db.SaveChangesAsync();
+            _db.ChangeTracker.Clear();
         }
 
         public async Task Delete(T item)

@@ -14,7 +14,6 @@
 
         <input type="hidden" id="AuthorId" asp-for="AuthorId" />
         <input type="hidden" id="CreationTime" asp-for="CreationTime" />
-        <input type="hidden" id="post-tags" asp-for="Tags" />
 
         <div class="max-width-600">
             <h5 class="text-muted ms-2">Теги</h5>
@@ -28,7 +27,7 @@
                 <select name="SelectedTagIds" class="form-select form-select-sm shadow-none input-primary-board" size="5" multiple>
                     @foreach (var tag in Model.AllTags)
                     {
-                        <option value="@tag.Id">@tag.Name</option>
+                        <option value="@tag.Id" selected="@(Model.TagIds.Contains(tag.Id))">@tag.Name</option>
                     }
                 </select>
                 @foreach (var tag in Model.AllTags.Select((t, i) => new { tag = t, i }))
