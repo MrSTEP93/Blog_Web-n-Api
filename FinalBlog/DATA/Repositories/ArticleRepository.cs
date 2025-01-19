@@ -38,7 +38,7 @@ namespace FinalBlog.DATA.Repositories
 
         public override async Task Update(Article item)
         {
-            _db.ChangeTracker.Clear();
+            //_db.ChangeTracker.Clear();
             var existingArticle = await _db.Articles
                 .Include(a => a.Tags)
                 .FirstOrDefaultAsync(a => a.Id == item.Id);

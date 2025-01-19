@@ -95,6 +95,13 @@ namespace FinalBlog.Services
             var tag = await repo.Get(tagId);
             return _mapper.Map<TagEditViewModel>(tag);
         }
+        
+        public async Task<TagEditViewModel> GetTagByIdAsNoTracking(int tagId)
+        {
+            var repo = _unitOfWork.GetRepository<Tag>() as TagRepository;
+            var tag = await repo.GetTagAsNoTracking(tagId);
+            return _mapper.Map<TagEditViewModel>(tag);
+        }
 
         public TagListViewModel GetTagsOfArticle(int articleId)
         {
@@ -105,7 +112,7 @@ namespace FinalBlog.Services
         {
             var list = new List<Tag>();
             foreach (var id in selectedIds)
-                list.Add(_mapper.Map<Tag>(await GetTagById(id)));
+                list.Add(_mapper.Map<Tag>(await GetTagByIdAsNoTracking(id)));
 
             return list;
         }
