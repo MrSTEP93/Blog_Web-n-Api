@@ -59,15 +59,9 @@ namespace FinalBlog.Services
             if (model.SelectedTagIds.Count != 0)
             {
                 var newTags = await _tagService.GetTagsByIds(model.SelectedTagIds);
-                //article.Tags.Clear();
-                while (article.Tags.Any())
-                {
-                    var tag = article.Tags.First();
-                    repo(tag).State = EntityState.Detached; // Отсоединяем тег от контекста
-                    article.Tags.Remove(tag);
-                }
-                resultModel = await TryToUpdate(repo, article);
-                article.Tags = newTags.Distinct().ToList();
+                article.Tags.Clear();
+                article.Tags.AddRange(newTags);
+
             }
             resultModel = await TryToUpdate(repo, article);
 
