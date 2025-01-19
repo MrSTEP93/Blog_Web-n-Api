@@ -58,27 +58,31 @@ namespace FinalBlog.Services
             article.ConvertArticle(model);
             if (model.SelectedTagIds.Count != 0)
             {
+                // Получаем новые теги
                 var newTags = await _tagService.GetTagsByIds(model.SelectedTagIds);
-                
-                // Удаляем все текущие теги
-                var tagsToRemove = article.Tags.ToList();
-                foreach (var tag in tagsToRemove)
+
+                // Сначала удаляем старую связь
+                var currentTagIds = article.Tags.Select(t => t.Id).ToList();
+
+                foreach (var tag in currentTagIds)
                 {
-                    article.Tags.Remove(tag);
+                    var tagToRemove = article.Tags.FirstOrDefault(t => t.Id == tag);
+                    if (tagToRemove != null)
+                    {
+                        article.Tags.Remove(tagToRemove);
+                    }
                 }
 
-                // Добавляем новые теги к статье
                 foreach (var tag in newTags)
                 {
-                    article.Tags.Add(tag); // Добавляем тег к статье
+                    article.Tags.Add(tag); // Добавляем новый тег к статье
                 }
-
-                /*
-                var tagRepo = _unitOfWork.GetRepository<Tag>() as TagRepository;
-                tagRepo.AttachTags(newTags);
-                article.Tags.AddRange(newTags);
-                */
             }
+            /*
+            var tagRepo = _unitOfWork.GetRepository<Tag>() as TagRepository;
+            tagRepo.AttachTags(newTags);
+            article.Tags.AddRange(newTags);
+            */
             resultModel = await TryToUpdate(repo, article);
 
             return resultModel;

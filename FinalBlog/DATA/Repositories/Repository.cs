@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using FinalBlog.DATA.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System.Diagnostics;
 
@@ -27,7 +28,8 @@ namespace FinalBlog.DATA.Repositories
 
         public async Task Update(T item)
         {
-            Set.Update(item);
+            //Set.Update(item);
+            _db.Entry(item).State = EntityState.Modified;
             await _db.SaveChangesAsync();
             _db.ChangeTracker.Clear();
         }
