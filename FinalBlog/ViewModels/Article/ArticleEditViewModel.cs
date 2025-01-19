@@ -18,8 +18,10 @@ namespace FinalBlog.ViewModels.Article
 
         public List<TagViewModel> Tags { get; set; } = [];
 
-        public List<TagViewModel> AllTags { get; set; }
+        public List<int> TagIds => Tags.Select(t => t.Id).ToList();
 
-        public List<int> SelectedTagIds { get; set; }
+        public List<TagViewModel> AllTags { get; set; } = [];
+
+        public List<int>? SelectedTagIds { get; set; } = [];
     }
 }

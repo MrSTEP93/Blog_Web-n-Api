@@ -56,12 +56,16 @@ namespace FinalBlog.Services
                 return new ResultModel(false, "Article not found");
             
             article.ConvertArticle(model);
-            if (model.SelectedTagIds.Count != 0)
+            if (model.SelectedTagIds != null && model.SelectedTagIds.Count != 0)
             {
                 var newTags = await _tagService.GetTagsByIds(model.SelectedTagIds);
                 article.Tags.Clear();
                 article.Tags.AddRange(newTags);
-
+            }
+            else if (model.SelectedTagIds == null || model.SelectedTagIds.Count == 0)
+            {
+                article.Tags ??= [];
+                article.Tags.Clear();
             }
             resultModel = await TryToUpdate(repo, article);
 
