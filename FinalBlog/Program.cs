@@ -2,6 +2,7 @@ using AutoMapper;
 using FinalBlog.DATA;
 using FinalBlog.DATA.Models;
 using FinalBlog.DATA.Repositories;
+using FinalBlog.DATA.Repositories.Interfaces;
 using FinalBlog.Extensions;
 using FinalBlog.Services;
 using FinalBlog.Services.Interfaces;
@@ -55,11 +56,13 @@ namespace FinalBlog
                 .AddTransient<ICommentService, CommentService>();
 
             builder.Services
+                .AddTransient<IArticleRepository, ArticleRepository>()
+                .AddTransient<ITagRepository, TagRepository>();
+
+            builder.Services
                 .AddUnitOfWork()
                 .AddCustomRepository<BlogUser, UserRepository>()
                 .AddCustomRepository<Role, RoleRepository>()
-                .AddCustomRepository<Article, ArticleRepository>()
-                .AddCustomRepository<Tag, TagRepository>()
                 .AddCustomRepository<Comment, CommentRepository>();
 
             var app = builder.Build();

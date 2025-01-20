@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using FinalBlog.DATA.Models;
 using FinalBlog.DATA.Repositories;
+using FinalBlog.DATA.Repositories.Interfaces;
 using FinalBlog.DATA.UoW;
 using FinalBlog.Extensions;
 using FinalBlog.Services.Interfaces;
@@ -14,21 +15,23 @@ namespace FinalBlog.Services
 {
     public class ArticleService(
         IMapper mapper,
-        IUnitOfWork unitOfWork,
+        //IUnitOfWork unitOfWork,
         IUserService userService,
         ICommentService commentService,
-        ITagService tagService
+        ITagService tagService,
+        IArticleRepository articleRepository
         ) : IArticleService
     {
         readonly IMapper _mapper = mapper;
-        readonly IUnitOfWork _unitOfWork = unitOfWork;
+        //readonly IUnitOfWork _unitOfWork = unitOfWork;
         readonly IUserService _userService = userService;
         readonly ICommentService _commentService = commentService;
         readonly ITagService _tagService = tagService;
+        readonly IArticleRepository repo = articleRepository;
 
         public async Task<ResultModel> AddArticle(ArticleAddViewModel model)
         {
-            var repo = _unitOfWork.GetRepository<Article>() as ArticleRepository;
+            //var repo = _unitOfWork.GetRepository<Article>() as ArticleRepository;
             var article = _mapper.Map<Article>(model);
             var resultModel = CheckIfAuthorExists(model.AuthorId);
             if (resultModel.IsSuccessed)
@@ -48,7 +51,7 @@ namespace FinalBlog.Services
 
         public async Task<ResultModel> UpdateArticle(ArticleEditViewModel model)
         {
-            var repo = _unitOfWork.GetRepository<Article>() as ArticleRepository;
+            //var repo = _unitOfWork.GetRepository<Article>() as ArticleRepository;
             //var article = new Article();
             var resultModel = new ResultModel(false, "Internal error");
             var article = await repo.Get(model.Id);
@@ -67,14 +70,14 @@ namespace FinalBlog.Services
                 article.Tags ??= [];
                 article.Tags.Clear();
             }
-            resultModel = await TryToUpdate(repo, article);
+            resultModel = await TryToUpdate(article);
 
             return resultModel;
         }
 
         public async Task<ResultModel> DeleteArticle(int articleId)
         {
-            var repo = _unitOfWork.GetRepository<Article>() as ArticleRepository;
+            //var repo = _unitOfWork.GetRepository<Article>() as ArticleRepository;
             var article = await repo.Get(articleId);
             ResultModel resultModel = new(true, "Article deleted");
             try
@@ -92,7 +95,7 @@ namespace FinalBlog.Services
 
         public async Task<ArticleViewModel> GetArticleById(int articleId)
         {
-            var repo = _unitOfWork.GetRepository<Article>() as ArticleRepository;
+            //var repo = _unitOfWork.GetRepository<Article>() as ArticleRepository;
             var article = await repo.Get(articleId);
             var model = _mapper.Map<ArticleViewModel>(article);
             model.Comments = _commentService.GetCommentsOfArticle(articleId);
@@ -102,7 +105,7 @@ namespace FinalBlog.Services
 
         public ArticleListViewModel GetAllArticles()
         {
-            var repo = _unitOfWork.GetRepository<Article>() as ArticleRepository;
+            //var repo = _unitOfWork.GetRepository<Article>() as ArticleRepository;
             var list = repo.GetAll().OrderByDescending(x => x.CreationTime).ToList();
             var model = CreateListOfViewModel(list);
             return model;
@@ -110,7 +113,7 @@ namespace FinalBlog.Services
 
         public ArticleListViewModel GetArticlesOfAuthor(string authorId)
         {
-            var repo = _unitOfWork.GetRepository<Article>() as ArticleRepository;
+            //var repo = _unitOfWork.GetRepository<Article>() as ArticleRepository;
             var list = repo.GetArticlesByAuthorId(authorId).OrderByDescending(x => x.CreationTime).ToList();
             var model = CreateListOfViewModel(list, authorId);
             return model;
@@ -118,18 +121,18 @@ namespace FinalBlog.Services
         
         public ArticleListViewModel GetArticlesByTag(int tagId)
         {
-            var repo = _unitOfWork.GetRepository<Article>() as ArticleRepository;
+            //var repo = _unitOfWork.GetRepository<Article>() as ArticleRepository;
             var list = repo.GetArticlesByTagId(tagId).OrderByDescending(x => x.CreationTime).ToList();
             var model = CreateListOfViewModel(list);
             return model;
         }
 
-        private static async Task<ResultModel> TryToUpdate(ArticleRepository? repo, Article? article)
+        private async Task<ResultModel> TryToUpdate(Article article)
         {
             var resultModel = new ResultModel(true);
             try
             {
-                await repo.Update(article);
+                await repo.Update(article!);
                 resultModel.MarkAsSuccess("Article updated");
             }
             catch (Exception ex)
