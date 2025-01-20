@@ -35,5 +35,16 @@ namespace FinalBlog.DATA.Repositories
                 .Include(a => a.Tags)
                 .Where(a => a.Tags.Any(x => x.Id == tagId))];
         }
+
+        public override async Task Update(Article item)
+        {
+            //_db.ChangeTracker.Clear();
+            var existingArticle = await _db.Articles
+                .Include(a => a.Tags)
+                .FirstOrDefaultAsync(a => a.Id == item.Id);
+
+            existingArticle = item;
+            await _db.SaveChangesAsync();
+        }
     }
 }

@@ -25,7 +25,7 @@ namespace FinalBlog.DATA.Repositories
             await _db.SaveChangesAsync();
         }
 
-        public async Task Update(T item)
+        public virtual async Task Update(T item)
         {
             _db.ChangeTracker.Clear();
             Set.Update(item);
@@ -52,6 +52,5 @@ namespace FinalBlog.DATA.Repositories
         {
             return Set;
         }
-
     }
 }

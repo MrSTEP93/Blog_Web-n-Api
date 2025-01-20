@@ -59,7 +59,12 @@ namespace FinalBlog.Services
             if (model.SelectedTagIds?.Count != 0)
             {
                 article.Tags.Clear();
-                article.Tags = (await _tagService.GetTagsByIds(model.SelectedTagIds)).Distinct().ToList();
+                article.Tags.AddRange(await _tagService.GetTagsByIds(model.SelectedTagIds)).Distinct().ToList());
+            }
+            else if (model.SelectedTagIds == null || model.SelectedTagIds.Count == 0)
+            {
+                article.Tags ??= [];
+                article.Tags.Clear();
             }
             resultModel = await TryToUpdate(repo, article);
 
