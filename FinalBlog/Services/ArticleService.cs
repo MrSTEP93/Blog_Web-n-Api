@@ -51,8 +51,7 @@ namespace FinalBlog.Services
 
         public async Task<ResultModel> UpdateArticle(ArticleEditViewModel model)
         {
-            //var repo = _unitOfWork.GetRepository<Article>() as ArticleRepository;
-            //var article = new Article();
+            var newTags = await _tagService.GetTagsByIds(model.SelectedTagIds);
             var resultModel = new ResultModel(false, "Internal error");
             var article = await repo.Get(model.Id);
 
@@ -63,7 +62,7 @@ namespace FinalBlog.Services
             if (model.SelectedTagIds?.Count != 0)
             {
                 article.Tags.Clear();
-                article.Tags.AddRange(await _tagService.GetTagsByIds(model.SelectedTagIds));
+                article.Tags.AddRange(newTags);
             }
             else if (model.SelectedTagIds == null || model.SelectedTagIds.Count == 0)
             {

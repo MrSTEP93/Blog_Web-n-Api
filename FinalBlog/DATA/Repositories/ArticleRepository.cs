@@ -21,8 +21,10 @@ namespace FinalBlog.DATA.Repositories
             var existingArticle = await _db.Articles
                 .Include(a => a.Tags)
                 .FirstOrDefaultAsync(a => a.Id == item.Id);
-            existingArticle = item;*/
+            existingArticle = item;
+            */
             _db.Articles.Update(item);
+            
             await _db.SaveChangesAsync();
         }
 
