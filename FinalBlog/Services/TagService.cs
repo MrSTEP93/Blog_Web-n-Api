@@ -103,13 +103,6 @@ namespace FinalBlog.Services
             return _mapper.Map<TagEditViewModel>(tag);
         }
 
-        public async Task<TagEditViewModel> GetTagByIdAsNoTracking(int tagId)
-        {
-            var repo = _unitOfWork.GetRepository<Tag>() as TagRepository;
-            var tag = await repo.GetTagAsNoTracking(tagId);
-            return _mapper.Map<TagEditViewModel>(tag);
-        }
-
         public TagListViewModel GetTagsOfArticle(int articleId)
         {
             throw new NotImplementedException();

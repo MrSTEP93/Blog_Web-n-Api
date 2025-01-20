@@ -6,6 +6,7 @@ using FinalBlog.Extensions;
 using FinalBlog.Services.Interfaces;
 using FinalBlog.ViewModels.Article;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 using System.Collections.Generic;
 using System.Security.Claims;
 
@@ -59,7 +60,7 @@ namespace FinalBlog.Services
             if (model.SelectedTagIds?.Count != 0)
             {
                 article.Tags.Clear();
-                article.Tags.AddRange(await _tagService.GetTagsByIds(model.SelectedTagIds)).Distinct().ToList());
+                article.Tags.AddRange(await _tagService.GetTagsByIds(model.SelectedTagIds));
             }
             else if (model.SelectedTagIds == null || model.SelectedTagIds.Count == 0)
             {
@@ -104,10 +105,6 @@ namespace FinalBlog.Services
             var repo = _unitOfWork.GetRepository<Article>() as ArticleRepository;
             var list = repo.GetAll().OrderByDescending(x => x.CreationTime).ToList();
             var model = CreateListOfViewModel(list);
-            foreach (var post in model.Articles)
-            {
-                post.Comments = _commentService.GetCommentsOfArticle(post.Id);
-            }
             return model;
         }
 
@@ -116,10 +113,6 @@ namespace FinalBlog.Services
             var repo = _unitOfWork.GetRepository<Article>() as ArticleRepository;
             var list = repo.GetArticlesByAuthorId(authorId).OrderByDescending(x => x.CreationTime).ToList();
             var model = CreateListOfViewModel(list, authorId);
-            foreach (var post in model.Articles)
-            {
-                post.Comments = _commentService.GetCommentsOfArticle(post.Id);
-            }
             return model;
         }
         
@@ -128,10 +121,6 @@ namespace FinalBlog.Services
             var repo = _unitOfWork.GetRepository<Article>() as ArticleRepository;
             var list = repo.GetArticlesByTagId(tagId).OrderByDescending(x => x.CreationTime).ToList();
             var model = CreateListOfViewModel(list);
-            foreach (var post in model.Articles)
-            {
-                post.Comments = _commentService.GetCommentsOfArticle(post.Id);
-            }
             return model;
         }
 
@@ -193,7 +182,11 @@ namespace FinalBlog.Services
         {
             var model = new ArticleListViewModel() { Articles = [] };
             foreach (var entity in list)
-                model.Articles.Add(_mapper.Map<ArticleViewModel>(entity));
+            {
+                var item = _mapper.Map<ArticleViewModel>(entity);
+                item.Comments = _commentService.GetCommentsOfArticle(entity.Id);
+                model.Articles.Add(item);
+            }
 
             return model;
         }

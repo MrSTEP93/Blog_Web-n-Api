@@ -11,7 +11,6 @@ namespace FinalBlog.DATA.Repositories
                 .Include(a => a.Articles)];
         }
 
-
         public async Task<Tag?> GetTagAsNoTracking(int id)
         {
             return await _db.Tags
