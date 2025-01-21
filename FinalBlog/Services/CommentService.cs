@@ -14,12 +14,14 @@ namespace FinalBlog.Services
     public class CommentService(
         IMapper mapper,
         IUnitOfWork unitOfWork,
-        IUserService userService
+        //IUserService userService,
+        ILogger<CommentService> logger
         ) : ICommentService
     {
         readonly IMapper _mapper = mapper;
         readonly IUnitOfWork _unitOfWork = unitOfWork;
-        readonly IUserService _userService = userService;
+        //readonly IUserService _userService = userService;
+        readonly ILogger<CommentService> _logger = logger;
 
         public async Task<ResultModel> AddComment(CommentAddViewModel model)
         {
@@ -28,13 +30,11 @@ namespace FinalBlog.Services
             try
             {
                 await repo.Create(_mapper.Map<Comment>(model));
+                _logger.LogInformation($"К статье id={model.ArticleId} добавлен комментарий автором {model.AuthorId}");
             }
             catch (Exception ex)
             {
-                resultModel.MarkAsFailed();
-                resultModel.AddMessage(ex.Message);
-                if (ex.InnerException is not null)
-                    resultModel.AddMessage(ex.InnerException.Message);
+                resultModel = ProcessException($"Ошибка обновления комментария к статье id={model.ArticleId}", ex);
             }
             return resultModel;
         }
@@ -46,13 +46,12 @@ namespace FinalBlog.Services
             try
             {
                 await repo.Update(_mapper.Map<Comment>(model));
+
+                _logger.LogInformation($"Комментарий id={model.Id} обновлен");
             }
             catch (Exception ex)
             {
-                resultModel.MarkAsFailed();
-                resultModel.AddMessage(ex.Message);
-                if (ex.InnerException is not null)
-                    resultModel.AddMessage(ex.InnerException.Message);
+                resultModel = ProcessException($"Ошибка обновления комментария id={model.Id}", ex);
             }
             return resultModel;
         }
@@ -68,10 +67,7 @@ namespace FinalBlog.Services
             }
             catch (Exception ex)
             {
-                resultModel.MarkAsFailed();
-                resultModel.AddMessage(ex.Message);
-                if (ex.InnerException is not null)
-                    resultModel.AddMessage(ex.InnerException.Message);
+                resultModel = ProcessException($"Ошибка удаления комментария id={commentId}", ex);
             }
             return resultModel;
         }
@@ -120,6 +116,8 @@ namespace FinalBlog.Services
                     || user.IsInRole("Модератор")
                 )
                 resultModel.MarkAsSuccess("Редактирование комментария разрешено");
+            else
+                _logger.LogError($"$Пользователю id={user.FindFirstValue(ClaimTypes.Email)} запрещено редактировать комментарий");
 
             return resultModel;
         }
@@ -133,6 +131,8 @@ namespace FinalBlog.Services
                     || user.IsInRole("Пользователь")
                )
                resultModel.MarkAsSuccess("Добавление комментов разрешено");
+            else
+                _logger.LogError($"$Пользователю id={user.FindFirstValue(ClaimTypes.Email)} запрещено добавлять комментарий");
 
             return resultModel;
         }
@@ -144,6 +144,26 @@ namespace FinalBlog.Services
                 model.Add(_mapper.Map<CommentViewModel>(entity));
 
             return model;
+        }
+
+        /// <summary>
+        /// Глобальный обработчик ошибок (если можно так выразиться xD)
+        /// глобальный для этого класса (иначе источник события будет криво отображаться)
+        /// </summary>
+        /// <param name="logMessage">Сообщение для записи в лог</param>
+        /// <param name="ex">полученнное исключение </param>
+        /// <returns></returns>
+        private ResultModel ProcessException(string logMessage, Exception ex)
+        {
+            var resultModel = new ResultModel();
+            resultModel.MarkAsFailed(ex.Message);
+            _logger.LogError($"{logMessage}: {ex.Message}");
+            if (ex.InnerException is not null)
+            {
+                _logger.LogError($" --- InnerException: {ex.InnerException.Message}");
+                resultModel.AddMessage(ex.InnerException.Message);
+            }
+            return resultModel;
         }
     }
 }

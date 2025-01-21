@@ -11,102 +11,82 @@ namespace FinalBlog.Services
 {
     public class TagService(
         IMapper mapper,
-        //IUnitOfWork unitOfWork,
-        ITagRepository tagRepository
+        ITagRepository tagRepository,
+        ILogger<TagService> logger
         ) : ITagService
     {
         readonly IMapper _mapper = mapper;
-        //readonly IUnitOfWork _unitOfWork = unitOfWork;
         readonly ITagRepository repo = tagRepository;
+        readonly ILogger<TagService> _logger = logger;
 
         public async Task<ResultModel> AddTag(TagAddViewModel model)
         {
-            //var repo = _unitOfWork.GetRepository<Tag>() as TagRepository;
             var resultModel = new ResultModel(true, "Tag created");
             try
             {
                 await repo.Create(_mapper.Map<Tag>(model));
+                _logger.LogInformation($"Добавлен тег {model.Name}");
             }
             catch (Exception ex)
             {
-                resultModel.MarkAsFailed();
-                resultModel.AddMessage(ex.Message); 
-                if (ex.InnerException is not null)
-                    resultModel.AddMessage(ex.InnerException.Message);
+                resultModel = ProcessException($"При добавлении тега {model.Name} произошла ошибка", ex);
             }
             return resultModel;
         }
 
         public async Task<ResultModel> UpdateTag(TagEditViewModel model)
         {
-            //var repo = _unitOfWork.GetRepository<Tag>() as TagRepository;
             var resultModel = new ResultModel(true, "Tag updated");
             try
             {
                 await repo.Update(_mapper.Map<Tag>(model));
+                _logger.LogInformation($"Обновлен тег {model.Name}");
             }
             catch (Exception ex)
             {
-                resultModel.MarkAsFailed();
-                resultModel.AddMessage(ex.Message);
-                if (ex.InnerException is not null)
-                    resultModel.AddMessage(ex.InnerException.Message);
+                resultModel = ProcessException($"При обновлении тега {model.Name} произошла ошибка", ex);
             }
             return resultModel;
         }
 
         public async Task<ResultModel> DeleteTag(int tagId)
         {
-            //var repo = _unitOfWork.GetRepository<Tag>() as TagRepository;
             var tag = await repo.Get(tagId);
             var resultModel = new ResultModel(true, "Tag deleted");
             try
             {
                 await repo.Delete(tag);
+                _logger.LogInformation($"Удален тег id={tagId}");
             }
             catch (Exception ex)
             {
-                resultModel.MarkAsFailed();
-                resultModel.AddMessage(ex.Message);
-                if (ex.InnerException is not null)
-                    resultModel.AddMessage(ex.InnerException.Message);
+                resultModel = ProcessException($"При удалении тега id={tagId} произошла ошибка", ex);
             }
             return resultModel;
         }
 
         public TagListViewModel GetAllTags()
         {
-            //var repo = _unitOfWork.GetRepository<Tag>() as TagRepository;
             var tags = repo.GetAll().ToList();
-            //return CreateListViewModel(tags);
             return CreateListViewModel(tags);
         }
         
         public List<TagViewModel> GetAllTagsList()
         {
-            //var repo = _unitOfWork.GetRepository<Tag>() as TagRepository;
             var tags = repo.GetAll().ToList();
-            //return CreateListViewModel(tags);
             return CreateListOfViewModels(tags);
         }
 
         public async Task<TagEditViewModel> GetTagById(int tagId)
         {
-            //var repo = _unitOfWork.GetRepository<Tag>() as TagRepository;
             var tag = await repo.Get(tagId);
             return _mapper.Map<TagEditViewModel>(tag);
         }
         
         public async Task<TagEditViewModel> GetTagByIdAsNoTracking(int tagId)
         {
-            //var repo = _unitOfWork.GetRepository<Tag>() as TagRepository;
             var tag = await repo.Get(tagId);
             return _mapper.Map<TagEditViewModel>(tag);
-        }
-
-        public TagListViewModel GetTagsOfArticle(int articleId)
-        {
-            throw new NotImplementedException();
         }
 
         public async Task<List<Tag>> GetTagsByIds(List<int> selectedIds)
@@ -124,7 +104,6 @@ namespace FinalBlog.Services
             foreach (var entity in list)
             {
                 var newItem = _mapper.Map<TagViewModel>(entity);
-                //newItem.ArticleCount = _articleService.GetArticlesByTag(entity.Id).Articles.Count;
                 model.Tags.Add(newItem);
             }
             return model;
@@ -136,10 +115,29 @@ namespace FinalBlog.Services
             foreach (var entity in list)
             {
                 var newItem = _mapper.Map<TagViewModel>(entity);
-                //newItem.ArticleCount = _articleService.GetArticlesByTag(entity.Id).Articles.Count;
                 model.Add(newItem);
             }
             return model;
+        }
+                
+        /// <summary>
+        /// Глобальный обработчик ошибок (если можно так выразиться xD)
+        /// глобальный для этого класса (другое не успел протестировать и внедрить)
+        /// </summary>
+        /// <param name="logMessage">Сообщение для записи в лог</param>
+        /// <param name="ex">полученное исключение </param>
+        /// <returns></returns>
+        private ResultModel ProcessException(string logMessage, Exception ex)
+        {
+            var resultModel = new ResultModel();
+            resultModel.MarkAsFailed(ex.Message);
+            _logger.LogError($"{logMessage}: {ex.Message}");
+            if (ex.InnerException is not null)
+            {
+                _logger.LogError($" --- InnerException: {ex.InnerException.Message}");
+                resultModel.AddMessage(ex.InnerException.Message);
+            }
+            return resultModel;
         }
     }
 }

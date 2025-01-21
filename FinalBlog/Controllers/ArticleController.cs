@@ -11,10 +11,17 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace FinalBlog.Controllers
 {
-    public class ArticleController(IArticleService articleService) : Controller
+    public class ArticleController(
+        IArticleService articleService
+        ) : Controller
     {
         readonly IArticleService _articleService = articleService;
+        string? CurrentUserId => User.FindFirstValue(ClaimTypes.NameIdentifier);
 
+        /// <summary>
+        /// [GET] Получение всех статей
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public IActionResult Index()
         {
@@ -22,6 +29,11 @@ namespace FinalBlog.Controllers
             return View("Articles", articleList);
         }
 
+        /// <summary>
+        /// [GET] Получение статей автора
+        /// </summary>
+        /// <param name="authorId">ID автора</param>
+        /// <returns></returns>
         [Route("Author")]
         [HttpGet]
         public IActionResult Author(string authorId)
@@ -29,7 +41,12 @@ namespace FinalBlog.Controllers
             var articleList = _articleService.GetArticlesOfAuthor(authorId);
             return View("Articles", articleList);
         }
-        
+
+        /// <summary>
+        /// [GET] Выбор статей по тегу
+        /// </summary>
+        /// <param name="id">ID тега</param>
+        /// <returns></returns>
         [HttpGet]
         public IActionResult Tag(int id)
         {
@@ -37,6 +54,11 @@ namespace FinalBlog.Controllers
             return View("Articles", articleList);
         }
 
+        /// <summary>
+        /// [GET] Просмотр статьи
+        /// </summary>
+        /// <param name="id">ID статьи</param>
+        /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> View(int id)
         {
@@ -44,21 +66,30 @@ namespace FinalBlog.Controllers
             return View("View", article);
         }
 
+        /// <summary>
+        /// [GET] Страница создания статьи
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public IActionResult Add() => View();
 
+        /// <summary>
+        /// [POST] Добавление статьи
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<IActionResult> Add(ArticleAddViewModel model)
         {
             var ifUserCanAdd = _articleService.CheckIfUserCanAdd(User);
             if (!ifUserCanAdd.IsSuccessed)
-                ModelState.AddModelError("", ifUserCanAdd.Messages[0]);
+                return RedirectToAction("AccessDenied", "Error");
 
             if (ModelState.IsValid)
             {
                 var resultModel = await _articleService.AddArticle(model);
                 if (resultModel.IsSuccessed)
-                    return RedirectToAction("Author", "Article", new { authorId = User.FindFirstValue(ClaimTypes.NameIdentifier) });
+                    return RedirectToAction("Author", "Article", new { authorId = CurrentUserId });
                 
                 foreach (var message in resultModel.Messages)
                     ModelState.AddModelError("", message);
@@ -66,6 +97,11 @@ namespace FinalBlog.Controllers
             return View("Add", model);
         }
 
+        /// <summary>
+        /// [GET] Страница редактирования статьи
+        /// </summary>
+        /// <param name="id">ID статьи</param>
+        /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
@@ -73,6 +109,11 @@ namespace FinalBlog.Controllers
             return View("Edit", article);
         }
 
+        /// <summary>
+        /// Редактирование статьи
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(ArticleEditViewModel model)
@@ -80,7 +121,7 @@ namespace FinalBlog.Controllers
             //model.NewTags = newTags;
             var ifUserCanEdit = _articleService.CheckIfUserCanEdit(User, model.AuthorId);
             if (!ifUserCanEdit.IsSuccessed)
-                ModelState.AddModelError("", ifUserCanEdit.Messages[0]);
+                return RedirectToAction("AccessDenied", "Error");
 
             if (ModelState.IsValid)
             {
@@ -94,19 +135,18 @@ namespace FinalBlog.Controllers
             return View("Edit", model);
         }
 
-        // GET: ArticleController/Delete/5
-        //public IActionResult Delete(int id)
-        //{
-        //    return View();
-        //}
-
+        /// <summary>
+        /// Удаление
+        /// </summary>
+        /// <param name="id">ID статьи</param>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
             var ifUserCanEdit = _articleService.CheckIfUserCanEdit(User, _articleService.GetArticleById(id).Result.AuthorId);
             if (!ifUserCanEdit.IsSuccessed)
-                ModelState.AddModelError("", ifUserCanEdit.Messages[0]);
+                return RedirectToAction("AccessDenied", "Error");
 
             if (ModelState.IsValid)
             {

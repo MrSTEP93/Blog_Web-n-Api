@@ -69,7 +69,7 @@ namespace FinalBlog
             // Connect logger
             builder.Logging
                 .ClearProviders()
-                .SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace)
+                .SetMinimumLevel(LogLevel.Trace)
                 .AddConsole()
                 .AddNLog("nlog");
 
@@ -85,6 +85,18 @@ namespace FinalBlog
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+
+            app.UseStatusCodePages(async statusCodeContext =>
+            {
+                var response = statusCodeContext.HttpContext.Response;
+
+                response.ContentType = "text/plain; charset=UTF-8";
+                if (response.StatusCode == 400)
+                    response.Redirect("/BadRequest");
+
+                else if (response.StatusCode == 404)
+                    response.Redirect("/NotFound");
+            });
 
             app.UseRouting();
 

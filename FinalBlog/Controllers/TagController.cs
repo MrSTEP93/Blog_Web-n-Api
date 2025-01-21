@@ -12,21 +12,41 @@ namespace FinalBlog.Controllers
     {
         readonly ITagService _tagService = tagService;
 
+        /// <summary>
+        /// [GET] Вывод всех тегов
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
         public IActionResult Index()
         {
             var model = _tagService.GetAllTags();
             return View("TagList", model);
         }
 
+        /// <summary>
+        /// [GET] Просмотр тега
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet]
         public async Task<IActionResult> View(int id)
         {
             var model = await _tagService.GetTagById(id);
             return View(model);
         }
 
+        /// <summary>
+        /// [GET] Показ окна добавления
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public IActionResult Add() => View();
 
+        /// <summary>
+        /// [POST] Добавление тега
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Add(TagAddViewModel model)
@@ -43,9 +63,19 @@ namespace FinalBlog.Controllers
             return View("Add", model);
         }
 
+        /// <summary>
+        /// [GET] Показ окна редактирования
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet]
         public ActionResult Edit(int id) => View("Edit", _tagService.GetTagById(id).Result);
 
+        /// <summary>
+        /// [POST] Редактирование
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(TagEditViewModel model)
@@ -62,6 +92,11 @@ namespace FinalBlog.Controllers
             return View("Edit", model);
         }
 
+        /// <summary>
+        /// [POST] Удаление тега
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)

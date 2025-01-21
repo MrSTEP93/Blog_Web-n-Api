@@ -13,7 +13,14 @@ namespace FinalBlog.Controllers
         ) : Controller
     {
         readonly ICommentService _commentService = commentService;
-
+        
+        /// <summary>
+        /// [GET] Отображение списка статей
+        /// </summary>
+        /// <param name="authorId">если заполнено - статьи этого автора</param>
+        /// <param name="authorFullName">имя автора для отображения в заголовке</param>
+        /// <returns></returns>
+        [HttpGet]
         public ActionResult Index(string? authorId = null, string? authorFullName = null)
         {
             var model = new CommentListViewModel();
@@ -30,14 +37,18 @@ namespace FinalBlog.Controllers
             return View("CommentsList", model);
         }
 
-        public async Task<IActionResult> Details(int id)
-        {
-            var model = await _commentService.GetCommentById(id);
-            return Ok(model);
-        }
-
+        /// <summary>
+        /// [GET] Страница создания комментария
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
         public IActionResult Add() => View();
 
+        /// <summary>
+        /// [POST] Создание комментари
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Add(CommentAddViewModel model)
@@ -59,9 +70,19 @@ namespace FinalBlog.Controllers
             return View("Add", model);
         }
 
+        /// <summary>
+        /// [GET] Страница редактирования комментария
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet]
         public ActionResult Edit(int id) => View("Edit", _commentService.GetCommentById(id).Result);
 
+        /// <summary>
+        /// [POST] Обновление комментария
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(CommentEditViewModel model)
@@ -82,6 +103,11 @@ namespace FinalBlog.Controllers
             return View("Edit", model);
         }
 
+        /// <summary>
+        /// [POST] Удаление комментария
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)

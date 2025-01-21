@@ -13,7 +13,6 @@ namespace FinalBlog.Services.Interfaces
         public Task<TagEditViewModel> GetTagByIdAsNoTracking(int tagId);
         public TagListViewModel GetAllTags();
         public List<TagViewModel> GetAllTagsList();
-        public TagListViewModel GetTagsOfArticle(int articleId);
         public Task<List<Tag>> GetTagsByIds(List<int> selectedIds);
     }
 }

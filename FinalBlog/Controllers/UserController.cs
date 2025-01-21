@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Security.Claims;
 
 namespace FinalBlog.Controllers
 {
@@ -23,6 +24,7 @@ namespace FinalBlog.Controllers
         private readonly IUserService _userService = userService;
         private readonly IMapper _mapper = mapper;
         private readonly ILogger<UserController> _logger = logger;
+        string? CurrentUserId => User.FindFirstValue(ClaimTypes.NameIdentifier);
 
         /// <summary>
         /// [GET] Метод для получения всех пользователей
@@ -219,12 +221,17 @@ namespace FinalBlog.Controllers
             return View("Edit", model);
         }
 
+        /// <summary>
+        /// Удаление
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [Authorize(Roles = "Администратор")]
-        [HttpDelete]
+        [HttpPost]
         public async Task<IActionResult> DeleteUser(string id)
         {
             var resultModel = await _userService.DeleteUser(id);
-            _logger.LogInformation($"Администратор удалил пользователя ID={id}");
+            _logger.LogInformation($"Администратор {{ {CurrentUserId} }} удалил пользователя ID={id}");
             return Ok(resultModel);
         }
         

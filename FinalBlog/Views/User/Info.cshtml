@@ -70,11 +70,7 @@
                         @if(isSuperUser)
                         {
                             <a class="m-3 text-decoration-none" asp-action="Index" asp-controller="Comment"
-                               asp-route-authorId="@Model.Id" asp-route-authorFullName="@Model.FirstName @Model.LastName">Комментарии</a>
-                        }
-                        @if (User.IsInRole("Администратор"))
-                        {
-                            <a class="m-3 text-decoration-none" asp-action="GetRoles" asp-controller="Role" asp-route-userId="@Model.Id">Роли</a>
+                               asp-route-authorId="@Model.Id" asp-route-authorFullName="@Model.FullName">Комментарии</a>
                         }
                     </div>
                     <div class="row">
@@ -87,7 +83,7 @@
                                 </a>
                             </div>
                             <div class="col mt-4 d-flex justify-content-sm-end justify-content-start">
-                                <form method="post" asp-action="AskDeleteConfirm" asp-controller="User">
+                                <form method="post" asp-action="DeleteUser" asp-controller="User" asp-route-id="@Model.Id">
                                     <input type="hidden" name="id" value="@Model.Id" />
                                     <input type="hidden" name="userId" value="@claimUserId" />
 

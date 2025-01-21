@@ -14,6 +14,10 @@ namespace FinalBlog.Controllers
     {
         private readonly IRoleService _roleService = roleService;
 
+        /// <summary>
+        /// [GET] Вывод всех ролей
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public IActionResult Index()
         {
@@ -25,9 +29,18 @@ namespace FinalBlog.Controllers
             return View("Roles", model);
         }
 
+        /// <summary>
+        /// [GET] Окно создания роли
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public IActionResult NewRole() => View();
 
+        /// <summary>
+        /// [POST] Создания новой роли
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [Authorize(Roles = "Администратор")]
         [HttpPost]
         public async Task<IActionResult> Add(RoleAddViewModel model)
@@ -48,10 +61,20 @@ namespace FinalBlog.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// [GET] Окно редактирования роли
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [Authorize(Roles = "Администратор")]
         [HttpGet]
         public IActionResult Edit(string id) => View(_roleService.GetRoleById(id));
 
+        /// <summary>
+        /// [POST] Редактирование роли
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [Authorize(Roles = "Администратор")] 
         [HttpPost]
         public async Task<IActionResult> Edit(RoleViewModel model)
@@ -73,10 +96,20 @@ namespace FinalBlog.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// [GET] Подтверждение удаления роли
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet]
         public ActionResult Delete(string id) => View(_roleService.GetRoleById(id));
         
-
+        /// <summary>
+        /// [POST] Удаление роли
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="confirmed"></param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<IActionResult> Delete(string id, string confirmed = "yes")
         {

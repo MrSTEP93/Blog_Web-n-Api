@@ -3,16 +3,8 @@ using Microsoft.EntityFrameworkCore.Storage;
 
 namespace FinalBlog.DATA.Models
 {
-    
-
     public class ResultModel
     {
-        private readonly Dictionary<bool, string> baseMessages = new()
-        {
-            { false, "Operation not completed" },
-            { true,  "Success"}
-        };
-
         public bool IsSuccessed { get; set; }
 
         public List<string> Messages { get; private set; } = [];
@@ -20,7 +12,6 @@ namespace FinalBlog.DATA.Models
         public ResultModel(bool isSuccessed = false)
         {
             IsSuccessed = isSuccessed;
-            //Messages.Add(baseMessages[isSuccessed]);
         }
 
         public ResultModel(bool isSuccessed, string message)
