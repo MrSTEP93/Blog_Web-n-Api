@@ -8,6 +8,7 @@ using FinalBlog.Services;
 using FinalBlog.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using NLog.Extensions.Logging;
 
 namespace FinalBlog
 {
@@ -64,6 +65,13 @@ namespace FinalBlog
                 .AddCustomRepository<BlogUser, UserRepository>()
                 .AddCustomRepository<Role, RoleRepository>()
                 .AddCustomRepository<Comment, CommentRepository>();
+
+            // Connect logger
+            builder.Logging
+                .ClearProviders()
+                .SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace)
+                .AddConsole()
+                .AddNLog("nlog");
 
             var app = builder.Build();
 

@@ -29,7 +29,7 @@ namespace FinalBlog.Services
 
         public async Task<ResultModel> Register(RegistrationViewModel model)
         {
-            const string defaultRoleName = "Пользователь0";
+            const string defaultRoleName = "Пользователь";
             ResultModel resultModel = new(false);
             var newUser = _mapper.Map<BlogUser>(model);
 
