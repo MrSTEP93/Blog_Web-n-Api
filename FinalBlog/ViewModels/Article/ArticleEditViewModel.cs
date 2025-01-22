@@ -40,6 +40,6 @@ namespace FinalBlog.ViewModels.Article
         /// <summary>
         /// Перечень выбранных тегов (отмеченных на форме редактирования)
         /// </summary>
-        public List<int>? SelectedTagIds { get; set; } = [];
+        public List<int> SelectedTagIds { get; set; } = [];
     }
 }

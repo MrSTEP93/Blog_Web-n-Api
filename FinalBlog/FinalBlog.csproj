@@ -27,8 +27,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="DAL\" />
     <Folder Include="Views\Tag\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FinalBlog.Data\FinalBlog.Data.csproj" />
   </ItemGroup>
 
 </Project>
