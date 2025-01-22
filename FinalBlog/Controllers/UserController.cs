@@ -27,11 +27,11 @@ namespace FinalBlog.Controllers
 
         /// <summary>
         /// [GET] Метод для получения всех пользователей
+        /// [Route("UserList")]
         /// </summary>
         /// <param name="viewMode"></param>
         /// <returns></returns>
         [Authorize(Roles = "Администратор, Модератор")]
-        [Route("UserList")]
         [HttpGet]
         public async Task<IActionResult> UserList(string viewMode = "block")
         {
@@ -46,9 +46,9 @@ namespace FinalBlog.Controllers
 
         /// <summary>
         /// [GET] Отображение формы регистрации
+        /// [Route("Register")]
         /// </summary>
         /// <returns></returns>
-        [Route("Register")]
         [HttpGet]
         public IActionResult Register() => View();
 
@@ -80,9 +80,9 @@ namespace FinalBlog.Controllers
 
         /// <summary>
         /// [GET] Отображение формы входа (авторизации)
+        /// [Route("Login")]
         /// </summary>
         /// <returns></returns>
-        [Route("Login")]
         [HttpGet]
         public IActionResult Login() => View();
 
@@ -91,7 +91,6 @@ namespace FinalBlog.Controllers
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        [Route("Login")]
         [HttpPost]
         public async Task<IActionResult> Login(LoginViewModel model)
         {
@@ -130,9 +129,9 @@ namespace FinalBlog.Controllers
 
         /// <summary>
         /// [POST] Выход из системы
+        /// [Route("Logout")]
         /// </summary>
         /// <returns></returns>
-        [Route("Logout")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
@@ -167,12 +166,12 @@ namespace FinalBlog.Controllers
 
         /// <summary>
         /// [GET] Страница редактирования информации пользователя
+        /// [Route("Profile")]
         /// </summary>
         /// <param name="id">ID пользователя (если NULL - пользователь редактирует свой профиль)</param>
         /// <returns></returns>
-        [Route("Profile")]
         [HttpGet]
-        public async Task<IActionResult> ShowUserEditForm(string? id = null)
+        public async Task<IActionResult> Profile(string? id = null)
         {
             if (!User.Identity!.IsAuthenticated)
             {
@@ -208,7 +207,7 @@ namespace FinalBlog.Controllers
                     resultModel = await _userService.UpdateUserInfo(model);
 
                 if (resultModel.IsSuccessed)
-                    return RedirectToAction("ShowUserEditForm", "User", model);
+                    return RedirectToAction("Profile", "User", model);
 
                 foreach (var message in resultModel.Messages)
                 {

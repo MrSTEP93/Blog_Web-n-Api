@@ -34,7 +34,6 @@ namespace FinalBlog.Controllers
         /// </summary>
         /// <param name="authorId">ID автора</param>
         /// <returns></returns>
-        [Route("Author")]
         [HttpGet]
         public IActionResult Author(string authorId)
         {

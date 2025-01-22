@@ -6,23 +6,23 @@ namespace FinalBlog.Controllers
     {
         /// <summary>
         /// Показ пользователю ошибки статус кода 404
+        /// [Route("NotFound")]
         /// </summary>
         [HttpGet]
-        [Route("NotFound")]
         public new IActionResult NotFound() => View();
 
         /// <summary>
         /// Показ пользователю ошибки статус кодов 400, 500
+        /// [Route("BadRequest")]
         /// </summary>
         [HttpGet]
-        [Route("BadRequest")]
         public new IActionResult BadRequest() => View();
 
         /// <summary>
         /// Показ пользователю ошибки статус кода 403
+        /// [Route("AccessDenied")]
         /// </summary>
         [HttpGet]
-        [Route("AccessDenied")]
         public IActionResult AccessDenied() => View();
     }
 }
