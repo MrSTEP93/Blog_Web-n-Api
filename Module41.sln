@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34723.18
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinalBlog", "FinalBlog\FinalBlog.csproj", "{D6B3CD6B-A1C7-4B18-AEE9-0E5C3FA0D764}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FinalBlog", "FinalBlog\FinalBlog.csproj", "{D6B3CD6B-A1C7-4B18-AEE9-0E5C3FA0D764}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinalBlog.WebApi", "FinalBlog.WebApi\FinalBlog.WebApi.csproj", "{D4E2DC3E-CAAC-47B9-8413-B1D703BDFD53}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{D6B3CD6B-A1C7-4B18-AEE9-0E5C3FA0D764}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D6B3CD6B-A1C7-4B18-AEE9-0E5C3FA0D764}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D6B3CD6B-A1C7-4B18-AEE9-0E5C3FA0D764}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D4E2DC3E-CAAC-47B9-8413-B1D703BDFD53}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D4E2DC3E-CAAC-47B9-8413-B1D703BDFD53}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D4E2DC3E-CAAC-47B9-8413-B1D703BDFD53}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D4E2DC3E-CAAC-47B9-8413-B1D703BDFD53}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
