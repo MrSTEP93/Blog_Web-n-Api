@@ -1,10 +1,10 @@
-﻿namespace FinalBlog.DATA.Models
+﻿namespace FinalBlog.Data.Models
 {
     public class Comment
     {
         public Comment()
         {
-            
+
         }
         public Comment(Article article, BlogUser commentAuthor, string text)
         {

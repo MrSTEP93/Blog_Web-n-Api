@@ -1,4 +1,4 @@
-﻿using FinalBlog.DATA.Models;
+﻿using FinalBlog.Data.Models;
 using FinalBlog.ViewModels.Role;
 
 namespace FinalBlog.Services.Interfaces

@@ -1,7 +1,8 @@
-﻿using FinalBlog.DATA.Models;
+﻿using FinalBlog.Data;
+using FinalBlog.Data.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace FinalBlog.DATA.Repositories
+namespace FinalBlog.Data.Repositories
 {
     public class CommentRepository(AppDbContext dbContext) : Repository<Comment>(dbContext)
     {

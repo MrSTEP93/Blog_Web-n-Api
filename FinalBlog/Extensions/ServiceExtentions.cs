@@ -1,5 +1,5 @@
-﻿using FinalBlog.DATA.Repositories;
-using FinalBlog.DATA.UoW;
+﻿using FinalBlog.Data.Repositories;
+using FinalBlog.Data.UoW;
 
 namespace FinalBlog.Extensions
 {

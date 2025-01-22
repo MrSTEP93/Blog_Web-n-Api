@@ -1,8 +1,7 @@
 ﻿using AutoMapper;
 using AutoMapper.Configuration.Annotations;
 using Azure.Core;
-using FinalBlog.DATA;
-using FinalBlog.DATA.Models;
+using FinalBlog.Data.Models;
 using FinalBlog.Extensions;
 using FinalBlog.Services.Interfaces;
 using FinalBlog.ViewModels.User;

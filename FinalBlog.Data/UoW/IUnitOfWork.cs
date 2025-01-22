@@ -1,6 +1,6 @@
-﻿using FinalBlog.DATA.Repositories;
+﻿using FinalBlog.Data.Repositories;
 
-namespace FinalBlog.DATA.UoW
+namespace FinalBlog.Data.UoW
 {
     public interface IUnitOfWork : IDisposable
     {

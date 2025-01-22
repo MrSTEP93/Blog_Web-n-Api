@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using FinalBlog.DATA.Models;
-using FinalBlog.DATA.Repositories;
-using FinalBlog.DATA.UoW;
+using FinalBlog.Data.Models;
+using FinalBlog.Data.Repositories;
+using FinalBlog.Data.UoW;
 using FinalBlog.Services.Interfaces;
 using FinalBlog.ViewModels.Article;
 using FinalBlog.ViewModels.Comment;

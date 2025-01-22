@@ -1,8 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using FinalBlog.Data;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System.Diagnostics;
 
-namespace FinalBlog.DATA.Repositories
+namespace FinalBlog.Data.Repositories
 {
     public class Repository<T> : IRepository<T> where T : class
     {

@@ -1,4 +1,4 @@
-﻿using FinalBlog.DATA.Models;
+﻿using FinalBlog.Data.Models;
 using FinalBlog.ViewModels.Tag;
 using FinalBlog.ViewModels.User;
 using System.ComponentModel.DataAnnotations;
@@ -40,6 +40,6 @@ namespace FinalBlog.ViewModels.Article
         /// <summary>
         /// Перечень выбранных тегов (отмеченных на форме редактирования)
         /// </summary>
-        public List<int>? SelectedTagIds { get; set; } = [];
+        public List<int> SelectedTagIds { get; set; } = [];
     }
 }

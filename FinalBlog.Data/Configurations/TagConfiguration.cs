@@ -1,15 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
-using FinalBlog.DATA.Models;
+using FinalBlog.Data.Models;
 
 namespace FinalBlog.Configurations
 {
-    public class ArticleConfiguration : IEntityTypeConfiguration<Article>
+    public class TagConfiguration : IEntityTypeConfiguration<Tag>
     {
 
-        public void Configure(EntityTypeBuilder<Article> builder)
+        public void Configure(EntityTypeBuilder<Tag> builder)
         {
-            builder.ToTable("Articles").HasKey(p => p.Id);
+            builder.ToTable("Tags").HasKey(p => p.Id);
             builder.Property(x => x.Id).UseIdentityColumn();
         }
     }

@@ -1,8 +1,9 @@
-﻿using FinalBlog.DATA.Models;
+﻿using FinalBlog.Data;
+using FinalBlog.Data.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Runtime.CompilerServices;
 
-namespace FinalBlog.DATA.Repositories
+namespace FinalBlog.Data.Repositories
 {
     public class UserRepository(AppDbContext dbContext) : Repository<BlogUser>(dbContext)
     {
