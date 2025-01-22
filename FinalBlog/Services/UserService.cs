@@ -99,7 +99,7 @@ namespace FinalBlog.Services
         public async Task<List<BlogUser>> GetAllUsers()
         {
             var repository = _unitOfWork.GetRepository<BlogUser>() as UserRepository;
-            var userList = repository.GetAll().ToList();
+            var userList = repository.GetAll().ToList() ?? [];
 
             foreach (var user in userList)
             {
@@ -194,6 +194,18 @@ namespace FinalBlog.Services
             return resultModel;
         }
 
+        public List<UserViewModel> ConvertToViewModel(List<BlogUser> userList)
+        {
+            List<UserViewModel> list = [];
+            foreach (BlogUser user in userList)
+            {
+                list.Add(_mapper.Map<UserViewModel>(user));
+            }
+            return list;
+        }
+        
+        public UserViewModel ConvertToViewModel(BlogUser user) => _mapper.Map<UserViewModel>(user);
+        
         public async Task<ResultModel> CreateRandomUsers()
         {
             byte userCount = 5;

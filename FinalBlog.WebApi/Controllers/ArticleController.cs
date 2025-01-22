@@ -59,9 +59,9 @@ namespace FinalBlog.WebApi.Controllers
         }
 
         /// <summary>
-        /// [POST] Добавление статьи
+        /// [PUT] Добавление статьи
         /// </summary>
-        [HttpPost]
+        [HttpPut]
         //[ValidateAntiForgeryToken]
         [Route("Add")]
         public async Task<IActionResult> Add([FromBody] ArticleAddViewModel model)
@@ -75,7 +75,7 @@ namespace FinalBlog.WebApi.Controllers
         }
 
         /// <summary>
-        /// Редактирование статьи
+        /// [Post] Редактирование статьи
         /// </summary>
         /// <param name="model"></param>
         [HttpPost]
@@ -92,10 +92,10 @@ namespace FinalBlog.WebApi.Controllers
         }
 
         /// <summary>
-        /// Удаление статьи
+        /// [Delete] Удаление статьи
         /// </summary>
         /// <param name="id">ID статьи</param>
-        [HttpPost]
+        [HttpDelete]
         //[ValidateAntiForgeryToken]
         [Route("Delete")]
         public async Task<IActionResult> Delete(int id)

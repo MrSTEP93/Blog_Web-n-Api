@@ -1,15 +1,11 @@
-
 using AutoMapper;
 using FinalBlog.Data;
 using FinalBlog.Data.Models;
 using FinalBlog.Data.Repositories;
 using FinalBlog.Data.Repositories.Interfaces;
-using FinalBlog.Extensions;
 using FinalBlog.Services.Interfaces;
 using FinalBlog.Services;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Hosting;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace FinalBlog.WebApi
 {
@@ -19,9 +15,8 @@ namespace FinalBlog.WebApi
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
-
-            builder.Services.AddControllers();
+            //builder.Services.AddControllers();
+            builder.Services.AddControllersWithViews();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
@@ -71,7 +66,6 @@ namespace FinalBlog.WebApi
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();

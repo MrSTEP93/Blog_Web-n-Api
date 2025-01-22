@@ -29,6 +29,10 @@ namespace FinalBlog.Services.Interfaces
 
         public Task<ResultModel> DeleteUser(string id);
 
+        public List<UserViewModel> ConvertToViewModel(List<BlogUser> userList);
+        public UserViewModel ConvertToViewModel(BlogUser user);
+
         public Task<ResultModel> CreateRandomUsers();
+
     }
 }
