@@ -27,6 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="DAL\" />
     <Folder Include="Views\Tag\" />
   </ItemGroup>
 

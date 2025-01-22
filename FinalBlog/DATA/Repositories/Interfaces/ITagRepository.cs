@@ -1,6 +1,6 @@
-﻿using FinalBlog.DATA.Models;
+﻿using FinalBlog.Data.Models;
 
-namespace FinalBlog.DATA.Repositories.Interfaces
+namespace FinalBlog.Data.Repositories.Interfaces
 {
     public interface ITagRepository
     {

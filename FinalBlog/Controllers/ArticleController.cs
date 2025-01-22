@@ -1,4 +1,4 @@
-﻿using FinalBlog.DATA.Models;
+﻿using FinalBlog.Data.Models;
 using FinalBlog.Services;
 using FinalBlog.Services.Interfaces;
 using FinalBlog.ViewModels.Article;

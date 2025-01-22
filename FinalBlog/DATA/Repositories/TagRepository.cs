@@ -1,9 +1,10 @@
-﻿using FinalBlog.DATA.Models;
-using FinalBlog.DATA.Repositories.Interfaces;
+﻿using FinalBlog.Data;
+using FinalBlog.Data.Models;
+using FinalBlog.Data.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 
-namespace FinalBlog.DATA.Repositories
+namespace FinalBlog.Data.Repositories
 {
     public class TagRepository(AppDbContext dbContext) : ITagRepository
     {

@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore.Storage;
 
-namespace FinalBlog.DATA.Models
+namespace FinalBlog.Data.Models
 {
     public class ResultModel
     {
@@ -29,14 +29,14 @@ namespace FinalBlog.DATA.Models
         {
             Messages.Add(message);
         }
-        
+
         public void MarkAsSuccess(string successMessage = "Success")
         {
             Messages.Clear();
             Messages.Add(successMessage);
             IsSuccessed = true;
         }
-        
+
         public void MarkAsFailed(string errorMessage = "Operation not completed")
         {
             Messages.Clear();

@@ -1,4 +1,4 @@
-﻿namespace FinalBlog.DATA.Repositories
+﻿namespace FinalBlog.Data.Repositories
 {
     public interface IRepository<T> where T : class
     {

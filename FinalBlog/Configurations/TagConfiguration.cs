@@ -1,6 +1,6 @@
-﻿using FinalBlog.DATA.Models;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
+using FinalBlog.Data.Models;
 
 namespace FinalBlog.Configurations
 {

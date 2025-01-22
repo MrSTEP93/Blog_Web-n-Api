@@ -1,8 +1,8 @@
 using AutoMapper;
-using FinalBlog.DATA;
-using FinalBlog.DATA.Models;
-using FinalBlog.DATA.Repositories;
-using FinalBlog.DATA.Repositories.Interfaces;
+using FinalBlog.Data;
+using FinalBlog.Data.Models;
+using FinalBlog.Data.Repositories;
+using FinalBlog.Data.Repositories.Interfaces;
 using FinalBlog.Extensions;
 using FinalBlog.Services;
 using FinalBlog.Services.Interfaces;

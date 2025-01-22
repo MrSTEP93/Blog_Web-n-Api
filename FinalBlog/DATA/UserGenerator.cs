@@ -1,12 +1,12 @@
-﻿using FinalBlog.DATA.Models;
+﻿using FinalBlog.Data.Models;
 
-namespace FinalBlog.DATA
+namespace FinalBlog.Data
 {
     public class UserGenerator
     {
         public readonly string[] maleNames = ["Алексей", "Борян", "Василий", "Игорь", "Даниил", "Сергей", "Евгений", "Григорий", "Витек", "Миха"];
         public readonly string[] femaleNames = ["Анна", "Мария", "Станислава", "Елена", "Юлия", "Настя"];
-        public readonly string[] lastNames = [ "Тестов", "Туголуков", "Потапов", "Шкуров", "Лысенков" ];
+        public readonly string[] lastNames = ["Тестов", "Туголуков", "Потапов", "Шкуров", "Лысенков"];
 
         public List<BlogUser> Populate(int count)
         {

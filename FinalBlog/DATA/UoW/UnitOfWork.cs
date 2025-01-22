@@ -1,7 +1,9 @@
-﻿using FinalBlog.DATA.Repositories;
+﻿using FinalBlog.Data;
+using FinalBlog.Data.Repositories;
+//using FinalBlog.DATA.Repositories;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 
-namespace FinalBlog.DATA.UoW
+namespace FinalBlog.Data.UoW
 {
     public class UnitOfWork : IUnitOfWork
     {

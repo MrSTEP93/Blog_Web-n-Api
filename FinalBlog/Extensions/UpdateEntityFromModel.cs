@@ -1,4 +1,4 @@
-﻿using FinalBlog.DATA.Models;
+﻿using FinalBlog.Data.Models;
 using FinalBlog.ViewModels.Article;
 using FinalBlog.ViewModels.Comment;
 using FinalBlog.ViewModels.Role;

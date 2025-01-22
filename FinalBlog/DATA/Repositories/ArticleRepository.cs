@@ -1,8 +1,9 @@
-﻿using FinalBlog.DATA.Models;
-using FinalBlog.DATA.Repositories.Interfaces;
+﻿using FinalBlog.Data;
+using FinalBlog.Data.Models;
+using FinalBlog.Data.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
-namespace FinalBlog.DATA.Repositories
+namespace FinalBlog.Data.Repositories
 {
     public class ArticleRepository(AppDbContext dbContext) : IArticleRepository
     {
@@ -24,7 +25,7 @@ namespace FinalBlog.DATA.Repositories
             existingArticle = item;
             */
             _db.Articles.Update(item);
-            
+
             await _db.SaveChangesAsync();
         }
 

@@ -1,9 +1,9 @@
 ﻿using FinalBlog.Configurations;
-using FinalBlog.DATA.Models;
+using FinalBlog.Data.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace FinalBlog.DATA
+namespace FinalBlog.Data
 {
     public class AppDbContext : IdentityDbContext
     {

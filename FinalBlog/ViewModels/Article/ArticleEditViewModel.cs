@@ -1,4 +1,4 @@
-﻿using FinalBlog.DATA.Models;
+﻿using FinalBlog.Data.Models;
 using FinalBlog.ViewModels.Tag;
 using FinalBlog.ViewModels.User;
 using System.ComponentModel.DataAnnotations;
