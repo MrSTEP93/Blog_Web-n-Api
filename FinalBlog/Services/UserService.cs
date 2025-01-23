@@ -126,8 +126,6 @@ namespace FinalBlog.Services
             var user = await repository.Get(id)
                 ?? throw new NullReferenceException($"Пользователь не найден в базе (id={id})");
             user.Roles = await _roleService.GetRolesOfUser(user);
-            //var model = _mapper.Map<UserViewModel>(user);
-            //model.Roles = userRoles;
 
             return user;
         }
@@ -137,7 +135,6 @@ namespace FinalBlog.Services
             var user = await _userManager.GetUserAsync(claimsPrincipal)
                 ?? throw new NullReferenceException($"Пользователь не найден в базе данных");
             user.Roles = await _roleService.GetRolesOfUser(user);
-            //var model = _mapper.Map<UserViewModel>(user);
 
             return user;
         }

@@ -1,90 +1,67 @@
-﻿using FinalBlog.Data.Models;
+﻿using FinalBlog.Services.Interfaces;
 using FinalBlog.Services;
-using FinalBlog.Services.Interfaces;
-using FinalBlog.ViewModels.Comment;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
+using FinalBlog.ViewModels.Comment;
+using FinalBlog.Data.Models;
 
-namespace FinalBlog.Controllers
+namespace FinalBlog.WebApi.Controllers
 {
+    [ApiController]
+    [Route("[controller]/[action]")]
     public class CommentController(
         ICommentService commentService
-        ) : Controller
+        ) : ControllerBase
     {
         readonly ICommentService _commentService = commentService;
-        
+
         /// <summary>
         /// [GET] Отображение списка комментариев
         /// </summary>
         /// <param name="authorId">если заполнено - комменты этого автора</param>
-        /// <param name="authorFullName">имя автора для отображения в заголовке</param>
-        /// <returns></returns>
         [HttpGet]
-        public ActionResult Index(string? authorId = null, string? authorFullName = null)
+        public IActionResult Index(string? authorId = null)
         {
             var model = new CommentListViewModel();
             if (string.IsNullOrEmpty(authorId))
             {
                 model.CommentList = [.. _commentService.GetAllComments().OrderByDescending(x => x.CreationTime)];
-            } else
+            }
+            else
             {
                 model.CommentList = [.. _commentService.GetCommentsOfAuthor(authorId).OrderByDescending(x => x.CreationTime)];
-                model.AuthorFullName = authorFullName;
             }
-            
-            model.CommentsCount = model.CommentList.Count;
-            return View("CommentsList", model);
-        }
 
-        /// <summary>
-        /// [GET] Страница создания комментария
-        /// </summary>
-        /// <returns></returns>
-        [HttpGet]
-        public IActionResult Add() => View();
+            model.CommentsCount = model.CommentList.Count;
+            return Ok(model);
+        }
 
         /// <summary>
         /// [POST] Создание комментария
         /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<ActionResult> Add(CommentAddViewModel model)
         {
             var ifUserCanAdd = _commentService.CheckIfUserCanAdd(User);
             if (!ifUserCanAdd.IsSuccessed)
                 ModelState.AddModelError("", ifUserCanAdd.Messages[0]);
 
-            model.CreationTime = DateTime.Now;
             if (ModelState.IsValid)
             {
                 var resultModel = await _commentService.AddComment(model);
                 if (resultModel.IsSuccessed)
-                    return RedirectToAction("View", "Article", new { id = model.ArticleId });
+                    return Ok(resultModel);
 
                 foreach (var message in resultModel.Messages)
                     ModelState.AddModelError("", message);
             }
-            return View("Add", model);
+            return BadRequest(model);
         }
 
         /// <summary>
-        /// [GET] Страница редактирования комментария
+        /// [PUT] Обновление комментария
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        [HttpGet]
-        public ActionResult Edit(int id) => View("Edit", _commentService.GetCommentById(id).Result);
-
-        /// <summary>
-        /// [POST] Обновление комментария
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(CommentEditViewModel model)
         {
             var ifUserCanEdit = _commentService.CheckIfUserCanEdit(User, model.AuthorId);
@@ -95,21 +72,18 @@ namespace FinalBlog.Controllers
             {
                 var resultModel = await _commentService.UpdateComment(model);
                 if (resultModel.IsSuccessed)
-                    return RedirectToAction("View", "Article", new { id = model.ArticleId });
+                    return Ok(resultModel);
 
                 foreach (var message in resultModel.Messages)
                     ModelState.AddModelError("", message);
             }
-            return View("Edit", model);
+            return BadRequest(model);
         }
 
         /// <summary>
-        /// [POST] Удаление комментария
+        /// [DELETE] Удаление комментария
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpDelete]
         public async Task<IActionResult> Delete(int id)
         {
             var ifUserCanEdit = _commentService.CheckIfUserCanEdit(User, _commentService.GetCommentById(id).Result.AuthorId);
@@ -120,12 +94,12 @@ namespace FinalBlog.Controllers
             {
                 var resultModel = await _commentService.DeleteComment(id);
                 if (resultModel.IsSuccessed)
-                    return RedirectToAction("Index", "Article");
+                    return Ok(resultModel);
 
                 foreach (var message in resultModel.Messages)
                     ModelState.AddModelError("", message);
             }
-            return RedirectToAction("Edit", "Comment", new { id });
+            return BadRequest(ModelState);
         }
     }
 }

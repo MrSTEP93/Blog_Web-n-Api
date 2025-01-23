@@ -1,6 +1,7 @@
 ﻿using FinalBlog.Services.Interfaces;
 using FinalBlog.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FinalBlog.WebApi.Controllers
 {
@@ -10,6 +11,7 @@ namespace FinalBlog.WebApi.Controllers
     {
         private readonly IUserService _userService = userService;
 
+        [Authorize(Roles = "Администратор, Модератор")]
         [HttpGet]
         public IActionResult Index()
         {

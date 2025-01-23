@@ -5,6 +5,7 @@ using FinalBlog.Extensions;
 using FinalBlog.ViewModels.User;
 using Microsoft.AspNetCore.Authorization;
 using FinalBlog.Data.Models;
+using System.Security.Claims;
 
 namespace FinalBlog.WebApi.Controllers
 {
@@ -13,6 +14,7 @@ namespace FinalBlog.WebApi.Controllers
     public class UserController(IUserService userService) : ControllerBase
     {
         private readonly IUserService _userService = userService;
+        string? CurrentUserId => User.FindFirstValue(ClaimTypes.NameIdentifier);
 
         /// <summary>
         /// [GET] Метод для получения всех пользователей
@@ -35,13 +37,16 @@ namespace FinalBlog.WebApi.Controllers
             if (!User.Identity!.IsAuthenticated)
                 return BadRequest("Пользователь не авторизован для просмотра профиля");
 
-            BlogUser userData;
-            if (id == null)
-                userData = await _userService.GetCurrentUser(User);
-            else
-                userData = await _userService.GetUserById(id);
-
-            return Ok(_userService.ConvertToViewModel(userData));
+            id ??= CurrentUserId;
+            try
+            {
+                BlogUser userData = new();
+                userData = await _userService.GetUserById(id!);
+                return Ok(_userService.ConvertToViewModel(userData));
+            } catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         /// <summary>
@@ -72,11 +77,15 @@ namespace FinalBlog.WebApi.Controllers
         [HttpDelete]
         public async Task<IActionResult> DeleteUser(string id)
         {
-            var resultModel = await _userService.DeleteUser(id);
-            if (resultModel.IsSuccessed)
-                return Ok(resultModel);
-
-            return BadRequest(resultModel);
+            if (ModelState.IsValid)
+            {
+                var resultModel = await _userService.DeleteUser(id);
+                if (resultModel.IsSuccessed)
+                    return Ok(resultModel);
+                else
+                    return BadRequest(resultModel);
+            }
+            return BadRequest(ModelState);
         }
     }
 }

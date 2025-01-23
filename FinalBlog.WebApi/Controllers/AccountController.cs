@@ -69,7 +69,7 @@ namespace FinalBlog.WebApi.Controllers
         public async Task<IActionResult> Logout()
         {
             await _userService.Logout();
-            return Ok();
+            return Ok("Logged out");
         }
     }
 }
