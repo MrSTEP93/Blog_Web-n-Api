@@ -1,0 +1,30 @@
+Добрый день, вот пример с реализацией Tag и Articler репозиториями (без UoW), аналогично им вам необходимо будет реализовать другие)
+
+Также у вас во многих методах контроллера при обращении к сервису не используется await (хотя методы в сервисах асинхронные), здесь вам надо поправить
+
+https://github.com/max-shelll/ForAlex
+
+Также сейчас, посмотрев ваш код более детальнее, я могу предположить, что ошибка была не совсем в UoW
+
+1) В контроллерах вы обращались к сервисам синхронно (хоть они асинхронные)
+2) Метод UpdateArticle в ArticleRepository у вас немного странно реализован (слишком много обращений к репо), я бы оставил вот такую реализацию:
+ public async Task<ResultModel> UpdateArticle(ArticleEditViewModel model)
+        {
+            var resultModel = new ResultModel(false, "Internal error");
+            var article = await _articleRepo.Get(model.Id);
+
+            article.Title = model.Title;
+            article.Content = model.Content;
+
+            article.Tags.Clear();
+            foreach (var tagID in model.SelectedTagIds)
+            {
+                var tagDB = await _tagRepo.Get(tagID);
+                article.Tags.Add(tagDB);
+            }
+
+            await _articleRepo.Update(article);
+            resultModel.MarkAsSuccess("Article updated");
+
+            return resultModel;
+        }
