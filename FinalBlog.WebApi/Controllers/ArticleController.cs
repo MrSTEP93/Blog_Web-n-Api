@@ -5,6 +5,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FinalBlog.WebApi.Controllers
 {
+    /// <summary>
+    /// Контроллер статей
+    /// </summary>
+    /// <param name="articleService">Подключаемый из DI сервис для работы со статьями</param>
     [ApiController]
     [Route("[controller]")]
     public class ArticleController(IArticleService articleService) : ControllerBase
@@ -12,7 +16,7 @@ namespace FinalBlog.WebApi.Controllers
         readonly IArticleService _articleService = articleService;
 
         /// <summary>
-        /// [GET] Список всех статей
+        /// Список всех статей
         /// </summary>
         [HttpGet]
         [Route("GetAll")]
@@ -23,7 +27,7 @@ namespace FinalBlog.WebApi.Controllers
         }
 
         /// <summary>
-        /// [GET] Получение статей автора
+        /// Получение статей автора
         /// </summary>
         /// <param name="id">ID автора</param>
         [HttpGet]
@@ -35,7 +39,7 @@ namespace FinalBlog.WebApi.Controllers
         }
 
         /// <summary>
-        /// [GET] Выбор статей по тегу
+        /// Выбор статей по тегу
         /// </summary>
         /// <param name="id">ID тега</param>
         [HttpGet]
@@ -47,7 +51,7 @@ namespace FinalBlog.WebApi.Controllers
         }
 
         /// <summary>
-        /// [GET] Просмотр статьи
+        /// Просмотр статьи
         /// </summary>
         /// <param name="id">ID статьи</param>
         [HttpGet]
@@ -59,12 +63,11 @@ namespace FinalBlog.WebApi.Controllers
         }
 
         /// <summary>
-        /// [PUT] Добавление статьи
+        /// Добавление статьи
         /// </summary>
         [HttpPut]
-        //[ValidateAntiForgeryToken]
         [Route("Add")]
-        public async Task<IActionResult> Add([FromBody] ArticleAddViewModel model)
+        public async Task<IActionResult> Add(ArticleAddViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -75,13 +78,12 @@ namespace FinalBlog.WebApi.Controllers
         }
 
         /// <summary>
-        /// [Post] Редактирование статьи
+        /// Редактирование статьи
         /// </summary>
         /// <param name="model"></param>
         [HttpPost]
-        //[ValidateAntiForgeryToken]
         [Route("Edit")]
-        public async Task<IActionResult> Edit([FromBody] ArticleEditViewModel model)
+        public async Task<IActionResult> Edit(ArticleEditViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -92,11 +94,10 @@ namespace FinalBlog.WebApi.Controllers
         }
 
         /// <summary>
-        /// [Delete] Удаление статьи
+        /// Удаление статьи
         /// </summary>
         /// <param name="id">ID статьи</param>
         [HttpDelete]
-        //[ValidateAntiForgeryToken]
         [Route("Delete")]
         public async Task<IActionResult> Delete(int id)
         {

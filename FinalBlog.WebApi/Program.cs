@@ -6,19 +6,38 @@ using FinalBlog.Data.Repositories.Interfaces;
 using FinalBlog.Services.Interfaces;
 using FinalBlog.Services;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 
 namespace FinalBlog.WebApi
 {
+    /// <summary>
+    /// Приложение Web Api
+    /// </summary>
     public class Program
     {
+        /// <summary>
+        /// Точка входа
+        /// </summary>
+        /// <param name="args"></param>
+        /// <exception cref="Exception"></exception>
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            //builder.Services.AddControllers();
-            builder.Services.AddControllersWithViews();
+            builder.Services.AddControllers();
+            //builder.Services.AddControllersWithViews();
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddSwaggerGen(opt =>
+            {
+                var xmlFileName = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                opt.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFileName));
+                opt.SupportNonNullableReferenceTypes();
+            });
+            /*
+                var xml = $"{Assembly.GetAssembly(typeof(UserApiModel)).GetName().Name}.xml";
+                                                        // MyBlog.Services.ApiModels.Users.Response.UserApiModel
+                opt.IncludeXmlComments(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, xml));
+            */
 
             builder.Configuration
                 .AddJsonFile(Path.Combine(Environment.CurrentDirectory, "bin\\Debug\\net8.0", "appsettings.json"))
@@ -26,9 +45,8 @@ namespace FinalBlog.WebApi
             string connection = builder.Configuration.GetConnectionString("DefaultConnection") ?? string.Empty;
 
             if (string.IsNullOrEmpty(connection))
-            {
                 throw new Exception("Can't get connection string from the file \"appsettings.Development.json\"");
-            }
+            
             builder.Services
                 .AddDbContext<AppDbContext>(opt => opt.UseSqlServer(connection))
                 .AddIdentity<BlogUser, Role>(opts => {

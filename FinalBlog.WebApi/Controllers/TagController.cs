@@ -6,6 +6,10 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace FinalBlog.WebApi.Controllers
 {
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="tagService">Подключаемый из DI сервис для работы с</param>
     [ApiController]
     [Route("[controller]/[action]")]
     public class TagController(ITagService tagService) : ControllerBase
@@ -13,7 +17,7 @@ namespace FinalBlog.WebApi.Controllers
         private readonly ITagService _tagService = tagService;
 
         /// <summary>
-        /// [GET] Вывод всех тегов
+        /// Вывод всех тегов
         /// </summary>
         [HttpGet]
         public IActionResult Index()
@@ -23,19 +27,7 @@ namespace FinalBlog.WebApi.Controllers
         }
 
         /// <summary>
-        /// [GET] Просмотр тега
-        /// </summary>
-        [HttpGet]
-        public async Task<IActionResult> View(int id)
-        {
-            var model = await _tagService.GetTagById(id);
-            if (model == null)
-                return BadRequest($"Tag id={id} doesn't exsists");
-            return Ok(model);
-        }
-
-        /// <summary>
-        /// [POST] Добавление тега
+        /// Добавление тега
         /// </summary>
         [HttpPost]
         public async Task<IActionResult> Add(TagAddViewModel model)
@@ -49,7 +41,7 @@ namespace FinalBlog.WebApi.Controllers
         }
 
         /// <summary>
-        /// [PUT] Редактирование
+        /// Редактирование
         /// </summary>
         [HttpPut]
         public async Task<IActionResult> Edit(TagEditViewModel model)
@@ -62,10 +54,10 @@ namespace FinalBlog.WebApi.Controllers
             return BadRequest(model);
         }
 
-        [Authorize(Roles = "Администратор, Модератор")]
         /// <summary>
-        /// [POST] Удаление тега
+        /// Удаление тега
         /// </summary>
+        [Authorize(Roles = "Администратор, Модератор")]
         [HttpDelete]
         public async Task<IActionResult> Delete(int id)
         {

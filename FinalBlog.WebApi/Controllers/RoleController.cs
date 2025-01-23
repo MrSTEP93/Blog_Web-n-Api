@@ -6,6 +6,10 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace FinalBlog.WebApi.Controllers
 {
+    /// <summary>
+    /// Контроллер ролей
+    /// </summary>
+    /// <param name="roleService">Подключаемый из DI сервис для работы с ролями</param>
     [ApiController]
     [Route("[controller]/[action]")]
     public class RoleController(IRoleService roleService) : ControllerBase
@@ -13,7 +17,7 @@ namespace FinalBlog.WebApi.Controllers
         private readonly IRoleService _roleService = roleService;
 
         /// <summary>
-        /// [GET] Вывод всех ролей
+        /// Вывод всех ролей
         /// </summary>
         [HttpGet]
         public IActionResult Index()
@@ -23,7 +27,7 @@ namespace FinalBlog.WebApi.Controllers
         }
 
         /// <summary>
-        /// [POST] Создания новой роли
+        /// Создание новой роли
         /// </summary>
         [Authorize(Roles = "Администратор")]
         [HttpPost]
@@ -42,7 +46,7 @@ namespace FinalBlog.WebApi.Controllers
         }
 
         /// <summary>
-        /// [PUT] Редактирование роли
+        /// Редактирование роли
         /// </summary>
         [Authorize(Roles = "Администратор")]
         [HttpPut]
@@ -61,7 +65,7 @@ namespace FinalBlog.WebApi.Controllers
         }
 
         /// <summary>
-        /// [DELETE] Удаление роли
+        /// Удаление роли
         /// </summary>
         [Authorize(Roles = "Администратор")]
         [HttpDelete]

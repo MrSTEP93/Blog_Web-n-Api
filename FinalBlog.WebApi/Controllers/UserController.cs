@@ -9,6 +9,10 @@ using System.Security.Claims;
 
 namespace FinalBlog.WebApi.Controllers
 {
+    /// <summary>
+    /// Контроллер пользовательских данных
+    /// </summary>
+    /// <param name="userService">Подключаемый из DI сервис для работы с пользователями</param>
     [ApiController]
     [Route("[controller]/[action]")]
     public class UserController(IUserService userService) : ControllerBase
@@ -17,7 +21,7 @@ namespace FinalBlog.WebApi.Controllers
         string? CurrentUserId => User.FindFirstValue(ClaimTypes.NameIdentifier);
 
         /// <summary>
-        /// [GET] Метод для получения всех пользователей
+        /// Метод для получения всех пользователей
         /// </summary>
         [Authorize(Roles = "Администратор, Модератор")]
         [HttpGet]
@@ -28,7 +32,7 @@ namespace FinalBlog.WebApi.Controllers
         }
 
         /// <summary>
-        /// [GET] Просмотр профиля пользователя
+        /// Просмотр профиля пользователя
         /// </summary>
         /// <param name="id">ID пользователя</param>
         [HttpGet]
@@ -50,7 +54,7 @@ namespace FinalBlog.WebApi.Controllers
         }
 
         /// <summary>
-        /// [POST] Обновление данных пользователя
+        /// Обновление данных пользователя
         /// </summary>
         /// <param name="model">Модель с данными пользователя</param>
         [HttpPost]
@@ -71,7 +75,7 @@ namespace FinalBlog.WebApi.Controllers
         }
 
         /// <summary>
-        /// [DELETE] Удаление
+        /// Удаление пользователя
         /// </summary>
         [Authorize(Roles = "Администратор")]
         [HttpDelete]

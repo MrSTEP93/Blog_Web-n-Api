@@ -7,6 +7,10 @@ using FinalBlog.Data.Models;
 
 namespace FinalBlog.WebApi.Controllers
 {
+    /// <summary>
+    /// Контроллер комментариев
+    /// </summary>
+    /// <param name="commentService">Подключаемый из DI сервис для работы с комментариями</param>
     [ApiController]
     [Route("[controller]/[action]")]
     public class CommentController(
@@ -16,7 +20,7 @@ namespace FinalBlog.WebApi.Controllers
         readonly ICommentService _commentService = commentService;
 
         /// <summary>
-        /// [GET] Отображение списка комментариев
+        /// Отображение списка комментариев
         /// </summary>
         /// <param name="authorId">если заполнено - комменты этого автора</param>
         [HttpGet]
@@ -37,7 +41,7 @@ namespace FinalBlog.WebApi.Controllers
         }
 
         /// <summary>
-        /// [POST] Создание комментария
+        /// Создание комментария
         /// </summary>
         [HttpPost]
         public async Task<ActionResult> Add(CommentAddViewModel model)
@@ -59,7 +63,7 @@ namespace FinalBlog.WebApi.Controllers
         }
 
         /// <summary>
-        /// [PUT] Обновление комментария
+        /// Обновление комментария
         /// </summary>
         [HttpPost]
         public async Task<IActionResult> Edit(CommentEditViewModel model)
@@ -81,7 +85,7 @@ namespace FinalBlog.WebApi.Controllers
         }
 
         /// <summary>
-        /// [DELETE] Удаление комментария
+        /// Удаление комментария
         /// </summary>
         [HttpDelete]
         public async Task<IActionResult> Delete(int id)

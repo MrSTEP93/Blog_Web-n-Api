@@ -6,6 +6,10 @@ using FinalBlog.Data.Models;
 
 namespace FinalBlog.WebApi.Controllers
 {
+    /// <summary>
+    /// Контроллер регистрации и авторизации пользователей
+    /// </summary>
+    /// <param name="userService">Подключаемый из DI сервис для работы с пользователями</param>
     [ApiController]
     [Route("[controller]/[action]")]
     public class AccountController(IUserService userService) : ControllerBase
@@ -13,7 +17,7 @@ namespace FinalBlog.WebApi.Controllers
         private readonly IUserService _userService = userService;
 
         /// <summary>
-        /// [POST] Обработка данных с формы регистрации
+        /// Обработка данных с формы регистрации (регистрация пользователя)
         /// </summary>
         [HttpPost]
         public async Task<IActionResult> Registration(RegistrationViewModel model)
@@ -35,7 +39,7 @@ namespace FinalBlog.WebApi.Controllers
         }
 
         /// <summary>
-        /// [POST] Метод авторизации
+        /// Авторизация
         /// </summary>
         [HttpPost]
         public async Task<IActionResult> Login(LoginViewModel model)
@@ -63,7 +67,7 @@ namespace FinalBlog.WebApi.Controllers
         }
 
         /// <summary>
-        /// [POST] Выход из системы
+        /// Выход из системы
         /// </summary>
         [HttpPost]
         public async Task<IActionResult> Logout()
