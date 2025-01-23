@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using FinalBlog.ViewModels.Comment;
 using FinalBlog.Data.Models;
+using FinalBlog.Data.ApiModels.Comment;
 
 namespace FinalBlog.WebApi.Controllers
 {
@@ -26,25 +27,28 @@ namespace FinalBlog.WebApi.Controllers
         [HttpGet]
         public IActionResult Index(string? authorId = null)
         {
-            var model = new CommentListViewModel();
+            var response = new List<CommentResponse>();
             if (string.IsNullOrEmpty(authorId))
             {
-                model.CommentList = [.. _commentService.GetAllComments().OrderByDescending(x => x.CreationTime)];
+                response =
+                    _commentService.ConvertToApiModel([.. _commentService
+                    .GetAllComments().OrderByDescending(x => x.CreationTime)]);
             }
             else
             {
-                model.CommentList = [.. _commentService.GetCommentsOfAuthor(authorId).OrderByDescending(x => x.CreationTime)];
+                response =
+                    _commentService.ConvertToApiModel([.. _commentService
+                    .GetCommentsOfAuthor(authorId).OrderByDescending(x => x.CreationTime)]);
             }
 
-            model.CommentsCount = model.CommentList.Count;
-            return Ok(model);
+            return Ok(response);
         }
 
         /// <summary>
         /// Создание комментария
         /// </summary>
         [HttpPost]
-        public async Task<ActionResult> Add(CommentAddViewModel model)
+        public async Task<ActionResult> Add(CommentAddRequest request)
         {
             var ifUserCanAdd = _commentService.CheckIfUserCanAdd(User);
             if (!ifUserCanAdd.IsSuccessed)
@@ -52,36 +56,40 @@ namespace FinalBlog.WebApi.Controllers
 
             if (ModelState.IsValid)
             {
-                var resultModel = await _commentService.AddComment(model);
+                var resultModel = await _commentService
+                    .AddComment(_commentService.ConvertToAddViewModel(request));
+
                 if (resultModel.IsSuccessed)
                     return Ok(resultModel);
 
                 foreach (var message in resultModel.Messages)
                     ModelState.AddModelError("", message);
             }
-            return BadRequest(model);
+            return BadRequest(request);
         }
 
         /// <summary>
         /// Обновление комментария
         /// </summary>
         [HttpPost]
-        public async Task<IActionResult> Edit(CommentEditViewModel model)
+        public async Task<IActionResult> Edit(CommentEditRequest request)
         {
-            var ifUserCanEdit = _commentService.CheckIfUserCanEdit(User, model.AuthorId);
+            var ifUserCanEdit = _commentService.CheckIfUserCanEdit(User, request.AuthorId);
             if (!ifUserCanEdit.IsSuccessed)
                 ModelState.AddModelError("", ifUserCanEdit.Messages[0]);
 
             if (ModelState.IsValid)
             {
-                var resultModel = await _commentService.UpdateComment(model);
+                var resultModel = await _commentService
+                    .UpdateComment(_commentService.ConvertToEditViewModel(request));
+
                 if (resultModel.IsSuccessed)
                     return Ok(resultModel);
 
                 foreach (var message in resultModel.Messages)
                     ModelState.AddModelError("", message);
             }
-            return BadRequest(model);
+            return BadRequest(request);
         }
 
         /// <summary>

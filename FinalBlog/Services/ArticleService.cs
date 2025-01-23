@@ -1,10 +1,13 @@
 ﻿using AutoMapper;
 using FinalBlog.Controllers;
+using FinalBlog.Data.ApiModels.Articles;
 using FinalBlog.Data.Models;
 using FinalBlog.Data.Repositories.Interfaces;
 using FinalBlog.Extensions;
 using FinalBlog.Services.Interfaces;
 using FinalBlog.ViewModels.Article;
+using FinalBlog.ViewModels.Comment;
+using FinalBlog.Data.ApiModels.Comment;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 using System.Collections.Generic;
@@ -58,7 +61,7 @@ namespace FinalBlog.Services
                 _logger.LogError($"Ошибка при редактировании статьи id={article.Id}: статья не обнаружена (неверный id)");
                 return new ResultModel(false, "Article not found");
             }
-            
+
             article.ConvertArticle(model);
             if (model.SelectedTagIds?.Count != 0)
             {
@@ -86,7 +89,7 @@ namespace FinalBlog.Services
             }
             catch (Exception ex)
             {
-                resultModel = ProcessException($"Ошибка удаления статьи id={article.Id}", ex);
+                resultModel = ProcessException($"Ошибка удаления статьи id={articleId}", ex);
             }
             return resultModel;
         }
@@ -113,7 +116,7 @@ namespace FinalBlog.Services
             var model = CreateListOfViewModel(list, authorId);
             return model;
         }
-        
+
         public ArticleListViewModel GetArticlesByTag(int tagId)
         {
             var list = repo.GetArticlesByTagId(tagId).OrderByDescending(x => x.CreationTime).ToList();
@@ -152,7 +155,7 @@ namespace FinalBlog.Services
 
             return resultModel;
         }
-        
+
         public ResultModel CheckIfUserCanAdd(ClaimsPrincipal user)
         {
             var resultModel = new ResultModel(false, "Вы не можете добавлять статьи");
@@ -190,13 +193,13 @@ namespace FinalBlog.Services
 
             return model;
         }
-        
+
         private ArticleListViewModel CreateListOfViewModel(List<Article> list, string authorId)
         {
             var model = CreateListOfViewModel(list);
             var user = _userService.GetUserById(authorId).Result;
             model.Title = $"Статьи автора {user.FirstName} {user.LastName}";
-            
+
             return model;
         }
 
@@ -219,5 +222,31 @@ namespace FinalBlog.Services
             }
             return resultModel;
         }
+
+        public ArticleResponse ConvertToApiModel(ArticleViewModel viewModel) 
+            => _mapper.Map<ArticleResponse>(viewModel);
+
+        public List<ArticleResponse> ConvertToApiModel(List<ArticleViewModel> viewModel)
+        {
+            var response = new List<ArticleResponse>();
+            foreach (var model in viewModel)
+                response.Add(_mapper.Map<ArticleResponse>(model));
+            return response;
+        }
+
+        public List<ArticleResponse> ConvertToApiModel(ArticleListViewModel viewModel)
+        {
+            var response = new List<ArticleResponse>();
+            foreach (var model in viewModel.Articles)
+                response.Add(_mapper.Map<ArticleResponse>(model));
+            return response;
+        }
+
+        public ArticleAddViewModel ConvertToAddViewModel(ArticleAddRequest request) 
+            => _mapper.Map<ArticleAddViewModel>(request);
+        
+        public ArticleEditViewModel ConvertToEditViewModel(ArticleEditRequest request) 
+            => _mapper.Map<ArticleEditViewModel>(request);
+        
     }
 }

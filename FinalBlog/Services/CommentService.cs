@@ -2,25 +2,25 @@
 using FinalBlog.Data.Models;
 using FinalBlog.Data.Repositories;
 using FinalBlog.Data.UoW;
+using FinalBlog.Data.ApiModels.Comment;
 using FinalBlog.Services.Interfaces;
 using FinalBlog.ViewModels.Article;
 using FinalBlog.ViewModels.Comment;
 using FinalBlog.ViewModels.Tag;
 using System.ComponentModel.Design;
 using System.Security.Claims;
+using FinalBlog.Data.ApiModels.Articles;
 
 namespace FinalBlog.Services
 {
     public class CommentService(
         IMapper mapper,
         IUnitOfWork unitOfWork,
-        //IUserService userService,
         ILogger<CommentService> logger
         ) : ICommentService
     {
         readonly IMapper _mapper = mapper;
         readonly IUnitOfWork _unitOfWork = unitOfWork;
-        //readonly IUserService _userService = userService;
         readonly ILogger<CommentService> _logger = logger;
 
         public async Task<ResultModel> AddComment(CommentAddViewModel model)
@@ -165,5 +165,21 @@ namespace FinalBlog.Services
             }
             return resultModel;
         }
+        
+        public CommentResponse ConvertToApiModel(CommentViewModel viewModel) => _mapper.Map<CommentResponse>(viewModel);
+
+        public List<CommentResponse> ConvertToApiModel(List<CommentViewModel> viewModel)
+        {
+            var response = new List<CommentResponse>();
+            foreach (var model in viewModel)
+                response.Add(_mapper.Map<CommentResponse>(model));
+            return response;
+        }
+
+        public CommentAddViewModel ConvertToAddViewModel(CommentAddRequest request)
+            => _mapper.Map<CommentAddViewModel>(request);
+
+        public CommentEditViewModel ConvertToEditViewModel(CommentEditRequest request)
+            => _mapper.Map<CommentEditViewModel>(request);
     }
 }

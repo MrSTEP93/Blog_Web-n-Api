@@ -1,5 +1,6 @@
 ﻿using FinalBlog.Data.Models;
 using FinalBlog.ViewModels.Comment;
+using FinalBlog.Data.ApiModels.Comment;
 using System.Security.Claims;
 
 namespace FinalBlog.Services.Interfaces
@@ -16,5 +17,12 @@ namespace FinalBlog.Services.Interfaces
 
         public ResultModel CheckIfUserCanAdd(ClaimsPrincipal user);
         public ResultModel CheckIfUserCanEdit(ClaimsPrincipal user, string authorId);
+
+        public List<CommentResponse> ConvertToApiModel(List<CommentViewModel> viewModel);
+        public CommentResponse ConvertToApiModel(CommentViewModel viewModel);
+
+        public CommentAddViewModel ConvertToAddViewModel(CommentAddRequest request);
+
+        public CommentEditViewModel ConvertToEditViewModel(CommentEditRequest request);
     }
 }

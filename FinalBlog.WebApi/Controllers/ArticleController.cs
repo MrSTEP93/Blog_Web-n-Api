@@ -1,4 +1,5 @@
-﻿using FinalBlog.Services.Interfaces;
+﻿using FinalBlog.Data.ApiModels.Articles;
+using FinalBlog.Services.Interfaces;
 using FinalBlog.ViewModels.Article;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -22,7 +23,8 @@ namespace FinalBlog.WebApi.Controllers
         [Route("GetAll")]
         public IActionResult Index()
         {
-            var articleList = _articleService.GetAllArticles();
+            var articleList = 
+                _articleService.ConvertToApiModel(_articleService.GetAllArticles());
             return Ok(articleList);
         }
 
@@ -34,7 +36,8 @@ namespace FinalBlog.WebApi.Controllers
         [Route("Author")]
         public IActionResult Author(string id)
         {
-            var articleList = _articleService.GetArticlesOfAuthor(id);
+            var articleList = 
+                _articleService.ConvertToApiModel(_articleService.GetArticlesOfAuthor(id));
             return Ok(articleList);
         }
 
@@ -46,7 +49,8 @@ namespace FinalBlog.WebApi.Controllers
         [Route("Tag")]
         public IActionResult Tag(int id)
         {
-            var articleList = _articleService.GetArticlesByTag(id);
+            var articleList =
+                _articleService.ConvertToApiModel(_articleService.GetArticlesByTag(id));
             return Ok(articleList);
         }
 
@@ -58,7 +62,8 @@ namespace FinalBlog.WebApi.Controllers
         [Route("View")]
         public async Task<IActionResult> View(int id)
         {
-            var article = await _articleService.GetArticleById(id);
+            var article =
+                _articleService.ConvertToApiModel(await _articleService.GetArticleById(id));
             return Ok(article);
         }
 
@@ -67,11 +72,13 @@ namespace FinalBlog.WebApi.Controllers
         /// </summary>
         [HttpPut]
         [Route("Add")]
-        public async Task<IActionResult> Add(ArticleAddViewModel model)
+        public async Task<IActionResult> Add(ArticleAddRequest request)
         {
             if (ModelState.IsValid)
             {
-                var resultModel = await _articleService.AddArticle(model);
+                var resultModel = await _articleService
+                    .AddArticle(_articleService.ConvertToAddViewModel(request));
+                
                 return Ok(resultModel);
             }
             return BadRequest(ModelState);
@@ -80,14 +87,15 @@ namespace FinalBlog.WebApi.Controllers
         /// <summary>
         /// Редактирование статьи
         /// </summary>
-        /// <param name="model"></param>
         [HttpPost]
         [Route("Edit")]
-        public async Task<IActionResult> Edit(ArticleEditViewModel model)
+        public async Task<IActionResult> Edit(ArticleEditRequest request)
         {
             if (ModelState.IsValid)
             {
-                var resultModel = await _articleService.UpdateArticle(model);
+                var resultModel = await _articleService
+                    .UpdateArticle(_articleService.ConvertToEditViewModel(request));
+                
                 return Ok(resultModel);
             }
             return BadRequest(ModelState);

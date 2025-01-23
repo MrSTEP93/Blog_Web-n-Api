@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using FinalBlog.Data.ApiModels.Articles;
+using FinalBlog.Data.ApiModels.Comment;
 using FinalBlog.Data.Models;
 using FinalBlog.ViewModels.Article;
 using FinalBlog.ViewModels.Comment;
@@ -23,15 +25,29 @@ namespace FinalBlog
             CreateMap<RoleViewModel, Role>();
             CreateMap<Role, RoleViewModel>();
 
+            #region Article
             CreateMap<ArticleEditViewModel, Article>();
             CreateMap<ArticleAddViewModel, Article>();
             CreateMap<Article, ArticleViewModel>();
             CreateMap<Article, ArticleEditViewModel>();
 
+            CreateMap<ArticleViewModel, ArticleResponse>();
+            CreateMap<ArticleEditViewModel, ArticleResponse>();
+            CreateMap<ArticleAddRequest, ArticleAddViewModel>();
+            CreateMap<ArticleEditRequest, ArticleEditViewModel>();
+            #endregion
+
+            #region Comment
             CreateMap<CommentAddViewModel, Comment>();
             CreateMap<CommentEditViewModel, Comment>();
-            CreateMap<Comment, CommentEditViewModel>();
             CreateMap<Comment, CommentViewModel>();
+            CreateMap<Comment, CommentEditViewModel>();
+
+            CreateMap<CommentViewModel, CommentResponse>();
+            CreateMap<CommentEditViewModel, CommentResponse>();
+            CreateMap<CommentAddRequest, CommentAddViewModel>();
+            CreateMap<CommentEditRequest, CommentEditViewModel>();
+            #endregion
 
             CreateMap<TagAddViewModel, Tag>();
             CreateMap<TagEditViewModel, Tag>();
