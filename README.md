@@ -119,7 +119,7 @@ docker-compose build --no-cache
 docker-compose up -d
 ```
 
-### Вопрос 5: Как посмотреть логи ###
+### Вопрос 5: Как посмотреть логи? ###
 Воспользуйтесь командой ```docker-compose logs```  
 Для сохранения логов в текстовый файл используйте ```docker-compose logs > logs.txt```  
 
